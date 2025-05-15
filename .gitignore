@@ -1,0 +1,4 @@
+/target
+.idea
+.idea/*
+/config/data_store.json
