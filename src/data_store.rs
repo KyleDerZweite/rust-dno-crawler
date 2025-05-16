@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-struct DataStore {
+pub(crate) struct DataStore {
     #[serde(flatten)]
     dnos: HashMap<String, DnoEntry>,
 }

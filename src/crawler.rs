@@ -1,13 +1,16 @@
-use tokio::sync::Semaphore;
 use reqwest::Client;
 use scraper::{Html, Selector};
-use std::{collections::{HashSet, VecDeque}, sync::Arc};
+use spider::tokio;
+use spider::website::Website;
+use std::{
+    collections::{HashSet, VecDeque},
+    sync::Arc,
+};
+use tokio::sync::Semaphore;
 
 #[tokio::main]
-pub async fn main() -> anyhow::Result<()> {
-    let client = Client::builder()
-        .user_agent("MyRustCrawler/1.0")
-        .build()?;
+pub async fn old_main() -> anyhow::Result<()> {
+    let client = Client::builder().user_agent("MyRustCrawler/1.0").build()?;
 
     let max_concurrent = Arc::new(Semaphore::new(20));
     let mut visited = HashSet::new();
@@ -15,7 +18,9 @@ pub async fn main() -> anyhow::Result<()> {
     queue.push_back("https://www.netze-bw.de/unternehmen/veroeffentlichungen#3-1".to_string());
 
     while let Some(url) = queue.pop_front() {
-        if !visited.insert(url.clone()) { continue; }
+        if !visited.insert(url.clone()) {
+            continue;
+        }
         let permit = Arc::clone(&max_concurrent).acquire_owned().await?;
         let client = client.clone();
         tokio::spawn(async move {
@@ -37,11 +42,22 @@ pub async fn main() -> anyhow::Result<()> {
                     // Extrahiere Daten, speichere PDF-Links usw.
                     println!("Crawled: {}", text);
                 }
-                
             }
-            
         });
     }
 
     Ok(())
+}
+
+#[tokio::main]
+pub async fn main() {
+    let mut website: Website = Website::new("https://spider.cloud");
+
+    website.crawl().await;
+
+    let links = website.get_links();
+
+    for link in links {
+        println!("- {:?}", link.as_ref());
+    }
 }

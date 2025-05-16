@@ -2,11 +2,14 @@ mod crawler;
 mod ollama_client;
 mod data_store;
 mod config;
+mod web_search;
+
 
 fn main() {
-    let result = crawler::main();
-    match result {
-        Ok(_) => println!("Crawling completed successfully. {result:?}"),
-        Err(e) => eprintln!("Error during crawling: {}", e),
-    }
+    let _ = web_search::search_xng("RheinNetz GmbH (RNG)").unwrap_or_else(
+        |err| {
+            eprintln!("Error: {}", err);
+            std::process::exit(1);
+        }
+    );
 }
