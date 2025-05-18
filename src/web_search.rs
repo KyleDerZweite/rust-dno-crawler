@@ -2,11 +2,13 @@ use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde_json::Value;
 
+const SEARCH_ENGINE_URL: &str = "http://65.109.38.216:10000/search"; // SearXNG URL
+
 #[tokio::main]
 pub async fn search_xng(keyword: &str) -> Result<()> {
     let client = Client::new();
     let resp = client
-        .get("http://65.109.38.216:10000/search")
+        .get(SEARCH_ENGINE_URL)
         .query(&[("q", keyword), ("format", "json")])
         .send()
         .await?
