@@ -11,14 +11,14 @@ const ASSET_DIR: &str = "assets";
 fn main() {
     fs::create_dir_all(ASSET_DIR).expect("Failed to create asset directory");
     
-    // let _ = web_search::search_xng("RheinNetz GmbH (RNG)").unwrap_or_else(
-    //     |err| {
-    //         eprintln!("Error: {}", err);
-    //         std::process::exit(1);
-    //     }
-    // );
+    let _ = web_search::search_xng("RheinNetz GmbH (RNG)").unwrap_or_else(
+        |err| {
+            eprintln!("Error: {}", err);
+            std::process::exit(1);
+        }
+    );
     
-    let _ = database::main().unwrap_or_else(
+    let _ = database::run_database().unwrap_or_else(
         |err| {
             eprintln!("Error: {}", err);
             std::process::exit(1);
