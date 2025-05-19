@@ -2,3 +2,4 @@
 .idea
 .idea/*
 /config/data_store.json
+/assets/data.db
