@@ -4,11 +4,53 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-anyhow = "1.0.98"
+anyhow = { version = "1.0.98" }
 serde_json = "1.0.140"
-tokio = { version = "1.45.0", features = ["rt", "rt-multi-thread", "macros"] }
+tokio = { version = "1.45.0", features = ["rt", "rt-multi-thread", "macros", "full"]}
 reqwest = { version = "0.12.15", features = ["json"] }
 scraper = "0.23.1"
 serde = { version = "1.0.219", features = ["derive"] }
 spider = { version = "2.37.52", default-features = false, features = ["serde"] }
-rusqlite = { version = "0.35.0", features = ["bundled"] }
+
+dioxus = { version = "0.6.2", features = ["router", "fullstack", "web"] }
+sqlx = { version = "0.7.0", features = ["sqlite", "runtime-tokio", "tls-native-tls", "macros", "chrono", "json"] }
+
+axum_session = { version = "0.12.1", features = ["sqlite-rustls"] }
+axum_session_auth = { version = "0.12.1", features = ["sqlite-rustls"] }
+axum = { version = "0.7.0" }
+
+bcrypt = { version = "0.16.0" }
+async-trait = { version = "0.1.87" }
+
+# Logging
+tracing = { version = "0.1" }
+tracing-subscriber = { version = "0.3.0" }
+
+
+[features]
+default = []
+web = ["dioxus/web"]
+desktop = ["dioxus/desktop"]
+mobile = ["dioxus/mobile"]
+server = ["dioxus/server", "dep:tokio", "sqlx", "axum_session", "axum_session_auth", "axum", "bcrypt", "async-trait", "anyhow"]
+
+[profile]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
+
+[profile.release]
+opt-level = "z"
+debug = false
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+incremental = false
