@@ -1,5 +1,7 @@
 /target
 .idea
 .idea/*
-/config/data_store.json
+/assets/data_store.json
 /assets/data.db
+/node_modules/
+/public/*
