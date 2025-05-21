@@ -4,11 +4,11 @@
 /assets/data_store.json
 /assets/data.db
 
-/website/public/*
-/website/node_modules
+/src/website/public/*
+/src/website/node_modules
 
 /target
-/website/target
-/auth/target
-/core/target
-/api/target
+/src/website/target
+/src/auth/target
+/src/core/target
+/src/api/target
