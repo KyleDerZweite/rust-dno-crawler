@@ -1,7 +1,14 @@
-/target
 .idea
 .idea/*
+
 /assets/data_store.json
 /assets/data.db
-/node_modules/
-/public/*
+
+/website/public/*
+/website/node_modules
+
+/target
+/website/target
+/auth/target
+/core/target
+/api/target
