@@ -1,28 +1,31 @@
-mod crawler;
-mod ollama_client;
-mod web_search;
-mod database;
-use std::{
-    fs,
-};
+#![allow(non_snake_case)]
 
-const ASSET_DIR: &str = "assets";
+use dioxus::prelude::*;
+// Import the workspace crates
+use auth;
+use core;
+use api;
+use website;
 
-fn main() {
-    fs::create_dir_all(ASSET_DIR).expect("Failed to create asset directory");
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Initialize the core components
+    let core_instance = core::init().await?;
     
-    let _ = web_search::search_xng("RheinNetz GmbH (RNG)").unwrap_or_else(
-        |err| {
-            eprintln!("Error: {}", err);
-            std::process::exit(1);
-        }
-    );
+    // Start the authentication server
+    let auth_server = auth::start_server().await?;
     
-    let _ = database::run_database().unwrap_or_else(
-        |err| {
-            eprintln!("Error: {}", err);
-            std::process::exit(1);
-        }
-    );
+    // Initialize API client
+    let api_client = api::create_client()?;
     
+    // Start the website - this will depend on whether you are using web, desktop, or mobile features
+    #[cfg(feature = "server")]
+    website::start_server().await?;
+    
+    #[cfg(not(feature = "server"))]
+    launch(website::app::App);
+    
+    println!("Dno-crawler initialized successfully!");
+    
+    Ok(())
 }

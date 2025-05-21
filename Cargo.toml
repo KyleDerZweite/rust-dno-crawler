@@ -1,38 +1,53 @@
 [package]
 name = "rust-dno-crawler"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2024"
 
+[workspace]
+resolver = "2"
+members = [
+    "./",
+    "src/api",
+    "src/auth",
+    "src/core",
+    "src/website"
+]
+
+[workspace.package]
+version = "0.0.1"
+
 [dependencies]
-anyhow = { version = "1.0.98" }
-serde_json = "1.0.140"
-tokio = { version = "1.45.0", features = ["rt", "rt-multi-thread", "macros", "full"]}
-reqwest = { version = "0.12.15", features = ["json"] }
-scraper = "0.23.1"
-serde = { version = "1.0.219", features = ["derive"] }
-spider = { version = "2.37.52", default-features = false, features = ["serde"] }
+# Add your workspace crates here
+api = { path = "src/api" }
+auth = { path = "src/auth" }
+core = { path = "src/core" }
+website = { path = "src/website" }
 
-dioxus = { version = "0.6.2", features = ["router", "fullstack", "web"] }
-sqlx = { version = "0.7.0", features = ["sqlite", "runtime-tokio", "tls-native-tls", "macros", "chrono", "json"] }
+# Direct dependencies
+anyhow = { workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "full"] }
+dioxus = { workspace = true }
 
-axum_session = { version = "0.12.1", features = ["sqlite-rustls"] }
-axum_session_auth = { version = "0.12.1", features = ["sqlite-rustls"] }
+[workspace.dependencies]
+anyhow = { version = "1.0.97" }
+serde_json = { version = "1.0.140" }
+tokio = { version = "1.45.0" }
+reqwest = { version = "0.12.15" }
+scraper = { version = "0.23.1" }
+serde = { version = "1.0.219" }
+spider = { version = "2.37.52", default-features = false }
+
+dioxus = { version = "0.6.2" }
+
+sqlx = { version = "0.7.0" }
+
+axum_session = { version = "0.12.1" }
+axum_session_auth = { version = "0.12.1" }
 axum = { version = "0.7.0" }
 
-bcrypt = { version = "0.16.0" }
+bcrypt = { version = "0.17.0" }
 async-trait = { version = "0.1.87" }
 
-# Logging
-tracing = { version = "0.1" }
-tracing-subscriber = { version = "0.3.0" }
-
-
-[features]
-default = []
-web = ["dioxus/web"]
-desktop = ["dioxus/desktop"]
-mobile = ["dioxus/mobile"]
-server = ["dioxus/server", "dep:tokio", "sqlx", "axum_session", "axum_session_auth", "axum", "bcrypt", "async-trait", "anyhow"]
 
 [profile]
 
