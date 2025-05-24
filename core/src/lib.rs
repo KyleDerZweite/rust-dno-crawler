@@ -3,6 +3,8 @@ mod ollama_client;
 mod crawler;
 mod web_search;
 pub mod errors;
+mod auth;
+mod models;
 
 use anyhow::Result;
 

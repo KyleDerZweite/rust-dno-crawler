@@ -1,3 +1,8 @@
+pub mod register;
+pub mod login;
+pub mod user;
+pub mod home;
+pub mod error_404;
 
 use axum::Router;
 
@@ -9,7 +14,6 @@ use dioxus::prelude::*;
 use sqlx::{Pool, Sqlite, SqlitePool};
 
 use super::auth_session::User;
-
 
 pub fn router(session_store : SessionStore<SessionSqlitePool>, auth_config: AuthConfig<i64>, pool: Pool<Sqlite>, app: fn() -> Element) -> Router {
   let config = ServeConfig::new().unwrap();

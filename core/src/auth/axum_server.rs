@@ -4,7 +4,6 @@ use dioxus::prelude::*;
 use super::{auth_session::auth_session_config, db::get_db, router::router, session::session};
 
 
-
 pub async fn launch_server(app: fn()-> Element) {
   let pool = get_db().await;
   let session_store = session().await;

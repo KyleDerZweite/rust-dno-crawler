@@ -2,8 +2,8 @@ pub mod auth;
 pub mod database;
 pub mod models;
 
-pub use auth::*;
-pub use database::*;
+pub use api_auth::*;
+pub use api_database::*;
 pub use models::*;
 
 use core::errors::AppError;
@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 
-use auth::{create_jwt_token, verify_jwt_token};
+use api_auth::{create_jwt_token, verify_jwt_token};
 use models::{DataResponse, LoginRequest, TokenResponse, User};
 
 

@@ -1,11 +1,10 @@
 #![allow(non_snake_case)]
-mod backend;
-mod components;
+mod router;
 
 use anyhow::Result;
 use backend::axum_server::launch_server;
 
-use crate::components::{home::Home, login::Login, register::Register, user::User};
+use crate::router::{home::Home, login::Login, register::Register, user::User};
 
 use dioxus::prelude::*;
 
