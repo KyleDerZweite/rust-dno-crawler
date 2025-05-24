@@ -1,0 +1,22 @@
+[package]
+name = "website"
+version = "0.0.1"
+edition = "2024"
+
+[dependencies]
+dioxus = { workspace = true, features = ["router", "fullstack"] }
+anyhow = { workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "full"] }
+
+sqlx = { workspace = true, features = ["sqlite", "runtime-tokio", "tls-native-tls"] }
+axum_session = { workspace = true, features = ["sqlite-rustls"] }
+axum_session_auth = { workspace = true, features = ["sqlite-rustls"] }
+axum = { workspace = true }
+
+bcrypt = { workspace = true }
+async-trait = { workspace = true }
+
+[features]
+default = ["web"]
+web = ["dioxus/web"]
+server = ["dioxus/server"]

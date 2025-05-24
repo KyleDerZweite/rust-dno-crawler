@@ -1,9 +1,9 @@
 use dioxus::prelude::*;
 
-#[cfg(feature="server")]
+
 use super::{auth_session:: get_auth_session, db::get_db, model::UserSql};
 
-#[server]
+
 pub async fn register(username: String, password: String) -> Result<(), ServerFnError> {
   if username.trim() == "" || password.is_empty() {
     let msg = format!("Username or Password can't be empty!");
@@ -22,7 +22,6 @@ pub async fn register(username: String, password: String) -> Result<(), ServerFn
   }
 }
 
-#[server]
 pub async fn log_in(username: String, password: String) -> Result<(), ServerFnError> {
   if username.trim() == "" || password.is_empty() {
     let msg = format!("Username or Password can't be empty!");
@@ -51,14 +50,12 @@ pub async fn log_in(username: String, password: String) -> Result<(), ServerFnEr
   }
 }
 
-#[server]
 pub async fn log_out () -> Result<(), ServerFnError> {
   let auth_session = get_auth_session().await?;
   auth_session.logout_user();
   Ok(())
 }
 
-#[server]
 pub async fn get_user() -> Result<String, ServerFnError> {
   let auth_session = get_auth_session().await?;
 

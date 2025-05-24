@@ -1,11 +1,7 @@
-#[cfg(feature="server")]
+
 use axum_session::{Key, SessionConfig, SessionSqlitePool, SessionStore};
-#[cfg(feature="server")]
+
 use super::db::get_db;
-
-
-
-#[cfg(feature="server")]
 
 pub async fn session() -> SessionStore<SessionSqlitePool> {
   let pool = get_db().await;

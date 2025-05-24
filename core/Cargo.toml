@@ -12,3 +12,10 @@ tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "full
 reqwest     = { workspace = true, features = ["json"] }
 serde_json = { workspace = true }
 sqlx = { workspace = true, features = ["sqlite", "runtime-tokio", "tls-native-tls"] }
+chrono = { workspace = true }
+axum = { workspace = true }
+tower-http = { workspace = true }
+thiserror = { workspace = true }
+jsonwebtoken = { workspace = true }
+uuid = { workspace = true }
+bcrypt = { workspace = true }

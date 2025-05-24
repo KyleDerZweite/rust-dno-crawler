@@ -1,14 +1,13 @@
 .idea
 .idea/*
 
-/assets/data_store.json
-/assets/data.db
+/core/assets/*
 
-/src/website/public/*
-/src/website/node_modules
+/website/public/*
+/website/node_modules
 
 /target
-/src/website/target
-/src/auth/target
-/src/core/target
-/src/api/target
+/website/target
+/auth/target
+/core/target
+/api/target

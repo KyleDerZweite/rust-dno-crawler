@@ -2,6 +2,7 @@ mod database;
 mod ollama_client;
 mod crawler;
 mod web_search;
+pub mod errors;
 
 use anyhow::Result;
 

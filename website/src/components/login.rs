@@ -1,8 +1,9 @@
+#![allow(non_snake_case)]
 use dioxus::prelude::*;
 
 use crate::backend::server_functions::log_in;
 
-use crate::router::Route;
+use crate::Route;
 
 #[component]
 pub fn Login() -> Element {

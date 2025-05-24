@@ -1,5 +1,4 @@
 
-#[cfg(feature="server")]
 #[derive(sqlx::FromRow)]
 pub struct UserSql {
   pub id : i64,

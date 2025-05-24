@@ -1,8 +1,0 @@
-[package]
-name = "auth"
-version = "0.0.1"
-edition = "2024"
-
-[dependencies]
-anyhow = { workspace = true}
-tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "full"] }
