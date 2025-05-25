@@ -3,7 +3,7 @@ use spider::website::Website;
 use std::collections::HashSet; // To keep track of unique PDF links
 use scraper::{Html, Selector};
 
-use crate::ollama_client::call_ollama;
+use crate::crawler::ollama_client::call_ollama;
 
 const KEYWORD_WEIGHTS: [(&str, f32); 10] = [
     ("veröffentlichungen", 0.85), // Publications - very strong indicator

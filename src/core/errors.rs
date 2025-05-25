@@ -23,6 +23,9 @@ pub enum AppError {
     #[error("Unauthorized: {0}")]
     Unauthorized(String),
 
+    #[error("Forbidden: {0}")]
+    Forbidden(String),
+
     #[error("Internal server error: {0}")]
     InternalServerError(String),
 }
@@ -38,6 +41,7 @@ impl IntoResponse for AppError {
             AppError::Bcrypt(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error"),
             AppError::BadRequest(ref message) => (StatusCode::BAD_REQUEST, message.as_str()),
             AppError::Unauthorized(ref message) => (StatusCode::UNAUTHORIZED, message.as_str()),
+            AppError::Forbidden(ref message) => (StatusCode::FORBIDDEN, message.as_str()),
             AppError::InternalServerError(ref message) => {
                 (StatusCode::INTERNAL_SERVER_ERROR, message.as_str())
             }
