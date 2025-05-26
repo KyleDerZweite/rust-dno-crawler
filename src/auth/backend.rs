@@ -54,6 +54,23 @@ impl AuthenticatedUser {
     pub fn can_access_api(&self) -> bool {
         self.role == "user" || self.role == "admin"
     }
+
+    // Add these new helper methods
+    pub fn can_manage_users(&self) -> bool {
+        self.is_admin()
+    }
+
+    pub fn has_role(&self, required_role: &str) -> bool {
+        match required_role {
+            "admin" => self.is_admin(),
+            "user" => self.can_access_api(),
+            _ => false,
+        }
+    }
+
+    pub fn can_access_dashboard(&self) -> bool {
+        self.can_access_api()
+    }
 }
 
 #[derive(Debug, Clone)]

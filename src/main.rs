@@ -18,6 +18,7 @@ use axum_login::{
 use std::{net::SocketAddr, time::Duration};
 use tower_http::{cors::CorsLayer, services::ServeDir};
 use tracing::{info, error, Level};
+use tracing_subscriber;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -26,7 +27,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // Lade Konfiguration
     let config = Config::from_env()?;
-    info!("Starting DNO Crawler server - Current time: 2025-05-26 12:46:55 UTC");
+    info!("Starting DNO Crawler server - Current time: 2025-05-26 13:44:28 UTC");
     info!("Current user: KyleDerZweite");
 
     // Initialisiere Datenbank
@@ -57,9 +58,9 @@ async fn main() -> Result<(), anyhow::Error> {
     // Website state
     let web_state = handlers::WebState { database: database.clone() };
 
-    // Website routes mit axum-login
+    // Website routes mit axum-login - Updated with proper authentication-aware handlers
     let website_routes = Router::new()
-        .route("/", get(|| async { axum::response::Redirect::to("/login") }))
+        .route("/", get(handlers::home_page)) // Updated to use the new home_page handler
         .route("/register", get(handlers::register_page))
         .route("/register", post(handlers::register))
         .route("/login", get(handlers::login_page))
@@ -94,7 +95,7 @@ async fn main() -> Result<(), anyhow::Error> {
         config.server_port,
     );
 
-    info!("DNO Crawler server listening on {}", addr);
+    info!("DNO Crawler server with axum-login listening on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     axum::serve(listener, app).await?;
