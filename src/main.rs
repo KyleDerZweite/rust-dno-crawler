@@ -18,7 +18,6 @@ use axum_login::{
 use std::{net::SocketAddr, time::Duration};
 use tower_http::{cors::CorsLayer, services::ServeDir};
 use tracing::{info, error, Level};
-use tracing_subscriber;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -27,7 +26,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // Lade Konfiguration
     let config = Config::from_env()?;
-    info!("Starting DNO Crawler server - Current time: 2025-05-26 08:30:34 UTC");
+    info!("Starting DNO Crawler server - Current time: 2025-05-26 12:46:55 UTC");
     info!("Current user: KyleDerZweite");
 
     // Initialisiere Datenbank
@@ -95,7 +94,7 @@ async fn main() -> Result<(), anyhow::Error> {
         config.server_port,
     );
 
-    info!("DNO Crawler server with axum-login listening on {}", addr);
+    info!("DNO Crawler server listening on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     axum::serve(listener, app).await?;

@@ -1,22 +1,18 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::website::{
-    components::{header::Header, footer::Footer},
-    routes::Route,
-};
+use crate::website::components::{header::Header, footer::Footer};
 
 #[derive(Props, Clone, PartialEq)]
-pub struct AppProps {
-    #[props(default = None)]
-    pub user_email: Option<String>,
+pub struct LayoutProps {
     #[props(default = None)]
     pub user_role: Option<String>,
     #[props(default = false)]
     pub is_authenticated: bool,
+    pub children: Element,
 }
 
 #[component]
-pub fn App(props: AppProps) -> Element {
+pub fn Layout(props: LayoutProps) -> Element {
     rsx! {
         head {
             title { "DNO Crawler" }
@@ -24,19 +20,13 @@ pub fn App(props: AppProps) -> Element {
             meta { charset: "utf-8" }
             meta { name: "viewport", content: "width=device-width, initial-scale=1" }
         }
-        body { class: "bg-gray-100 min-h-screen flex flex-col",
-            Router::<Route> {}
-        }
-    }
-}
-
-#[component]
-pub fn AppLayout() -> Element {
-    rsx! {
-        div { class: "min-h-screen flex flex-col",
-            Header {}
+        div { class: "bg-gray-100 min-h-screen flex flex-col",
+            Header {
+                user_role: props.user_role.clone(),
+                is_authenticated: props.is_authenticated,
+            }
             main { class: "flex-grow container mx-auto px-4 py-8",
-                Outlet::<Route> {}
+                {props.children}
             }
             Footer {}
         }

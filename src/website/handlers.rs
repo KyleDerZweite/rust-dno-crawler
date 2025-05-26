@@ -1,11 +1,14 @@
 use crate::{
     core::{database::Database, errors::AppError, models::{CreateUserRequest, LoginRequest}},
-    website::routes::{
-        dashboard::{Dashboard, DashboardProps},
-        error_404::Error404,
-        login::Login,
-        register::Register,
-        user_management::{UserManagement, UserManagementProps},
+    website::{
+        layout::Layout,
+        routes::{
+            dashboard::{Dashboard, DashboardProps},
+            error_404::Error404,
+            login::Login,
+            register::Register,
+            user_management::{UserManagement, UserManagementProps},
+        },
     },
 };
 use axum::{
@@ -37,17 +40,35 @@ pub struct LoginForm {
     pub password: String,
 }
 
+// Helper function to render with layout
+fn render_with_layout(
+    content: Element,
+    user_role: Option<String>,
+    is_authenticated: bool
+) -> String {
+    let mut app = VirtualDom::new_with_props(Layout, crate::website::layout::LayoutProps {
+        user_role,
+        is_authenticated,
+        children: content,
+    });
+
+    // THIS IS THE KEY: rebuild before rendering
+    let _ = app.rebuild(&mut dioxus_core::NoOpMutations);
+
+    let html = dioxus_ssr::render(&mut app);
+    format!("<!DOCTYPE html>{}", html)
+}
 
 pub async fn register_page() -> Html<String> {
-    let mut app = VirtualDom::new(Register);
-    let html = dioxus_ssr::render(&mut app);
-    Html(format!("<!DOCTYPE html>{}", html))
+    let content = rsx! { Register {} };
+    let html = render_with_layout(content, None, false);
+    Html(html)
 }
 
 pub async fn login_page() -> Html<String> {
-    let mut app = VirtualDom::new(Login);
-    let html = dioxus_ssr::render(&mut app);
-    Html(format!("<!DOCTYPE html>{}", html))
+    let content = rsx! { Login {} };
+    let html = render_with_layout(content, None, false);
+    Html(html)
 }
 
 pub async fn user_management_page(auth: AuthContext) -> Result<Html<String>, Redirect> {
@@ -56,40 +77,86 @@ pub async fn user_management_page(auth: AuthContext) -> Result<Html<String>, Red
             current_user_role: user.role.clone(),
         };
 
-        let mut app = VirtualDom::new_with_props(UserManagement, props);
-        let html = dioxus_ssr::render(&mut app);
-        Ok(Html(format!("<!DOCTYPE html>{}", html)))
+        let content = rsx! {
+            UserManagement {
+                current_user_role: props.current_user_role
+            }
+        };
+        let html = render_with_layout(content, Some(user.role), true);
+        Ok(Html(html))
     } else {
         Err(Redirect::to("/login"))
     }
 }
 
-pub async fn privacy_page() -> Html<String> {
-    let mut app = VirtualDom::new(crate::website::routes::privacy::Privacy);
-    let html = dioxus_ssr::render(&mut app);
-    Html(format!("<!DOCTYPE html>{}", html))
+pub async fn privacy_page(auth: AuthContext) -> Html<String> {
+    let (user_role, is_authenticated) = if let Some(user) = auth.user {
+        (Some(user.role), true)
+    } else {
+        (None, false)
+    };
+
+    let content = rsx! { crate::website::routes::privacy::Privacy {} };
+    let html = render_with_layout(content, user_role, is_authenticated);
+    Html(html)
 }
 
-pub async fn terms_page() -> Html<String> {
-    let mut app = VirtualDom::new(crate::website::routes::terms::Terms);
-    let html = dioxus_ssr::render(&mut app);
-    Html(format!("<!DOCTYPE html>{}", html))
+pub async fn terms_page(auth: AuthContext) -> Html<String> {
+    let (user_role, is_authenticated) = if let Some(user) = auth.user {
+        (Some(user.role), true)
+    } else {
+        (None, false)
+    };
+
+    let content = rsx! { crate::website::routes::terms::Terms {} };
+    let html = render_with_layout(content, user_role, is_authenticated);
+    Html(html)
 }
 
-pub async fn contact_page() -> Html<String> {
-    let mut app = VirtualDom::new(crate::website::routes::contact::Contact);
-    let html = dioxus_ssr::render(&mut app);
-    Html(format!("<!DOCTYPE html>{}", html))
+pub async fn contact_page(auth: AuthContext) -> Html<String> {
+    let (user_role, is_authenticated) = if let Some(user) = auth.user {
+        (Some(user.role), true)
+    } else {
+        (None, false)
+    };
+
+    let content = rsx! { crate::website::routes::contact::Contact {} };
+    let html = render_with_layout(content, user_role, is_authenticated);
+    Html(html)
 }
 
 pub async fn error_404_page() -> Html<String> {
     let route = vec!["unknown".to_string()];
-    let mut app = VirtualDom::new_with_props(Error404, Error404Props { route });
-    let html = dioxus_ssr::render(&mut app);
-    Html(format!("<!DOCTYPE html>{}", html))
+    let content = rsx! {
+        Error404 {
+            route: route
+        }
+    };
+    let html = render_with_layout(content, None, false);
+    Html(html)
 }
 
-// Form handlers
+pub async fn dashboard(auth: AuthContext) -> Result<Html<String>, Redirect> {
+    if let Some(user) = auth.user {
+        let props = DashboardProps {
+            email: user.email.clone(),
+            role: user.role.clone(),
+        };
+
+        let content = rsx! {
+            Dashboard {
+                email: props.email,
+                role: props.role.clone()
+            }
+        };
+        let html = render_with_layout(content, Some(user.role), true);
+        Ok(Html(html))
+    } else {
+        Err(Redirect::to("/login"))
+    }
+}
+
+// Form handlers remain the same
 pub async fn register(
     mut auth: AuthContext,
     State(state): State<WebState>,
@@ -150,19 +217,4 @@ pub async fn login(
 pub async fn logout(mut auth: AuthContext) -> Redirect {
     let _ = auth.logout().await;
     Redirect::to("/login")
-}
-
-pub async fn dashboard(auth: AuthContext) -> Result<Html<String>, Redirect> {
-    if let Some(user) = auth.user {
-        let props = DashboardProps {
-            email: user.email.clone(),
-            role: user.role.clone(),
-        };
-
-        let mut app = VirtualDom::new_with_props(Dashboard, props);
-        let html = dioxus_ssr::render(&mut app);
-        Ok(Html(format!("<!DOCTYPE html>{}", html)))
-    } else {
-        Err(Redirect::to("/login"))
-    }
 }
