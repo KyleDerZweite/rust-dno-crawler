@@ -5,12 +5,17 @@ mod core;
 mod website;
 
 use crate::{
-    auth::jwt::JwtService,
+    auth::{backend::AuthBackend, jwt::JwtService},
     config::Config,
     core::database::Database,
+    website::handlers,
 };
-use axum::Router;
-use std::net::SocketAddr;
+use axum::{routing::{get, post}, Router};
+use axum_login::{
+    tower_sessions::{Expiry, MemoryStore, SessionManagerLayer},
+    AuthManagerLayerBuilder,
+};
+use std::{net::SocketAddr, time::Duration};
 use tower_http::{cors::CorsLayer, services::ServeDir};
 use tracing::{info, error, Level};
 use tracing_subscriber;
@@ -22,7 +27,8 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // Lade Konfiguration
     let config = Config::from_env()?;
-    info!("Starting DNO Crawler server with config: {:?}", config);
+    info!("Starting DNO Crawler server - Current time: 2025-05-26 08:30:34 UTC");
+    info!("Current user: KyleDerZweite");
 
     // Initialisiere Datenbank
     let database = match Database::new(&config.database_url).await {
@@ -36,22 +42,43 @@ async fn main() -> Result<(), anyhow::Error> {
         }
     };
 
-    // Initialisiere JWT Service
+    // Initialisiere JWT Service für API
     let jwt_service = JwtService::new(&config.jwt_secret);
 
-    // Erstelle API Routes
-    let api_routes = api::routes::create_api_routes(database.clone(), jwt_service);
+    // Session store für axum-login
+    let session_store = MemoryStore::default();
+    let session_layer = SessionManagerLayer::new(session_store)
+        .with_secure(false) // Set to true in production with HTTPS
+        .with_expiry(Expiry::OnInactivity(Duration::from_secs(3600).try_into()?)); // 1 hour
 
-    // Erstelle Website Routes
-    let website_routes = match website::handlers::create_website_routes(database, &config.session_secret).await {
-        Ok(routes) => routes,
-        Err(e) => {
-            error!("Failed to create website routes: {}", e);
-            return Err(anyhow::anyhow!("Website routes creation failed: {}", e));
-        }
-    };
+    // Auth backend
+    let auth_backend = AuthBackend::new(database.clone());
+    let auth_layer = AuthManagerLayerBuilder::new(auth_backend, session_layer).build();
 
-    // Static file serving für CSS
+    // Website state
+    let web_state = handlers::WebState { database: database.clone() };
+
+    // Website routes mit axum-login
+    let website_routes = Router::new()
+        .route("/", get(|| async { axum::response::Redirect::to("/login") }))
+        .route("/register", get(handlers::register_page))
+        .route("/register", post(handlers::register))
+        .route("/login", get(handlers::login_page))
+        .route("/login", post(handlers::login))
+        .route("/logout", post(handlers::logout))
+        .route("/dashboard", get(handlers::dashboard))
+        .route("/user-management", get(handlers::user_management_page))
+        .route("/privacy", get(handlers::privacy_page))
+        .route("/terms", get(handlers::terms_page))
+        .route("/contact", get(handlers::contact_page))
+        .fallback(handlers::error_404_page)
+        .layer(auth_layer)
+        .with_state(web_state);
+
+    // API routes (JWT-basiert)
+    let api_routes = api::routes::create_api_routes(database, jwt_service);
+
+    // Static file serving
     let static_routes = Router::new()
         .nest_service("/public", ServeDir::new("./public"));
 
@@ -68,7 +95,7 @@ async fn main() -> Result<(), anyhow::Error> {
         config.server_port,
     );
 
-    info!("DNO Crawler server listening on {}", addr);
+    info!("DNO Crawler server with axum-login listening on {}", addr);
 
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     axum::serve(listener, app).await?;

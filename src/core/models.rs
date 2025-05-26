@@ -3,24 +3,20 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, sqlx::Type)]
-#[sqlx(type_name = "TEXT")]
-pub enum UserRoles {
-    Guest,
-    User,
-    Admin,
-}
+use crate::core::errors::AppError;
+use crate::auth::password::PasswordService;
 
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
 pub struct User {
     pub id: String,
     pub email: String,
-    pub hashed_password: String,
+    pub password_hash: String,
     pub role: String,
     pub created_at: NaiveDateTime,
+    pub last_login: Option<NaiveDateTime>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CreateUserRequest {
     pub email: String,
     pub password: String,
@@ -39,6 +35,7 @@ pub struct UserResponse {
     pub email: String,
     pub role: String,
     pub created_at: NaiveDateTime,
+    pub last_login: Option<NaiveDateTime>,
 }
 
 impl From<User> for UserResponse {
@@ -48,16 +45,79 @@ impl From<User> for UserResponse {
             email: user.email,
             role: user.role,
             created_at: user.created_at,
+            last_login: user.last_login,
         }
     }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    pub sub: String,  // user_id als String
-    pub exp: usize,   // Ablaufzeit (epoch seconds)
-    pub iat: usize,   // Ausstellzeit
-    pub role: String, // Rollenbasierte Authentifizierung
+    pub sub: String,    // user_id als String
+    pub exp: usize,     // Ablaufzeit (epoch seconds)
+    pub iat: usize,     // Ausstellzeit
+    pub role: String,   // Rollenbasierte Authentifizierung
+}
+
+impl User {
+    pub fn new(email: String, password: &str, role: Option<String>) -> Result<Self, AppError> {
+        let password_service = PasswordService::new();
+        let password_hash = password_service.hash_password(password)?;
+        let id = Uuid::new_v4().to_string();
+
+        Ok(User {
+            id,
+            email,
+            password_hash,
+            role: role.unwrap_or_else(|| "user".to_string()),
+            created_at: chrono::Utc::now().naive_utc(),
+            last_login: None,
+        })
+    }
+
+    pub fn verify_password(&self, password: &str) -> Result<bool, AppError> {
+        let password_service = PasswordService::new();
+        password_service.verify_password(password, &self.password_hash)
+    }
+
+    pub fn update_last_login(&mut self) {
+        self.last_login = Some(chrono::Utc::now().naive_utc());
+    }
+
+    pub fn is_admin(&self) -> bool {
+        self.role == "admin"
+    }
+
+    pub fn can_access_api(&self) -> bool {
+        self.role == "user" || self.role == "admin"
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, sqlx::Type)]
+#[sqlx(type_name = "TEXT")]
+pub enum UserRoles {
+    Guest,
+    User,
+    Admin,
+}
+
+impl std::fmt::Display for UserRoles {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            UserRoles::Guest => write!(f, "guest"),
+            UserRoles::User => write!(f, "user"),
+            UserRoles::Admin => write!(f, "admin"),
+        }
+    }
+}
+
+impl From<String> for UserRoles {
+    fn from(s: String) -> Self {
+        match s.to_lowercase().as_str() {
+            "admin" => UserRoles::Admin,
+            "user" => UserRoles::User,
+            "guest" | _ => UserRoles::Guest,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, FromRow)]
@@ -109,25 +169,6 @@ pub struct DataSourceYearly {
     pub netzentgelte_url: Option<String>,
     pub hlzf_file: Option<String>,
     pub netzentgelte_file: Option<String>,
-}
-
-impl User {
-    pub fn new(email: String, password: &str, role: Option<String>) -> Result<Self, anyhow::Error> {
-        let hashed_password = bcrypt::hash(password, bcrypt::DEFAULT_COST)?;
-        let id = Uuid::new_v4().to_string();
-
-        Ok(User {
-            id,
-            email,
-            hashed_password,
-            role: role.unwrap_or_else(|| "user".to_string()),
-            created_at: chrono::Utc::now().naive_utc(),
-        })
-    }
-
-    pub fn verify_password(&self, password: &str) -> Result<bool, anyhow::Error> {
-        Ok(bcrypt::verify(password, &self.hashed_password)?)
-    }
 }
 
 // Helper functions for JSON serialization/deserialization

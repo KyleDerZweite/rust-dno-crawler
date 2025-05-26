@@ -1,5 +1,6 @@
+pub mod backend;
 pub mod jwt;
-pub mod session;
+pub mod password;
 
 #[cfg(test)]
 mod tests;

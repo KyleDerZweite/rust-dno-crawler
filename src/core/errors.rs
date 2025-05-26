@@ -13,9 +13,7 @@ pub enum AppError {
 
     #[error("JWT error: {0}")]
     Jwt(#[from] jsonwebtoken::errors::Error),
-
-    #[error("Bcrypt error: {0}")]
-    Bcrypt(#[from] bcrypt::BcryptError),
+    
 
     #[error("Bad request: {0}")]
     BadRequest(String),
@@ -38,7 +36,6 @@ impl IntoResponse for AppError {
                 (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error")
             }
             AppError::Jwt(_) => (StatusCode::UNAUTHORIZED, "Invalid token"),
-            AppError::Bcrypt(_) => (StatusCode::INTERNAL_SERVER_ERROR, "Internal server error"),
             AppError::BadRequest(ref message) => (StatusCode::BAD_REQUEST, message.as_str()),
             AppError::Unauthorized(ref message) => (StatusCode::UNAUTHORIZED, message.as_str()),
             AppError::Forbidden(ref message) => (StatusCode::FORBIDDEN, message.as_str()),

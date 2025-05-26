@@ -1,5 +1,4 @@
 use crate::{
-    auth::session::SessionUser,
     core::{database::Database, errors::AppError, models::{CreateUserRequest, LoginRequest}},
     website::routes::{
         dashboard::{Dashboard, DashboardProps},
@@ -14,9 +13,12 @@ use axum::{
     response::{Html, Redirect},
     Form,
 };
-use axum_session_auth::AuthSession;
+use axum_login::AuthSession;
 use dioxus::prelude::*;
 use serde::Deserialize;
+use crate::website::routes::error_404::Error404Props;
+
+type AuthContext = AuthSession<crate::auth::backend::AuthBackend>;
 
 #[derive(Clone)]
 pub struct WebState {
@@ -35,46 +37,7 @@ pub struct LoginForm {
     pub password: String,
 }
 
-pub async fn create_website_routes(database: Database, session_secret: &str) -> Result<axum::Router, AppError> {
-    use axum::routing::{get, post};
-    use axum_session::{SessionConfig, SessionLayer, SessionStore};
-    use axum_session_auth::{AuthConfig, AuthSessionLayer};
 
-    // Session Store Setup
-    let session_config = SessionConfig::default()
-        .with_table_name("sessions")
-        .with_key(session_secret);
-
-    let session_store = SessionStore::<SessionUser>::new(None, session_config)
-        .await
-        .map_err(|e| AppError::InternalServerError(format!("Session store creation failed: {}", e)))?;
-
-    let web_state = WebState { database };
-
-    let router = axum::Router::new()
-        .route("/", get(|| async { axum::response::Redirect::to("/login") }))
-        .route("/register", get(register_page))
-        .route("/register", post(register))
-        .route("/login", get(login_page))
-        .route("/login", post(login))
-        .route("/logout", post(logout))
-        .route("/dashboard", get(dashboard))
-        .route("/user-management", get(user_management_page))
-        .route("/privacy", get(privacy_page))
-        .route("/terms", get(terms_page))
-        .route("/contact", get(contact_page))
-        .fallback(error_404_page)
-        .with_state(web_state)
-        .layer(AuthSessionLayer::<SessionUser, String>::new(Some(
-            session_store.clone(),
-        )))
-        .layer(SessionLayer::new(session_store))
-        .layer(AuthConfig::default().layer());
-
-    Ok(router)
-}
-
-// Page handlers that render Dioxus components to HTML
 pub async fn register_page() -> Html<String> {
     let mut app = VirtualDom::new(Register);
     let html = dioxus_ssr::render(&mut app);
@@ -87,8 +50,8 @@ pub async fn login_page() -> Html<String> {
     Html(format!("<!DOCTYPE html>{}", html))
 }
 
-pub async fn user_management_page(auth_session: AuthSession<SessionUser>) -> Result<Html<String>, Redirect> {
-    if let Some(user) = auth_session.user {
+pub async fn user_management_page(auth: AuthContext) -> Result<Html<String>, Redirect> {
+    if let Some(user) = auth.user {
         let props = UserManagementProps {
             current_user_role: user.role.clone(),
         };
@@ -121,14 +84,14 @@ pub async fn contact_page() -> Html<String> {
 
 pub async fn error_404_page() -> Html<String> {
     let route = vec!["unknown".to_string()];
-    let mut app = VirtualDom::new_with_props(Error404, route);
+    let mut app = VirtualDom::new_with_props(Error404, Error404Props { route });
     let html = dioxus_ssr::render(&mut app);
     Html(format!("<!DOCTYPE html>{}", html))
 }
 
 // Form handlers
 pub async fn register(
-    mut auth_session: AuthSession<SessionUser>,
+    mut auth: AuthContext,
     State(state): State<WebState>,
     Form(form): Form<RegisterForm>,
 ) -> Result<Redirect, AppError> {
@@ -142,54 +105,55 @@ pub async fn register(
     }
 
     let request = CreateUserRequest {
-        email: form.email,
-        password: form.password,
+        email: form.email.clone(),
+        password: form.password.clone(),
         role: None,
     };
 
-    let user = state.database.create_user(request).await?;
-    let session_user = SessionUser::from(user);
-    auth_session
-        .login(&session_user)
-        .await
-        .map_err(|e| AppError::InternalServerError(e.to_string()))?;
+    let _user = state.database.create_user(request).await?;
+
+    let login_creds = LoginRequest {
+        email: form.email,
+        password: form.password,
+    };
+
+    if let Ok(Some(user)) = auth.authenticate(login_creds).await {
+        auth.login(&user).await.map_err(|e| AppError::InternalServerError(e.to_string()))?;
+        state.database.update_last_login(&user.id).await?;
+    }
 
     Ok(Redirect::to("/dashboard"))
 }
 
 pub async fn login(
-    mut auth_session: AuthSession<SessionUser>,
+    mut auth: AuthContext,
     State(state): State<WebState>,
     Form(form): Form<LoginForm>,
 ) -> Result<Redirect, AppError> {
-    let user = state
-        .database
-        .get_user_by_email(&form.email)
-        .await?
-        .ok_or_else(|| AppError::Unauthorized("Invalid credentials".to_string()))?;
+    let creds = LoginRequest {
+        email: form.email,
+        password: form.password,
+    };
 
-    if !user.verify_password(&form.password)
-        .map_err(|e| AppError::InternalServerError(e.to_string()))?
-    {
-        return Err(AppError::Unauthorized("Invalid credentials".to_string()));
-    }
+    let user = match auth.authenticate(creds).await {
+        Ok(Some(user)) => user,
+        Ok(None) => return Err(AppError::Unauthorized("Invalid credentials".to_string())),
+        Err(e) => return Err(AppError::InternalServerError(e.to_string())),
+    };
 
-    let session_user = SessionUser::from(user);
-    auth_session
-        .login(&session_user)
-        .await
-        .map_err(|e| AppError::InternalServerError(e.to_string()))?;
+    auth.login(&user).await.map_err(|e| AppError::InternalServerError(e.to_string()))?;
+    state.database.update_last_login(&user.id).await?;
 
     Ok(Redirect::to("/dashboard"))
 }
 
-pub async fn logout(mut auth_session: AuthSession<SessionUser>) -> Redirect {
-    auth_session.logout().await;
+pub async fn logout(mut auth: AuthContext) -> Redirect {
+    let _ = auth.logout().await;
     Redirect::to("/login")
 }
 
-pub async fn dashboard(auth_session: AuthSession<SessionUser>) -> Result<Html<String>, Redirect> {
-    if let Some(user) = auth_session.user {
+pub async fn dashboard(auth: AuthContext) -> Result<Html<String>, Redirect> {
+    if let Some(user) = auth.user {
         let props = DashboardProps {
             email: user.email.clone(),
             role: user.role.clone(),
