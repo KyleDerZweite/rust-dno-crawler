@@ -7,18 +7,22 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                'stone-black': '#1F1F1F',
-                'wood-oak': '#8B5E3C',
-                'wood-oak-light': '#A67B5B',
-                'plant-green': '#4B7C4B',
-                'plant-green-light': '#6B8E23',
-                'neutral-gray': '#F5F5F5'
+                'neutral-900': '#1A1A1A', // Hintergrund
+                'neutral-800': '#2A2A2A', // Sekundär-Hintergrund
+                'green-500': '#6DBF4B',   // Primär-Akzent (Grün)
+                'amber-600': '#A97449',   // Sekundär-Akzent (Holz)
+                'neutral-100': '#EAEAEA', // Text Hauptfarbe
+                'neutral-400': '#AAAAAA'  // Text Sekundär
             },
             fontFamily: {
-                heading: ['Merriweather', 'serif'],
-                body: ['Inter', 'sans-serif']
+                heading: ['Manrope', 'sans-serif'], // Primärschrift
+                body: ['Manrope', 'sans-serif'],   // Primärschrift
+                alt: ['Inter', 'sans-serif'],      // Alternativen
             }
         }
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/forms'), // Für bessere Input-Feld-Stile
+        require('@tailwindcss/typography'), // Für Typografie-Optimierungen
+    ],
 }
