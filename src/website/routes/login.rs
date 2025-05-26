@@ -4,47 +4,48 @@ use dioxus::prelude::*;
 #[component]
 pub fn Login() -> Element {
     rsx! {
-        head {
-            title { "DNO Crawler - Login" }
-            link { rel: "stylesheet", href: "/public/tailwind_output.css" }
-            meta { charset: "utf-8" }
-            meta { name: "viewport", content: "width=device-width, initial-scale=1" }
-        }
-        body { class: "bg-gray-100 min-h-screen flex flex-col",
-            // Header
-            header { class: "bg-white shadow-lg",
-                nav { class: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-                    div { class: "flex justify-between h-16",
-                        div { class: "flex items-center",
-                            a { 
-                                href: "/",
-                                class: "flex-shrink-0 flex items-center",
-                                h1 { class: "text-xl font-bold text-indigo-600",
-                                    "DNO - Crawler"
-                                }
-                            }
+        div {
+            class: "min-h-screen flex items-center justify-center bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8",
+            div {
+                class: "max-w-md w-full space-y-8",
+
+                // Header Section
+                div {
+                    class: "text-center",
+                    // Logo
+                    div {
+                        class: "flex justify-center mb-6",
+                        div {
+                            class: "w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center",
+                            span { class: "text-white font-bold text-xl", "K" }
                         }
+                    }
+                    h2 {
+                        class: "text-3xl font-bold text-neutral-100 mb-2",
+                        "Welcome back"
+                    }
+                    p {
+                        class: "text-neutral-400 text-sm",
+                        "Sign in to your KyleHub account"
                     }
                 }
-            }
-            
-            // Main Content
-            main { class: "flex-grow container mx-auto px-4 py-8",
-                div { class: "max-w-md w-full mx-auto space-y-8",
-                    div { class: "text-center",
-                        h2 { class: "mt-6 text-3xl font-extrabold text-gray-900",
-                            "Sign in to your account"
-                        }
-                    }
-                    form { 
-                        class: "mt-8 space-y-6 bg-white shadow-md rounded-lg p-6",
+
+                // Login Form
+                div {
+                    class: "card mt-8",
+                    form {
+                        class: "space-y-6",
                         method: "POST",
                         action: "/login",
-                        div { class: "rounded-md shadow-sm space-y-4",
+
+                        div {
+                            class: "space-y-4",
+
+                            // Email Field
                             div {
-                                label { 
+                                label {
                                     r#for: "email",
-                                    class: "block text-sm font-medium text-gray-700 mb-1",
+                                    class: "block text-sm font-medium text-neutral-100 mb-2",
                                     "Email address"
                                 }
                                 input {
@@ -52,14 +53,16 @@ pub fn Login() -> Element {
                                     name: "email",
                                     r#type: "email",
                                     required: true,
-                                    class: "appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm",
-                                    placeholder: "Email address"
+                                    class: "input-field w-full",
+                                    placeholder: "Enter your email address"
                                 }
                             }
+
+                            // Password Field
                             div {
                                 label {
                                     r#for: "password",
-                                    class: "block text-sm font-medium text-gray-700 mb-1",
+                                    class: "block text-sm font-medium text-neutral-100 mb-2",
                                     "Password"
                                 }
                                 input {
@@ -67,34 +70,98 @@ pub fn Login() -> Element {
                                     name: "password",
                                     r#type: "password",
                                     required: true,
-                                    class: "appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm",
-                                    placeholder: "Password"
+                                    class: "input-field w-full",
+                                    placeholder: "Enter your password"
                                 }
                             }
                         }
+
+                        // Remember Me & Forgot Password
+                        div {
+                            class: "flex items-center justify-between",
+                            div {
+                                class: "flex items-center",
+                                input {
+                                    id: "remember-me",
+                                    name: "remember-me",
+                                    r#type: "checkbox",
+                                    class: "h-4 w-4 text-green-500 focus:ring-green-500 border-neutral-600 rounded bg-neutral-700"
+                                }
+                                label {
+                                    r#for: "remember-me",
+                                    class: "ml-2 block text-sm text-neutral-400",
+                                    "Remember me"
+                                }
+                            }
+                            div {
+                                a {
+                                    href: "/forgot-password",
+                                    class: "text-sm text-green-500 hover:text-green-400 transition-colors",
+                                    "Forgot your password?"
+                                }
+                            }
+                        }
+
+                        // Submit Button
                         div {
                             button {
                                 r#type: "submit",
-                                class: "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
+                                class: "btn-primary w-full py-3 text-base font-medium",
                                 "Sign in"
                             }
                         }
-                        div { class: "text-center",
-                            a {
-                                href: "/register",
-                                class: "font-medium text-indigo-600 hover:text-indigo-500",
-                                "Don't have an account? Sign up"
+                    }
+
+                    // Divider
+                    div {
+                        class: "mt-6",
+                        div {
+                            class: "relative",
+                            div {
+                                class: "absolute inset-0 flex items-center",
+                                div { class: "w-full border-t border-neutral-700" }
+                            }
+                            div {
+                                class: "relative flex justify-center text-sm",
+                                span {
+                                    class: "px-2 bg-neutral-800 text-neutral-400",
+                                    "New to KyleHub?"
+                                }
                             }
                         }
                     }
+
+                    // Register Link
+                    div {
+                        class: "mt-6 text-center",
+                        a {
+                            href: "/register",
+                            class: "btn-secondary w-full py-3 text-base font-medium inline-block",
+                            "Create an account"
+                        }
+                    }
                 }
-            }
-            
-            // Footer
-            footer { class: "bg-gray-800 text-white",
-                div { class: "max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center",
-                    p { class: "text-gray-400 text-sm",
-                        "© 2025 Kyle. All rights reserved."
+
+                // Footer Links
+                div {
+                    class: "text-center mt-8",
+                    div {
+                        class: "flex justify-center space-x-6 text-sm",
+                        a {
+                            href: "/privacy",
+                            class: "text-neutral-400 hover:text-green-500 transition-colors",
+                            "Privacy"
+                        }
+                        a {
+                            href: "/terms",
+                            class: "text-neutral-400 hover:text-green-500 transition-colors",
+                            "Terms"
+                        }
+                        a {
+                            href: "/help",
+                            class: "text-neutral-400 hover:text-green-500 transition-colors",
+                            "Help"
+                        }
                     }
                 }
             }
