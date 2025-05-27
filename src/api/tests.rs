@@ -20,6 +20,7 @@ mod tests {
 
         // Create a test user
         let request = CreateUserRequest {
+            name: "Test User".to_string(),
             email: "test@example.com".to_string(),
             password: "password123".to_string(),
             role: Some("user".to_string()),
@@ -51,6 +52,7 @@ mod tests {
 
         // Create a guest user
         let request = CreateUserRequest {
+            name: "Guest User".to_string(),
             email: "guest@example.com".to_string(),
             password: "password123".to_string(),
             role: Some("guest".to_string()),

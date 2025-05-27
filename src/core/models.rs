@@ -9,6 +9,7 @@ use crate::auth::password::PasswordService;
 #[derive(Debug, Clone, FromRow, Serialize, Deserialize)]
 pub struct User {
     pub id: String,
+    pub name: String,
     pub email: String,
     pub password_hash: String,
     pub role: String,
@@ -18,6 +19,7 @@ pub struct User {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CreateUserRequest {
+    pub name: String,
     pub email: String,
     pub password: String,
     pub role: Option<String>,
@@ -32,6 +34,7 @@ pub struct LoginRequest {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct UserResponse {
     pub id: String,
+    pub name: String,
     pub email: String,
     pub role: String,
     pub created_at: NaiveDateTime,
@@ -42,6 +45,7 @@ impl From<User> for UserResponse {
     fn from(user: User) -> Self {
         UserResponse {
             id: user.id,
+            name: user.name,
             email: user.email,
             role: user.role,
             created_at: user.created_at,
@@ -59,13 +63,14 @@ pub struct Claims {
 }
 
 impl User {
-    pub fn new(email: String, password: &str, role: Option<String>) -> Result<Self, AppError> {
+    pub fn new(name:String, email: String, password: &str, role: Option<String>) -> Result<Self, AppError> {
         let password_service = PasswordService::new();
         let password_hash = password_service.hash_password(password)?;
         let id = Uuid::new_v4().to_string();
 
         Ok(User {
             id,
+            name,
             email,
             password_hash,
             role: role.unwrap_or_else(|| "user".to_string()),

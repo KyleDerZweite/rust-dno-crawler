@@ -35,6 +35,7 @@ impl Database {
             r#"
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
                 password_hash TEXT NOT NULL,
                 role TEXT NOT NULL DEFAULT 'user',
@@ -51,15 +52,16 @@ impl Database {
     }
 
     pub async fn create_user(&self, request: CreateUserRequest) -> Result<User, AppError> {
-        let user = User::new(request.email, &request.password, request.role)
+        let user = User::new(request.name, request.email, &request.password, request.role)
             .map_err(|e| AppError::InternalServerError(e.to_string()))?;
         
         let sql_user_clone = user.clone();
         
         sqlx::query(
-            "INSERT INTO users (id, email, password_hash, role, created_at, last_login) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO users (id,name, email, password_hash, role, created_at, last_login) VALUES (?, ?, ?, ?, ?, ?, ?)",
         )
             .bind(sql_user_clone.id)
+            .bind(sql_user_clone.name)
             .bind(sql_user_clone.email)
             .bind(sql_user_clone.password_hash)
             .bind(sql_user_clone.role)
@@ -123,7 +125,7 @@ impl Database {
         let users = match role_filter {
             Some(role) => {
                 sqlx::query_as::<_, User>(
-                    "SELECT id, email, password_hash, role, created_at, last_login FROM users WHERE role = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
+                    "SELECT id, name, email, password_hash, role, created_at, last_login FROM users WHERE role = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
                 )
                     .bind(role)
                     .bind(limit as i64)
@@ -134,7 +136,7 @@ impl Database {
             }
             None => {
                 sqlx::query_as::<_, User>(
-                    "SELECT id, email, password_hash, role, created_at, last_login FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?",
+                    "SELECT id, name, email, password_hash, role, created_at, last_login FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?",
                 )
                     .bind(limit as i64)
                     .bind(offset as i64)

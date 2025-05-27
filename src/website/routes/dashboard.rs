@@ -4,6 +4,8 @@ use dioxus::prelude::*;
 #[derive(Props, Clone, PartialEq)]
 pub struct DashboardProps {
     #[props(default = String::new())]
+    pub name: String,
+    #[props(default = String::new())]
     pub email: String,
     #[props(default = String::new())]
     pub role: String,
@@ -26,7 +28,7 @@ pub fn Dashboard(props: DashboardProps) -> Element {
                     }
                     p {
                         class: "text-neutral-400 text-lg",
-                        "Welcome to your KyleHub control center"
+                        "Welcome to your Crawler control center"
                     }
                 }
 
@@ -55,7 +57,7 @@ pub fn Dashboard(props: DashboardProps) -> Element {
                                 div {
                                     h3 {
                                         class: "text-xl font-semibold text-neutral-100",
-                                        "User Profile"
+                                        "{props.name}"
                                     }
                                     p {
                                         class: "text-neutral-400 text-sm",

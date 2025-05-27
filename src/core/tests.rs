@@ -15,6 +15,7 @@ mod tests {
         let db = Database::new("sqlite::memory:").await.unwrap();
 
         let request = CreateUserRequest {
+            name: "Test User".to_string(),
             email: "test@example.com".to_string(),
             password: "password123".to_string(),
             role: None,
@@ -34,6 +35,7 @@ mod tests {
         let db = Database::new("sqlite::memory:").await.unwrap();
 
         let request = CreateUserRequest {
+            name: "Test User".to_string(),
             email: "test@example.com".to_string(),
             password: "password123".to_string(),
             role: None,
@@ -50,6 +52,7 @@ mod tests {
     #[tokio::test]
     async fn test_user_password_verification() {
         let user = User::new(
+            "Test User".to_string(),
             "test@example.com".to_string(),
             "password123",
             None,
@@ -64,6 +67,7 @@ mod tests {
         let db = Database::new("sqlite::memory:").await.unwrap();
 
         let request = CreateUserRequest {
+            name: "Test User".to_string(),
             email: "test@example.com".to_string(),
             password: "password123".to_string(),
             role: Some("admin".to_string()),
@@ -85,6 +89,7 @@ mod tests {
         let db = Database::new("sqlite::memory:").await.unwrap();
 
         let request = CreateUserRequest {
+            name: "Test User".to_string(),
             email: "test@example.com".to_string(),
             password: "password123".to_string(),
             role: None,

@@ -34,6 +34,7 @@ mod tests {
         let jwt_service = JwtService::new("test-secret");
 
         let user = User::new(
+            "Test User".to_string(),
             "test@example.com".to_string(),
             "password123",
             Some("admin".to_string()),
@@ -52,6 +53,7 @@ mod tests {
     #[test]
     fn test_user_model_with_argon2() {
         let user = User::new(
+            "Test User".to_string(),
             "test@example.com".to_string(),
             "secure_password_123!",
             Some("user".to_string()),

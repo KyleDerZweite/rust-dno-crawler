@@ -41,6 +41,7 @@ mod tests {
 
         // First register a user
         let request = crate::core::models::CreateUserRequest {
+            name: "Test User".to_string(),
             email: "test@example.com".to_string(),
             password: "password123".to_string(),
             role: None,

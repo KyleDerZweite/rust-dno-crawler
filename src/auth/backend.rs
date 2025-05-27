@@ -14,6 +14,7 @@ use crate::{
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AuthenticatedUser {
     pub id: String,
+    pub name: String,
     pub email: String,
     pub role: String,
 }
@@ -40,6 +41,7 @@ impl From<User> for AuthenticatedUser {
     fn from(user: User) -> Self {
         Self {
             id: user.id,
+            name: user.name,
             email: user.email,
             role: user.role,
         }

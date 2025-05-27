@@ -30,6 +30,7 @@ pub struct WebState {
 
 #[derive(Deserialize)]
 pub struct RegisterForm {
+    pub name: String,
     pub email: String,
     pub password: String,
 }
@@ -141,7 +142,9 @@ pub async fn dashboard(auth: AuthContext) -> Result<Html<String>, Redirect> {
     require_authentication(&auth)?;
 
     let user = auth.user.as_ref().unwrap(); // Safe because we checked above
+    
     let props = DashboardProps {
+        name: user.name.clone(),
         email: user.email.clone(),
         role: user.role.clone(),
     };
@@ -218,6 +221,7 @@ pub async fn register(
     }
 
     let request = CreateUserRequest {
+        name: form.name.clone(),
         email: form.email.clone(),
         password: form.password.clone(),
         role: None, // Default role will be assigned by the database
