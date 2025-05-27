@@ -13,7 +13,6 @@ pub struct Error404Props {
 #[component]
 pub fn Error404(props: Error404Props) -> Element {
     rsx! {
-        Header {}
         div { class: "flex-grow flex items-center justify-center",
             div { class: "text-center bg-white rounded-lg shadow-lg p-8 max-w-md mx-auto",
                 div { class: "text-6xl font-bold text-red-500 mb-4", "404" }

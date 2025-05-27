@@ -27,8 +27,8 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // Lade Konfiguration
     let config = Config::from_env()?;
-    info!("Starting DNO Crawler server - Current time: 2025-05-26 13:44:28 UTC");
-    info!("Current user: KyleDerZweite");
+    let current_date = chrono::Utc::now().format("%B %d, %Y").to_string();
+    info!("Starting DNO Crawler server - Current time: {current_date}");
 
     // Initialisiere Datenbank
     let database = match Database::new(&config.database_url).await {
