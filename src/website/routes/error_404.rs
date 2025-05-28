@@ -1,9 +1,6 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
 
-use header::Header;
-use crate::website::components::header;
-
 #[derive(Props, Clone, PartialEq)]
 pub struct Error404Props {
     #[props(default = Vec::new())]

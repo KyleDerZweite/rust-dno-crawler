@@ -24,18 +24,17 @@ pub fn Footer() -> Element {
                             }
                             h3 {
                                 class: "text-xl font-bold text-neutral-100",
-                                "KyleHub"
+                                "DNO - Crawler"
                             }
                         }
                         p {
                             class: "text-neutral-400 text-sm leading-relaxed mb-4",
-                            "A personal web hub for open-source projects and tools. Focused on modern, sustainable, and secure development practices."
+                            "Open Source Web Crawler for DNO Data.\nPart of the KyleHub ecosystem."
                         }
-                        // Social Links (als Beispiel)
                         div {
                             class: "flex space-x-4",
                             a {
-                                href: "https://github.com/KyleDerZweite",
+                                href: "https://github.com/KyleDerZweite/rust-dno-crawler",
                                 class: "text-neutral-400 hover:text-green-500 transition-colors",
                                 target: "_blank",
                                 rel: "noopener noreferrer",
@@ -59,21 +58,21 @@ pub fn Footer() -> Element {
                             class: "space-y-3",
                             li {
                                 a {
-                                    href: "/projects/dno-crawler",
+                                    href: "https://kylehub.dev/projects/dno-crawler",
                                     class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
                                     "DNO Crawler"
                                 }
                             }
                             li {
                                 a {
-                                    href: "/projects",
+                                    href: "https://kylehub.dev/projects",
                                     class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
                                     "All Projects"
                                 }
                             }
                             li {
                                 a {
-                                    href: "/tools",
+                                    href: "https://kylehub.dev/tools",
                                     class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
                                     "Development Tools"
                                 }
@@ -94,27 +93,6 @@ pub fn Footer() -> Element {
                                     href: "/dashboard",
                                     class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
                                     "Dashboard"
-                                }
-                            }
-                            li {
-                                a {
-                                    href: "/documentation",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
-                                    "Documentation"
-                                }
-                            }
-                            li {
-                                a {
-                                    href: "/contact",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
-                                    "Contact"
-                                }
-                            }
-                            li {
-                                a {
-                                    href: "/blog",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
-                                    "Blog"
                                 }
                             }
                         }
@@ -147,13 +125,6 @@ pub fn Footer() -> Element {
                                     href: "/impressum",
                                     class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
                                     "Impressum"
-                                }
-                            }
-                            li {
-                                a {
-                                    href: "/license",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
-                                    "Open Source License"
                                 }
                             }
                         }

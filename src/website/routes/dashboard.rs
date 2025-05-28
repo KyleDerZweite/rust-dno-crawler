@@ -15,9 +15,9 @@ pub struct DashboardProps {
 pub fn Dashboard(props: DashboardProps) -> Element {
     rsx! {
         div {
-            class: "min-h-screen bg-neutral-900 py-8",
+            class: "min-h-screen bg-neutral-900 w-full",
             div {
-                class: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+                class: "w-full px-4 sm:px-8",
 
                 // Welcome Header
                 div {

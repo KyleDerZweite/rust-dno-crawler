@@ -2,9 +2,7 @@
 module.exports = {
     content: [
         "./src/**/*.{rs,html,css,js,ts,jsx,tsx}",
-        "./dist/**/*.html",
-        "./public/**/*.html",
-        "./index.html"
+        "./dist/**/*.html"
     ],
     darkMode: 'class',
     theme: {
@@ -20,7 +18,7 @@ module.exports = {
                     100: '#EAEAEA', // Text Hauptfarbe
                 },
                 'green': {
-                    500: '#6DBF4B', // Primär-Akzent
+                    500: '#4B7C4B', // Primär-Akzent
                     600: '#5BA63F', // Hover-State
                     400: '#89D76A', // Light Mode Variante
                 },
@@ -35,13 +33,6 @@ module.exports = {
                     200: '#ECECEC', // Light Mode Sekundär-Hintergrund
                     300: '#D1D5DB', // Light Mode Borders
                 },
-                // Legacy Farben (zur Kompatibilität)
-                'stone-black': '#1F1F1F',
-                'wood-oak': '#8B5E3C',
-                'wood-oak-light': '#A67B5B',
-                'plant-green': '#4B7C4B',
-                'plant-green-light': '#6B8E23',
-                'neutral-gray': '#F5F5F5'
             },
             fontFamily: {
                 'sans': ['Manrope', 'Inter', 'system-ui', 'sans-serif'],

@@ -187,29 +187,6 @@ pub fn Register() -> Element {
                         }
                     }
                 }
-
-                // Footer Links
-                div {
-                    class: "text-center mt-8",
-                    div {
-                        class: "flex justify-center space-x-6 text-sm",
-                        a {
-                            href: "/privacy",
-                            class: "text-neutral-400 hover:text-green-500 transition-colors",
-                            "Privacy"
-                        }
-                        a {
-                            href: "/terms",
-                            class: "text-neutral-400 hover:text-green-500 transition-colors",
-                            "Terms"
-                        }
-                        a {
-                            href: "/help",
-                            class: "text-neutral-400 hover:text-green-500 transition-colors",
-                            "Help"
-                        }
-                    }
-                }
             }
         }
     }

@@ -19,7 +19,6 @@ use axum::{
 use axum_login::AuthSession;
 use dioxus::prelude::*;
 use serde::Deserialize;
-use crate::website::routes::error_404::Error404Props;
 
 type AuthContext = AuthSession<crate::auth::backend::AuthBackend>;
 
@@ -143,16 +142,11 @@ pub async fn dashboard(auth: AuthContext) -> Result<Html<String>, Redirect> {
 
     let user = auth.user.as_ref().unwrap(); // Safe because we checked above
     
-    let props = DashboardProps {
-        name: user.name.clone(),
-        email: user.email.clone(),
-        role: user.role.clone(),
-    };
-
     let content = rsx! {
         Dashboard {
-            email: props.email,
-            role: props.role.clone()
+            name: user.name.clone(),
+            email: user.email.clone(),
+            role: user.role.clone()
         }
     };
     let html = render_with_layout(content, Some(user.role.clone()), true);
@@ -170,7 +164,7 @@ pub async fn user_management_page(auth: AuthContext) -> Result<Html<String>, Red
 
     let content = rsx! {
         UserManagement {
-            current_user_role: props.current_user_role
+            current_user_role: user.role.clone()
         }
     };
     let html = render_with_layout(content, Some(user.role.clone()), true);

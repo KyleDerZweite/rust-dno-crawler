@@ -76,7 +76,7 @@ impl Database {
 
     pub async fn get_user_by_email(&self, email: &str) -> Result<Option<User>, AppError> {
         let user = sqlx::query_as::<_, User>(
-            "SELECT id, email, password_hash, role, created_at, last_login FROM users WHERE email = ?",
+            "SELECT id, name, email, password_hash, role, created_at, last_login FROM users WHERE email = ?",
         )
             .bind(email)
             .fetch_optional(&self.pool)
@@ -88,7 +88,7 @@ impl Database {
 
     pub async fn get_user_by_id(&self, id: &str) -> Result<Option<User>, AppError> {
         let user = sqlx::query_as::<_, User>(
-            "SELECT id, email, password_hash, role, created_at, last_login FROM users WHERE id = ?",
+            "SELECT id, name, email, password_hash, role, created_at, last_login FROM users WHERE id = ?",
         )
             .bind(id)
             .fetch_optional(&self.pool)

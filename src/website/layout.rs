@@ -25,7 +25,7 @@ pub fn Layout(props: LayoutProps) -> Element {
                 user_role: props.user_role.clone(),
                 is_authenticated: props.is_authenticated,
             }
-            main { class: "flex-grow container mx-auto px-4 py-8",
+            main { class: "flex-grow w-full",
                 {props.children}
             }
             Footer {}

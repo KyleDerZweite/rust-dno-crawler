@@ -35,7 +35,7 @@ pub fn Header(props: HeaderProps) -> Element {
                             }
                             h1 {
                                 class: "text-xl font-bold text-neutral-100 group-hover:text-green-500 transition-colors hidden sm:block",
-                                "KyleHub"
+                                "DNO - Crawler"
                             }
                         }
                     }
@@ -91,7 +91,7 @@ pub fn Header(props: HeaderProps) -> Element {
                             a {
                                 href: "/register",
                                 class: "btn-primary ml-2",
-                                "Sign Up"
+                                "Register"
                             }
                         }
                     }
