@@ -36,6 +36,8 @@ pub fn Privacy() -> Element {
     rsx! {
         div {
             class: "flex-grow px-4 py-8",
+            style: "padding-top: 6rem;",
+
             div {
                 class: "max-w-4xl mx-auto",
                 div {
