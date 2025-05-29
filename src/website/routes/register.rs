@@ -1,11 +1,55 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
+use crate::website::theme::{use_theme, Theme};
 
 #[component]
 pub fn Register() -> Element {
+    let theme = use_theme();
+
+    // Theme-aware classes
+    let bg_color = match theme() {
+        Theme::Light => "bg-gray-100",
+        Theme::Dark => "bg-neutral-900",
+    };
+
+    let card_bg = match theme() {
+        Theme::Light => "bg-white shadow-lg border border-gray-200",
+        Theme::Dark => "bg-neutral-800 shadow-xl border border-neutral-700",
+    };
+
+    let heading_color = match theme() {
+        Theme::Light => "text-neutral-800",
+        Theme::Dark => "text-neutral-100",
+    };
+
+    let text_color = match theme() {
+        Theme::Light => "text-neutral-600",
+        Theme::Dark => "text-neutral-400",
+    };
+
+    let label_color = match theme() {
+        Theme::Light => "text-neutral-700",
+        Theme::Dark => "text-neutral-100",
+    };
+
+    let input_bg = match theme() {
+        Theme::Light => "bg-white border-gray-300 text-neutral-800 focus:border-green-500 focus:ring-green-500",
+        Theme::Dark => "bg-neutral-700 border-neutral-600 text-neutral-100 focus:border-green-500 focus:ring-green-500",
+    };
+
+    let divider_bg = match theme() {
+        Theme::Light => "bg-white",
+        Theme::Dark => "bg-neutral-800",
+    };
+
+    let divider_border = match theme() {
+        Theme::Light => "border-gray-200",
+        Theme::Dark => "border-neutral-700",
+    };
+
     rsx! {
         div {
-            class: "min-h-screen flex items-center justify-center bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8",
+            class: format!("min-h-screen flex items-center justify-center {} py-12 px-4 sm:px-6 lg:px-8", bg_color),
             div {
                 class: "max-w-md w-full space-y-8",
 
@@ -21,18 +65,18 @@ pub fn Register() -> Element {
                         }
                     }
                     h2 {
-                        class: "text-3xl font-bold text-neutral-100 mb-2",
+                        class: format!("text-3xl font-bold {} mb-2", heading_color),
                         "Join KyleHub"
                     }
                     p {
-                        class: "text-neutral-400 text-sm",
+                        class: format!("{} text-sm", text_color),
                         "Create your account to get started"
                     }
                 }
 
                 // Register Form
                 div {
-                    class: "card mt-8",
+                    class: format!("{} rounded-2xl p-8 mt-8", card_bg),
                     form {
                         class: "space-y-6",
                         method: "POST",
@@ -45,7 +89,7 @@ pub fn Register() -> Element {
                             div {
                                 label {
                                     r#for: "name",
-                                    class: "block text-sm font-medium text-neutral-100 mb-2",
+                                    class: format!("block text-sm font-medium {} mb-2", label_color),
                                     "Full name"
                                 }
                                 input {
@@ -53,7 +97,7 @@ pub fn Register() -> Element {
                                     name: "name",
                                     r#type: "text",
                                     required: true,
-                                    class: "input-field w-full",
+                                    class: format!("w-full px-3 py-2 rounded-xl {} transition-all duration-200", input_bg),
                                     placeholder: "Enter your full name"
                                 }
                             }
@@ -62,7 +106,7 @@ pub fn Register() -> Element {
                             div {
                                 label {
                                     r#for: "email",
-                                    class: "block text-sm font-medium text-neutral-100 mb-2",
+                                    class: format!("block text-sm font-medium {} mb-2", label_color),
                                     "Email address"
                                 }
                                 input {
@@ -70,7 +114,7 @@ pub fn Register() -> Element {
                                     name: "email",
                                     r#type: "email",
                                     required: true,
-                                    class: "input-field w-full",
+                                    class: format!("w-full px-3 py-2 rounded-xl {} transition-all duration-200", input_bg),
                                     placeholder: "Enter your email address"
                                 }
                             }
@@ -79,7 +123,7 @@ pub fn Register() -> Element {
                             div {
                                 label {
                                     r#for: "password",
-                                    class: "block text-sm font-medium text-neutral-100 mb-2",
+                                    class: format!("block text-sm font-medium {} mb-2", label_color),
                                     "Password"
                                 }
                                 input {
@@ -87,11 +131,11 @@ pub fn Register() -> Element {
                                     name: "password",
                                     r#type: "password",
                                     required: true,
-                                    class: "input-field w-full",
+                                    class: format!("w-full px-3 py-2 rounded-xl {} transition-all duration-200", input_bg),
                                     placeholder: "Create a secure password"
                                 }
                                 p {
-                                    class: "mt-1 text-xs text-neutral-400",
+                                    class: format!("mt-1 text-xs {}", text_color),
                                     "At least 8 characters with numbers and symbols"
                                 }
                             }
@@ -100,7 +144,7 @@ pub fn Register() -> Element {
                             div {
                                 label {
                                     r#for: "confirm-password",
-                                    class: "block text-sm font-medium text-neutral-100 mb-2",
+                                    class: format!("block text-sm font-medium {} mb-2", label_color),
                                     "Confirm password"
                                 }
                                 input {
@@ -108,7 +152,7 @@ pub fn Register() -> Element {
                                     name: "confirm-password",
                                     r#type: "password",
                                     required: true,
-                                    class: "input-field w-full",
+                                    class: format!("w-full px-3 py-2 rounded-xl {} transition-all duration-200", input_bg),
                                     placeholder: "Confirm your password"
                                 }
                             }
@@ -124,35 +168,38 @@ pub fn Register() -> Element {
                                     name: "terms",
                                     r#type: "checkbox",
                                     required: true,
-                                    class: "h-4 w-4 text-green-500 focus:ring-green-500 border-neutral-600 rounded bg-neutral-700"
+                                    class: format!("h-4 w-4 text-green-500 focus:ring-green-500 rounded {}", match theme() {
+                                        Theme::Light => "border-gray-300 bg-white",
+                                        Theme::Dark => "border-neutral-600 bg-neutral-700",
+                                    })
                                 }
                             }
                             div {
                                 class: "ml-3 text-sm",
                                 label {
                                     r#for: "terms",
-                                    class: "text-neutral-400",
+                                    class: format!("{}", text_color),
                                     "I agree to the "
                                     a {
                                         href: "/terms",
-                                        class: "text-green-500 hover:text-green-400 transition-colors",
+                                        class: "text-green-500 hover:text-green-600 transition-colors underline-offset-4 hover:underline",
                                         "Terms of Service"
                                     }
                                     " and "
                                     a {
                                         href: "/privacy",
-                                        class: "text-green-500 hover:text-green-400 transition-colors",
+                                        class: "text-green-500 hover:text-green-600 transition-colors underline-offset-4 hover:underline",
                                         "Privacy Policy"
                                     }
                                 }
                             }
                         }
 
-                        // Submit Button
+                        // Submit Button (Primary - Green for new user registration)
                         div {
                             button {
                                 r#type: "submit",
-                                class: "btn-primary w-full py-3 text-base font-medium",
+                                class: "w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl text-base font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105",
                                 "Create account"
                             }
                         }
@@ -165,24 +212,24 @@ pub fn Register() -> Element {
                             class: "relative",
                             div {
                                 class: "absolute inset-0 flex items-center",
-                                div { class: "w-full border-t border-neutral-700" }
+                                div { class: format!("w-full border-t {}", divider_border) }
                             }
                             div {
                                 class: "relative flex justify-center text-sm",
                                 span {
-                                    class: "px-2 bg-neutral-800 text-neutral-400",
+                                    class: format!("px-2 {} {}", divider_bg, text_color),
                                     "Already have an account?"
                                 }
                             }
                         }
                     }
 
-                    // Login Link
+                    // Login Link (Green hover for existing user action)
                     div {
                         class: "mt-6 text-center",
                         a {
                             href: "/login",
-                            class: "text-green-500 hover:text-green-400 font-medium transition-colors",
+                            class: "text-green-500 hover:text-green-600 font-medium transition-colors underline-offset-4 hover:underline",
                             "Sign in to your account"
                         }
                     }
