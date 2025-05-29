@@ -6,3 +6,4 @@ pub mod privacy;
 pub mod terms;
 pub mod contact;
 pub mod user_management;
+pub mod impressum;

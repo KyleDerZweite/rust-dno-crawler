@@ -1,11 +1,45 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
+use crate::website::theme::{use_theme, Theme};
 
 #[component]
 pub fn Footer() -> Element {
+    let theme = use_theme();
+
+    // Define theme-aware classes
+    let footer_bg = match theme() {
+        Theme::Light => "bg-gray-50",
+        Theme::Dark => "bg-neutral-900",
+    };
+
+    let border_color = match theme() {
+        Theme::Light => "border-gray-200",
+        Theme::Dark => "border-neutral-700",
+    };
+
+    let heading_color = match theme() {
+        Theme::Light => "text-neutral-800",
+        Theme::Dark => "text-neutral-100",
+    };
+
+    let text_color = match theme() {
+        Theme::Light => "text-neutral-600",
+        Theme::Dark => "text-neutral-400",
+    };
+
+    let link_hover = match theme() {
+        Theme::Light => "hover:text-green-600",
+        Theme::Dark => "hover:text-green-500",
+    };
+
+    let secondary_text = match theme() {
+        Theme::Light => "text-neutral-500",
+        Theme::Dark => "text-neutral-500",
+    };
+
     rsx! {
         footer {
-            class: "bg-neutral-900 border-t border-neutral-700 mt-auto",
+            class: format!("{} border-t {} mt-auto", footer_bg, border_color),
             div {
                 class: "max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8",
 
@@ -23,19 +57,19 @@ pub fn Footer() -> Element {
                                 span { class: "text-white font-bold text-sm", "K" }
                             }
                             h3 {
-                                class: "text-xl font-bold text-neutral-100",
+                                class: format!("text-xl font-bold {}", heading_color),
                                 "DNO - Crawler"
                             }
                         }
                         p {
-                            class: "text-neutral-400 text-sm leading-relaxed mb-4",
+                            class: format!("{} text-sm leading-relaxed mb-4", text_color),
                             "Open Source Web Crawler for DNO Data.\nPart of the KyleHub ecosystem."
                         }
                         div {
                             class: "flex space-x-4",
                             a {
                                 href: "https://github.com/KyleDerZweite/rust-dno-crawler",
-                                class: "text-neutral-400 hover:text-green-500 transition-colors",
+                                class: format!("{} {} transition-colors", text_color, link_hover),
                                 target: "_blank",
                                 rel: "noopener noreferrer",
                                 svg {
@@ -51,7 +85,7 @@ pub fn Footer() -> Element {
                     // Projects Section
                     div {
                         h4 {
-                            class: "text-lg font-semibold text-neutral-100 mb-4",
+                            class: format!("text-lg font-semibold {} mb-4", heading_color),
                             "Projects"
                         }
                         ul {
@@ -59,21 +93,21 @@ pub fn Footer() -> Element {
                             li {
                                 a {
                                     href: "https://kylehub.dev/projects/dno-crawler",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
+                                    class: format!("{} {} text-sm transition-colors", text_color, link_hover),
                                     "DNO Crawler"
                                 }
                             }
                             li {
                                 a {
                                     href: "https://kylehub.dev/projects",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
+                                    class: format!("{} {} text-sm transition-colors", text_color, link_hover),
                                     "All Projects"
                                 }
                             }
                             li {
                                 a {
                                     href: "https://kylehub.dev/tools",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
+                                    class: format!("{} {} text-sm transition-colors", text_color, link_hover),
                                     "Development Tools"
                                 }
                             }
@@ -83,7 +117,7 @@ pub fn Footer() -> Element {
                     // Quick Links Section
                     div {
                         h4 {
-                            class: "text-lg font-semibold text-neutral-100 mb-4",
+                            class: format!("text-lg font-semibold {} mb-4", heading_color),
                             "Quick Links"
                         }
                         ul {
@@ -91,7 +125,7 @@ pub fn Footer() -> Element {
                             li {
                                 a {
                                     href: "/dashboard",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
+                                    class: format!("{} {} text-sm transition-colors", text_color, link_hover),
                                     "Dashboard"
                                 }
                             }
@@ -101,7 +135,7 @@ pub fn Footer() -> Element {
                     // Legal Section
                     div {
                         h4 {
-                            class: "text-lg font-semibold text-neutral-100 mb-4",
+                            class: format!("text-lg font-semibold {} mb-4", heading_color),
                             "Legal"
                         }
                         ul {
@@ -109,21 +143,21 @@ pub fn Footer() -> Element {
                             li {
                                 a {
                                     href: "/privacy",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
+                                    class: format!("{} {} text-sm transition-colors", text_color, link_hover),
                                     "Privacy Policy"
                                 }
                             }
                             li {
                                 a {
                                     href: "/terms",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
+                                    class: format!("{} {} text-sm transition-colors", text_color, link_hover),
                                     "Terms of Service"
                                 }
                             }
                             li {
                                 a {
                                     href: "/impressum",
-                                    class: "text-neutral-400 hover:text-green-500 text-sm transition-colors",
+                                    class: format!("{} {} text-sm transition-colors", text_color, link_hover),
                                     "Impressum"
                                 }
                             }
@@ -133,28 +167,34 @@ pub fn Footer() -> Element {
 
                 // Footer Bottom Section
                 div {
-                    class: "border-t border-neutral-700 mt-12 pt-8",
+                    class: format!("border-t {} mt-12 pt-8", border_color),
                     div {
                         class: "flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0",
                         p {
-                            class: "text-neutral-400 text-sm text-center sm:text-left",
+                            class: format!("{} text-sm text-center sm:text-left", text_color),
                             "© 2025 Kyle (Leander Grau). Licensed under Apache-2.0."
                         }
                         div {
-                            class: "flex items-center space-x-4 text-xs text-neutral-500",
+                            class: format!("flex items-center space-x-4 text-xs {}", secondary_text),
                             span { "Built with " }
                             span {
-                                class: "text-amber-600 font-medium",
+                                class: match theme() {
+                                    Theme::Light => "text-amber-700 font-medium",
+                                    Theme::Dark => "text-amber-600 font-medium",
+                                },
                                 "Rust"
                             }
                             span { "+" }
                             span {
-                                class: "text-green-500 font-medium",
+                                class: match theme() {
+                                    Theme::Light => "text-green-600 font-medium",
+                                    Theme::Dark => "text-green-500 font-medium",
+                                },
                                 "Dioxus"
                             }
                             span { "+" }
                             span {
-                                class: "text-neutral-400 font-medium",
+                                class: format!("{} font-medium", text_color),
                                 "TailwindCSS"
                             }
                         }
