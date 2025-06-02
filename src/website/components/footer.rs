@@ -1,41 +1,15 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::website::theme::{use_theme, Theme};
 
 #[component]
 pub fn Footer() -> Element {
-    let theme = use_theme();
-
-    // Define theme-aware classes
-    let footer_bg = match theme() {
-        Theme::Light => "bg-gray-50",
-        Theme::Dark => "bg-neutral-900",
-    };
-
-    let border_color = match theme() {
-        Theme::Light => "border-gray-200",
-        Theme::Dark => "border-neutral-700",
-    };
-
-    let heading_color = match theme() {
-        Theme::Light => "text-neutral-800",
-        Theme::Dark => "text-neutral-100",
-    };
-
-    let text_color = match theme() {
-        Theme::Light => "text-neutral-600",
-        Theme::Dark => "text-neutral-400",
-    };
-
-    let link_hover = match theme() {
-        Theme::Light => "hover:text-green-600",
-        Theme::Dark => "hover:text-green-500",
-    };
-
-    let secondary_text = match theme() {
-        Theme::Light => "text-neutral-500",
-        Theme::Dark => "text-neutral-500",
-    };
+    // Define theme-aware classes (simplified to dark theme)
+    let footer_bg = "bg-neutral-900";
+    let border_color = "border-neutral-700";
+    let heading_color = "text-neutral-100";
+    let text_color = "text-neutral-400";
+    let link_hover = "hover:text-green-500";
+    let secondary_text = "text-neutral-500";
 
     rsx! {
         footer {
@@ -178,18 +152,12 @@ pub fn Footer() -> Element {
                             class: format!("flex items-center space-x-4 text-xs {}", secondary_text),
                             span { "Built with " }
                             span {
-                                class: match theme() {
-                                    Theme::Light => "text-amber-700 font-medium",
-                                    Theme::Dark => "text-amber-600 font-medium",
-                                },
+                                class: "text-amber-600 font-medium",
                                 "Rust"
                             }
                             span { "+" }
                             span {
-                                class: match theme() {
-                                    Theme::Light => "text-green-600 font-medium",
-                                    Theme::Dark => "text-green-500 font-medium",
-                                },
+                                class: "text-green-500 font-medium",
                                 "Dioxus"
                             }
                             span { "+" }

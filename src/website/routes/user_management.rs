@@ -1,6 +1,5 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::website::theme::{use_theme, Theme};
 use chrono::{Local, Datelike, Timelike};
 
 #[derive(Props, Clone, PartialEq)]
@@ -22,7 +21,6 @@ struct User {
 
 #[component]
 pub fn UserManagement(props: UserManagementProps) -> Element {
-    let theme = use_theme();
 
     // Mock data
     let mock_users = use_signal(|| vec![
@@ -97,22 +95,13 @@ pub fn UserManagement(props: UserManagementProps) -> Element {
                 class: "w-full min-h-screen py-8 px-4 sm:px-6 lg:px-8",
                 style: "padding-top: 6rem;",
                 div {
-                    class: match theme() {
-                        Theme::Light => "max-w-4xl mx-auto bg-white/60 backdrop-blur-xl border border-stone-200/40 shadow-2xl shadow-stone-500/10 rounded-3xl p-8",
-                        Theme::Dark => "max-w-4xl mx-auto bg-neutral-900/60 backdrop-blur-xl border border-stone-700/40 shadow-2xl shadow-black/20 rounded-3xl p-8",
-                    },
+                    class: "max-w-4xl mx-auto bg-neutral-900/60 backdrop-blur-xl border border-stone-700/40 shadow-2xl shadow-black/20 rounded-3xl p-8",
                     div {
-                        class: match theme() {
-                            Theme::Light => "bg-red-50/80 border border-red-200/60 rounded-2xl p-6",
-                            Theme::Dark => "bg-red-900/20 border border-red-600/40 rounded-2xl p-6",
-                        },
+                        class: "bg-red-900/20 border border-red-600/40 rounded-2xl p-6",
                         div { class: "flex items-center",
                             div { class: "flex-shrink-0",
                                 svg {
-                                    class: match theme() {
-                                        Theme::Light => "h-6 w-6 text-red-500",
-                                        Theme::Dark => "h-6 w-6 text-red-400",
-                                    },
+                                    class: "h-6 w-6 text-red-400",
                                     fill: "currentColor",
                                     view_box: "0 0 20 20",
                                     path {
@@ -124,17 +113,11 @@ pub fn UserManagement(props: UserManagementProps) -> Element {
                             }
                             div { class: "ml-4",
                                 h3 {
-                                    class: match theme() {
-                                        Theme::Light => "text-lg font-semibold text-red-800",
-                                        Theme::Dark => "text-lg font-semibold text-red-200",
-                                    },
+                                    class: "text-lg font-semibold text-red-200",
                                     "Access Denied"
                                 }
                                 div {
-                                    class: match theme() {
-                                        Theme::Light => "mt-2 text-red-700",
-                                        Theme::Dark => "mt-2 text-red-300",
-                                    },
+                                    class: "mt-2 text-red-300",
                                     p { "You do not have permission to access user management. Admin privileges required." }
                                 }
                             }
@@ -142,10 +125,7 @@ pub fn UserManagement(props: UserManagementProps) -> Element {
                         div { class: "mt-6",
                             a {
                                 href: "/dashboard",
-                                class: match theme() {
-                                    Theme::Light => "inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 {text_primary} rounded-xl transition-all duration-200 hover:scale-105 shadow-lg",
-                                    Theme::Dark => "inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 {text_primary} rounded-xl transition-all duration-200 hover:scale-105 shadow-lg",
-                                },
+                                class: "inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-stone-100 rounded-xl transition-all duration-200 hover:scale-105 shadow-lg",
                                 "← Return to Dashboard"
                             }
                         }
@@ -155,51 +135,16 @@ pub fn UserManagement(props: UserManagementProps) -> Element {
         };
     }
 
-    // Theme-aware classes
-    let container_bg = match theme() {
-        Theme::Light => "bg-white/60 backdrop-blur-xl border border-stone-200/40 shadow-2xl shadow-stone-500/10",
-        Theme::Dark => "bg-neutral-900/60 backdrop-blur-xl border border-stone-700/40 shadow-2xl shadow-black/20",
-    };
-
-    let card_bg = match theme() {
-        Theme::Light => "bg-white/80 backdrop-blur-lg border border-stone-200/30 shadow-lg shadow-stone-500/5",
-        Theme::Dark => "bg-neutral-800/80 backdrop-blur-lg border border-stone-700/30 shadow-xl shadow-black/10",
-    };
-
-    let input_bg = match theme() {
-        Theme::Light => "bg-white/90 border-stone-300/50 text-stone-800 focus:border-moss-500 focus:ring-moss-500/20",
-        Theme::Dark => "bg-neutral-700/90 border-stone-600/50 text-stone-100 focus:border-moss-500 focus:ring-moss-500/20",
-    };
-
-    let text_primary = match theme() {
-        Theme::Light => "text-stone-800",
-        Theme::Dark => "text-stone-100",
-    };
-
-    let text_secondary = match theme() {
-        Theme::Light => "text-stone-600",
-        Theme::Dark => "text-stone-400",
-    };
-
-    let accent_bg = match theme() {
-        Theme::Light => "bg-stone-50/80",
-        Theme::Dark => "bg-neutral-700/50",
-    };
-
-    let table_header_bg = match theme() {
-        Theme::Light => "bg-stone-100/80",
-        Theme::Dark => "bg-neutral-800/80",
-    };
-
-    let table_row_bg = match theme() {
-        Theme::Light => "bg-white/40 hover:bg-white/60",
-        Theme::Dark => "bg-neutral-800/40 hover:bg-neutral-800/60",
-    };
-
-    let primary_button_bg = match theme() {
-        Theme::Light => "bg-moss-600 hover:bg-moss-700",
-        Theme::Dark => "bg-moss-500 hover:bg-moss-600",
-    };
+    // Theme-aware classes (simplified to dark theme)
+    let container_bg = "bg-neutral-900/60 backdrop-blur-xl border border-stone-700/40 shadow-2xl shadow-black/20";
+    let card_bg = "bg-neutral-800/80 backdrop-blur-lg border border-stone-700/30 shadow-xl shadow-black/10";
+    let input_bg = "bg-neutral-700/90 border-stone-600/50 text-stone-100 focus:border-moss-500 focus:ring-moss-500/20";
+    let text_primary = "text-stone-100";
+    let text_secondary = "text-stone-400";
+    let accent_bg = "bg-neutral-700/50";
+    let table_header_bg = "bg-neutral-800/80";
+    let table_row_bg = "bg-neutral-800/40 hover:bg-neutral-800/60";
+    let primary_button_bg = "bg-moss-500 hover:bg-moss-600";
 
     // Filter users based on search and role
     let filtered_users = use_memo(move || {
@@ -453,7 +398,7 @@ pub fn UserManagement(props: UserManagementProps) -> Element {
                                 }
                             }
                             tbody {
-                                class: "divide-y divide-stone-200 dark:divide-stone-700",
+                                class: "divide-y divide-stone-700",
                                 for user in filtered_users() {
                                     tr {
                                         key: "{user.id}",

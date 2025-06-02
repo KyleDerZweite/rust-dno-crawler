@@ -1,12 +1,9 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::website::theme::{use_theme, Theme};
 use chrono::{Local, Datelike, Timelike};
 
 #[component]
 pub fn Impressum() -> Element {
-    let theme = use_theme();
-
     // Get current local time
     let now = Local::now();
     let weekday = match now.weekday() {
@@ -27,41 +24,14 @@ pub fn Impressum() -> Element {
     let current_time = format!("{}, {} {}, {} • {:02}:{:02}:{:02}",
                                weekday, month, now.day(), now.year(), now.hour(), now.minute(), now.second());
 
-    // Theme-aware classes
-    let container_bg = match theme() {
-        Theme::Light => "bg-white/60 backdrop-blur-xl border border-stone-200/40 shadow-2xl shadow-stone-500/10",
-        Theme::Dark => "bg-neutral-900/60 backdrop-blur-xl border border-stone-700/40 shadow-2xl shadow-black/20",
-    };
-
-    let card_bg = match theme() {
-        Theme::Light => "bg-white/80 backdrop-blur-lg border border-stone-200/30 shadow-lg shadow-stone-500/5",
-        Theme::Dark => "bg-neutral-800/80 backdrop-blur-lg border border-stone-700/30 shadow-xl shadow-black/10",
-    };
-
-    let text_primary = match theme() {
-        Theme::Light => "text-stone-800",
-        Theme::Dark => "text-stone-100",
-    };
-
-    let text_secondary = match theme() {
-        Theme::Light => "text-stone-600",
-        Theme::Dark => "text-stone-400",
-    };
-
-    let accent_bg = match theme() {
-        Theme::Light => "bg-stone-50/80",
-        Theme::Dark => "bg-neutral-700/50",
-    };
-
-    let link_color = match theme() {
-        Theme::Light => "text-moss-700 hover:text-moss-800",
-        Theme::Dark => "text-moss-400 hover:text-moss-300",
-    };
-
-    let divider_color = match theme() {
-        Theme::Light => "border-stone-200/60",
-        Theme::Dark => "border-stone-700/60",
-    };
+    // Theme-aware classes (simplified to dark theme)
+    let container_bg = "bg-neutral-900/60 backdrop-blur-xl border border-stone-700/40 shadow-2xl shadow-black/20";
+    let card_bg = "bg-neutral-800/80 backdrop-blur-lg border border-stone-700/30 shadow-xl shadow-black/10";
+    let text_primary = "text-stone-100";
+    let text_secondary = "text-stone-400";
+    let accent_bg = "bg-neutral-700/50";
+    let link_color = "text-moss-400 hover:text-moss-300";
+    let divider_color = "border-stone-700/60";
 
     rsx! {
         div {
@@ -413,10 +383,7 @@ pub fn Impressum() -> Element {
                         class: "text-center pt-6",
                         a {
                             href: "/dashboard",
-                            class: match theme() {
-                                Theme::Light => "inline-flex items-center space-x-2 px-6 py-3 bg-moss-600 hover:bg-moss-700 {text_primary} rounded-xl transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-moss-600/30",
-                                Theme::Dark => "inline-flex items-center space-x-2 px-6 py-3 bg-moss-500 hover:bg-moss-600 {text_primary} rounded-xl transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-moss-500/30",
-                            },
+                            class: "inline-flex items-center space-x-2 px-6 py-3 bg-moss-500 hover:bg-moss-600 {text_primary} rounded-xl transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-moss-500/30",
                             svg {
                                 class: "w-5 h-5",
                                 fill: "none",

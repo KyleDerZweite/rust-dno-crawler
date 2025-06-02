@@ -1,37 +1,16 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::website::theme::{use_theme, Theme};
 
 #[component]
 pub fn Terms() -> Element {
-    let theme = use_theme();
     let current_date = "May 28, 2025"; // Using your current date
 
-    // Theme-aware classes
-    let container_bg = match theme() {
-        Theme::Light => "bg-white shadow-lg border border-gray-200",
-        Theme::Dark => "bg-neutral-800 shadow-xl border border-neutral-700",
-    };
-
-    let heading_color = match theme() {
-        Theme::Light => "text-neutral-800",
-        Theme::Dark => "text-neutral-100",
-    };
-
-    let subheading_color = match theme() {
-        Theme::Light => "text-neutral-700",
-        Theme::Dark => "text-neutral-200",
-    };
-
-    let text_color = match theme() {
-        Theme::Light => "text-neutral-600",
-        Theme::Dark => "text-neutral-400",
-    };
-
-    let date_color = match theme() {
-        Theme::Light => "text-neutral-500",
-        Theme::Dark => "text-neutral-500",
-    };
+    // Theme-aware classes (simplified to dark theme)
+    let container_bg = "bg-neutral-800 shadow-xl border border-neutral-700";
+    let heading_color = "text-neutral-100";
+    let subheading_color = "text-neutral-200";
+    let text_color = "text-neutral-400";
+    let date_color = "text-neutral-500";
 
     rsx! {
         div {

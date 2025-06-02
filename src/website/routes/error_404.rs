@@ -1,6 +1,5 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::website::theme::{use_theme, Theme};
 
 #[derive(Props, Clone, PartialEq)]
 pub struct Error404Props {
@@ -10,49 +9,15 @@ pub struct Error404Props {
 
 #[component]
 pub fn Error404(props: Error404Props) -> Element {
-    let theme = use_theme();
-
-    // Theme-aware classes
-    let container_bg = match theme() {
-        Theme::Light => "bg-gray-200 shadow-lg border border-gray-200",
-        Theme::Dark => "bg-neutral-800 shadow-xl border border-neutral-700",
-    };
-
-    let heading_color = match theme() {
-        Theme::Light => "text-neutral-800",
-        Theme::Dark => "text-neutral-100",
-    };
-
-    let text_color = match theme() {
-        Theme::Light => "text-neutral-600",
-        Theme::Dark => "text-neutral-400",
-    };
-
-    let error_number_color = match theme() {
-        Theme::Light => "text-amber-700",
-        Theme::Dark => "text-amber-600",
-    };
-
-    let log_bg = match theme() {
-        Theme::Light => "bg-red-50 border border-red-200",
-        Theme::Dark => "bg-red-900/20 border border-red-800/30",
-    };
-
-    let log_text = match theme() {
-        Theme::Light => "text-amber-700",
-        Theme::Dark => "text-amber-400",
-    };
-
-    let icon_color = match theme() {
-        Theme::Light => "text-neutral-400",
-        Theme::Dark => "text-neutral-500",
-    };
-
-    // Dashboard button with green hover (navigation/user action)
-    let dashboard_button = match theme() {
-        Theme::Light => "border-neutral-300 text-neutral-700 hover:text-green-500 hover:bg-green-50 hover:border-green-500 bg-transparent",
-        Theme::Dark => "border-neutral-600 text-neutral-300 hover:text-green-500 hover:bg-green-900/20 hover:border-green-500 bg-transparent",
-    };
+    // Theme-aware classes (simplified to dark theme)
+    let container_bg = "bg-neutral-800 shadow-xl border border-neutral-700";
+    let heading_color = "text-neutral-100";
+    let text_color = "text-neutral-400";
+    let error_number_color = "text-amber-600";
+    let log_bg = "bg-red-900/20 border border-red-800/30";
+    let log_text = "text-amber-400";
+    let icon_color = "text-neutral-500";
+    let dashboard_button = "border-neutral-600 text-neutral-300 hover:text-green-500 hover:bg-green-900/20 hover:border-green-500 bg-transparent";
 
     rsx! {
         div {

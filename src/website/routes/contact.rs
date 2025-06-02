@@ -1,58 +1,21 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::website::theme::{use_theme, Theme};
 
 #[component]
 pub fn Contact() -> Element {
-    let theme = use_theme();
     let mut form_submitted = use_signal(|| false);
     let mut selected_category = use_signal(|| "general".to_string());
 
-    // Theme-aware classes
-    let bg_color = match theme() {
-        Theme::Light => "bg-gray-100",
-        Theme::Dark => "bg-neutral-900",
-    };
-
-    let card_bg = match theme() {
-        Theme::Light => "bg-white shadow-lg border border-gray-200",
-        Theme::Dark => "bg-neutral-800 shadow-xl border border-neutral-700",
-    };
-
-    let heading_color = match theme() {
-        Theme::Light => "text-neutral-800",
-        Theme::Dark => "text-neutral-100",
-    };
-
-    let text_color = match theme() {
-        Theme::Light => "text-neutral-600",
-        Theme::Dark => "text-neutral-400",
-    };
-
-    let label_color = match theme() {
-        Theme::Light => "text-neutral-700",
-        Theme::Dark => "text-neutral-100",
-    };
-
-    let input_bg = match theme() {
-        Theme::Light => "bg-white border-gray-300 text-neutral-800 focus:border-green-500 focus:ring-green-500",
-        Theme::Dark => "bg-neutral-700 border-neutral-600 text-neutral-100 focus:border-green-500 focus:ring-green-500",
-    };
-
-    let select_bg = match theme() {
-        Theme::Light => "bg-white border-gray-300 text-neutral-800 focus:border-green-500 focus:ring-green-500",
-        Theme::Dark => "bg-neutral-700 border-neutral-600 text-neutral-100 focus:border-green-500 focus:ring-green-500",
-    };
-
-    let info_card_bg = match theme() {
-        Theme::Light => "bg-green-50 border border-green-200",
-        Theme::Dark => "bg-green-900/20 border border-green-800/30",
-    };
-
-    let info_text = match theme() {
-        Theme::Light => "text-green-700",
-        Theme::Dark => "text-green-300",
-    };
+    // Theme-aware classes (simplified to dark theme)
+    let bg_color = "bg-neutral-900";
+    let card_bg = "bg-neutral-800 shadow-xl border border-neutral-700";
+    let heading_color = "text-neutral-100";
+    let text_color = "text-neutral-400";
+    let label_color = "text-neutral-100";
+    let input_bg = "bg-neutral-700 border-neutral-600 text-neutral-100 focus:border-green-500 focus:ring-green-500";
+    let select_bg = "bg-neutral-700 border-neutral-600 text-neutral-100 focus:border-green-500 focus:ring-green-500";
+    let info_card_bg = "bg-green-900/20 border border-green-800/30";
+    let info_text = "text-green-300";
 
     rsx! {
         div {

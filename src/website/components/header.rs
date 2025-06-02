@@ -1,6 +1,5 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::website::theme::{use_theme, Theme};
 
 #[derive(Props, Clone, PartialEq)]
 pub struct HeaderProps {
@@ -13,32 +12,12 @@ pub struct HeaderProps {
 #[component]
 pub fn Header(props: HeaderProps) -> Element {
     let mut is_mobile_menu_open = use_signal(|| false);
-    let mut theme = use_theme();
 
-    let toggle_theme = move |_| {
-        theme.set(theme().toggle());
-    };
-
-    // Natural theme-aware classes for floating island
-    let island_bg = match theme() {
-        Theme::Light => "bg-white/80 backdrop-blur-lg border border-stone-200/40 shadow-2xl shadow-stone-500/10",
-        Theme::Dark => "bg-neutral-900/80 backdrop-blur-lg border border-stone-700/40 shadow-2xl shadow-black/20",
-    };
-
-    let island_hover_bg = match theme() {
-        Theme::Light => "hover:bg-stone-50/90",
-        Theme::Dark => "hover:bg-neutral-800/90",
-    };
-
-    let text_primary = match theme() {
-        Theme::Light => "text-stone-700",
-        Theme::Dark => "text-stone-100",
-    };
-
-    let text_secondary = match theme() {
-        Theme::Light => "text-stone-500",
-        Theme::Dark => "text-stone-400",
-    };
+    // Natural theme-aware classes for floating island (simplified to dark theme)
+    let island_bg = "bg-neutral-900/80 backdrop-blur-lg border border-stone-700/40 shadow-2xl shadow-black/20";
+    let island_hover_bg = "hover:bg-neutral-800/90";
+    let text_primary = "text-stone-100";
+    let text_secondary = "text-stone-400";
 
     rsx! {
         // Floating Island Navigation
@@ -138,36 +117,6 @@ pub fn Header(props: HeaderProps) -> Element {
                     // Right Side - Action Items
                     div {
                         class: "flex items-center space-x-2 flex-shrink-0",
-
-                        // Theme Toggle - Sun/Moon with natural styling
-                        button {
-                            class: format!(
-                                "p-2 rounded-2xl {} {} transition-all duration-300 group hover:scale-110",
-                                text_primary, island_hover_bg
-                            ),
-                            onclick: toggle_theme,
-                            title: match theme() {
-                                Theme::Light => "Switch to dark mode",
-                                Theme::Dark => "Switch to light mode",
-                            },
-                            if theme() == Theme::Light {
-                                // Moon icon with gentle glow
-                                svg {
-                                    class: "w-5 h-5 group-hover:rotate-12 transition-transform duration-500",
-                                    fill: "currentColor",
-                                    view_box: "0 0 20 20",
-                                    path { d: "M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" }
-                                }
-                            } else {
-                                // Sun icon with natural rays
-                                svg {
-                                    class: "w-5 h-5 group-hover:rotate-45 transition-transform duration-500",
-                                    fill: "currentColor",
-                                    view_box: "0 0 24 24",
-                                    path { d: "M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM18.894 17.834a.75.75 0 00-1.06 1.06l-1.591-1.59a.75.75 0 111.06-1.061l1.591 1.59zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" }
-                                }
-                            }
-                        }
 
                         if props.is_authenticated {
                             // Logout - Natural flowing icon
@@ -333,10 +282,7 @@ pub fn Header(props: HeaderProps) -> Element {
                         }
                     }
 
-                    div { class: format!("border-t {} my-3", match theme() {
-                        Theme::Light => "border-stone-200",
-                        Theme::Dark => "border-stone-700",
-                    }) }
+                    div { class: format!("border-t {} my-3", "border-stone-700") }
 
                     if !props.is_authenticated {
                         a {

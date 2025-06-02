@@ -1,5 +1,4 @@
 #![allow(non_snake_case)]
-use crate::website::theme::{use_theme, Theme};
 use dioxus::prelude::*;
 use chrono::{Local, Datelike, Timelike};
 
@@ -33,8 +32,6 @@ struct RunningProcess {
 
 #[component]
 pub fn Dashboard(props: DashboardProps) -> Element {
-    let theme = use_theme();
-
     // State management
     let mut current_input = use_signal(|| String::new());
     let mut chat_messages = use_signal(|| Vec::<ChatMessage>::new());
@@ -97,84 +94,22 @@ pub fn Dashboard(props: DashboardProps) -> Element {
     };
     let mock_jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJLeWxlRGVyWndlaXRlIiwibmFtZSI6Ikt5bGUiLCJpYXQiOjE3MzI4MzE1MzF9.abc123...".to_string();
 
-    // Theme-aware classes
-    let container_bg = match theme() {
-        Theme::Light => "bg-white/60 backdrop-blur-xl border border-stone-200/40 shadow-2xl shadow-stone-500/10",
-        Theme::Dark => "bg-neutral-900/60 backdrop-blur-xl border border-stone-700/40 shadow-2xl shadow-black/20",
-    };
-
-    let card_bg = match theme() {
-        Theme::Light => "bg-white/80 backdrop-blur-lg border border-stone-200/30 shadow-lg shadow-stone-500/5",
-        Theme::Dark => "bg-neutral-800/80 backdrop-blur-lg border border-stone-700/30 shadow-xl shadow-black/10",
-    };
-
-    let input_bg = match theme() {
-        Theme::Light => "bg-white/90 border-stone-300/50 text-stone-800 focus:border-moss-500 focus:ring-moss-500/20",
-        Theme::Dark => "bg-neutral-700/90 border-stone-600/50 text-stone-100 focus:border-moss-500 focus:ring-moss-500/20",
-    };
-
-    let text_primary = match theme() {
-        Theme::Light => "text-stone-800",
-        Theme::Dark => "text-stone-100",
-    };
-
-    let text_secondary = match theme() {
-        Theme::Light => "text-stone-600",
-        Theme::Dark => "text-stone-400",
-    };
-
-    let accent_bg = match theme() {
-        Theme::Light => "bg-stone-50/80",
-        Theme::Dark => "bg-neutral-700/50",
-    };
-
-    // Theme-aware button colors
-    let suggestion_button_bg = match theme() {
-        Theme::Light => "bg-moss-500/10 hover:bg-moss-500/20",
-        Theme::Dark => "bg-moss-500/10 hover:bg-moss-500/20",
-    };
-
-    let suggestion_button_text = match theme() {
-        Theme::Light => "text-stone-800",
-        Theme::Dark => "text-stone-100",
-    };
-
-    // Primary button colors (New Chat, Send)
-    let primary_button_bg = match theme() {
-        Theme::Light => "bg-moss-600 hover:bg-moss-700",
-        Theme::Dark => "bg-moss-500 hover:bg-moss-600",
-    };
-
-    let primary_button_shadow = match theme() {
-        Theme::Light => "shadow-lg hover:shadow-moss-600/30",
-        Theme::Dark => "shadow-lg hover:shadow-moss-500/30",
-    };
-
-    // API Token section colors
-    let token_bg = match theme() {
-        Theme::Light => "bg-stone-100",
-        Theme::Dark => "bg-neutral-700",
-    };
-
-    let copy_button_bg = match theme() {
-        Theme::Light => "bg-stone-100",
-        Theme::Dark => "bg-neutral-700",
-    };
-
-    let icon_primary = match theme() {
-        Theme::Light => "text-stone-700",
-        Theme::Dark => "text-stone-300",
-    };
-
-    let icon_secondary = match theme() {
-        Theme::Light => "text-stone-500",
-        Theme::Dark => "text-stone-400",
-    };
-
-    let icon_moss = match theme() {
-        Theme::Light => "text-moss-600",
-        Theme::Dark => "text-moss-400",
-    };
+    // Theme-aware classes (simplified to dark theme)
+    let container_bg = "bg-neutral-900/60 backdrop-blur-xl border border-stone-700/40 shadow-2xl shadow-black/20";
+    let card_bg = "bg-neutral-800/80 backdrop-blur-lg border border-stone-700/30 shadow-xl shadow-black/10";
+    let input_bg = "bg-neutral-700/90 border-stone-600/50 text-stone-100 focus:border-moss-500 focus:ring-moss-500/20";
+    let text_primary = "text-stone-100";
+    let text_secondary = "text-stone-400";
+    let accent_bg = "bg-neutral-700/50";
+    let suggestion_button_bg = "bg-moss-500/10 hover:bg-moss-500/20";
+    let suggestion_button_text = "text-stone-100";
+    let primary_button_bg = "bg-moss-500 hover:bg-moss-600";
+    let primary_button_shadow = "shadow-lg hover:shadow-moss-500/30";
+    let token_bg = "bg-neutral-700";
+    let copy_button_bg = "bg-neutral-700";
+    let icon_primary = "text-stone-300";
+    let icon_secondary = "text-stone-400";
+    let icon_moss = "text-moss-400";
 
     // Mock functions
     let send_message = move |_| {
