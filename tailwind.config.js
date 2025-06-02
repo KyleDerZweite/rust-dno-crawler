@@ -162,5 +162,90 @@ module.exports = {
     plugins: [
         require('@tailwindcss/forms'),
         require('@tailwindcss/typography'),
+        // Custom plugin for streamlined utilities
+        function({ addUtilities, theme }) {
+            const newUtilities = {
+                // Border utilities
+                '.border-neutral': {
+                    '@apply border border-neutral-700': {},
+                },
+                '.border-neutral-soft': {
+                    '@apply border border-stone-700/40': {},
+                },
+
+                // Background utilities
+                '.bg-surface': {
+                    '@apply bg-neutral-900': {},
+                },
+                '.bg-surface-elevated': {
+                    '@apply bg-neutral-800': {},
+                },
+                '.bg-surface-glass': {
+                    '@apply bg-neutral-900/80 backdrop-blur-lg': {},
+                },
+                '.bg-surface-glass-hover': {
+                    '@apply bg-neutral-800/90': {},
+                },
+
+                // Text utilities
+                '.text-primary': {
+                    '@apply text-neutral-100': {},
+                },
+                '.text-secondary': {
+                    '@apply text-neutral-400': {},
+                },
+                '.text-tertiary': {
+                    '@apply text-neutral-500': {},
+                },
+                '.text-stone-primary': {
+                    '@apply text-stone-100': {},
+                },
+                '.text-stone-secondary': {
+                    '@apply text-stone-400': {},
+                },
+
+                // Interactive utilities
+                '.interactive': {
+                    '@apply transition-all duration-300 ease-out': {},
+                },
+                '.interactive-hover': {
+                    '@apply hover:scale-105 active:scale-95': {},
+                },
+                '.interactive-gentle': {
+                    '@apply hover:scale-[1.02] transition-transform duration-300': {},
+                },
+
+                // Link utilities
+                '.link-primary': {
+                    '@apply text-green-500 hover:text-green-600 transition-colors': {},
+                },
+                '.link-accent': {
+                    '@apply text-moss-600 hover:text-moss-500 transition-colors': {},
+                },
+
+                // Button base styles
+                '.btn-base': {
+                    '@apply px-4 py-2 rounded-2xl font-medium transition-all duration-300 focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900': {},
+                },
+
+                // Icon utilities
+                '.icon': {
+                    '@apply w-5 h-5': {},
+                },
+                '.icon-interactive': {
+                    '@apply w-5 h-5 group-hover:scale-110 transition-transform duration-300': {},
+                },
+
+                // Layout utilities
+                '.glass-island': {
+                    '@apply bg-neutral-900/80 backdrop-blur-lg border border-stone-700/40 shadow-2xl shadow-black/20 rounded-4xl': {},
+                },
+                '.floating-nav': {
+                    '@apply fixed top-4 left-1/2 min-w-[50vw] max-w-6xl transform -translate-x-1/2 z-50 animate-gentle-float': {},
+                },
+            }
+
+            addUtilities(newUtilities)
+        }
     ],
 }

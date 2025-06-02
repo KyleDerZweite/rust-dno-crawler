@@ -12,8 +12,8 @@
     }
 
     body {
-        @apply bg-neutral-900 text-neutral-100 transition-colors duration-300;
-        @apply dark:bg-neutral-900 dark:text-neutral-100;
+        @apply bg-surface text-primary interactive;
+        @apply dark:bg-surface dark:text-primary;
     }
 
     /* Typografie Reset basierend auf Design Guide */
@@ -35,122 +35,125 @@
 
     /* Link Styles */
     a {
-        @apply text-green-500 hover:underline transition-colors;
+        @apply link-primary;
     }
 
     /* Input Reset für bessere Konsistenz */
     input, textarea, select {
-        @apply bg-neutral-700 text-neutral-100 placeholder:text-neutral-400;
-        @apply border border-neutral-600 rounded-md;
+        @apply bg-neutral-700 text-primary placeholder:text-secondary;
+        @apply border-neutral rounded-md;
         @apply focus:ring-2 focus:ring-green-500 focus:border-transparent;
-        @apply dark:bg-neutral-700 dark:text-neutral-100;
+        @apply dark:bg-neutral-700 dark:text-primary;
     }
 }
 
 /* Component Styles für Design Guide */
 @layer components {
-    /* Primärbutton Style */
+    /* Enhanced Button Styles */
     .btn-primary {
-        @apply bg-green-500 hover:bg-green-600 text-white rounded-xl px-4 py-2;
-        @apply font-medium transition-colors duration-200;
-        @apply focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-neutral-900;
+        @apply btn-base bg-green-500 hover:bg-green-600 text-white focus:ring-green-500;
     }
 
-    /* Sekundärbutton Style */
     .btn-secondary {
-        @apply bg-amber-600 hover:bg-amber-700 text-white rounded-xl px-4 py-2;
-        @apply font-medium transition-colors duration-200;
-        @apply focus:ring-2 focus:ring-amber-600 focus:ring-offset-2 focus:ring-offset-neutral-900;
+        @apply btn-base bg-amber-600 hover:bg-amber-700 text-white focus:ring-amber-600;
     }
 
-    /* Card/Container Style */
+    .btn-ghost {
+        @apply btn-base text-primary bg-surface-elevated hover:bg-surface-glass-hover;
+    }
+
+    .btn-accent {
+        @apply btn-base bg-gradient-to-r from-moss-500 to-moss-600 text-white hover:from-moss-600 hover:to-moss-700;
+    }
+
+    /* Layout Components */
     .card {
-        @apply bg-neutral-800 rounded-2xl p-6 shadow-inner;
-        @apply dark:bg-neutral-800;
+        @apply bg-surface-elevated rounded-2xl p-6 shadow-inner;
+        @apply dark:bg-surface-elevated;
     }
 
-    /* Navigation Style */
     .nav {
-        @apply bg-neutral-900 border-b border-neutral-700 py-4 px-6;
-        @apply dark:bg-neutral-900 dark:border-neutral-700;
+        @apply bg-surface border-b border-neutral py-4 px-6;
+        @apply dark:bg-surface dark:border-neutral;
     }
 
-    /* Input Feld Style */
+    .nav-floating {
+        @apply floating-nav glass-island px-6 py-3 interactive hover:scale-[1.02];
+    }
+
+    /* Form Components */
     .input-field {
-        @apply bg-neutral-700 text-neutral-100 placeholder:text-neutral-400 rounded-md;
-        @apply border border-neutral-600 px-3 py-2;
+        @apply bg-neutral-700 text-primary placeholder:text-secondary rounded-md;
+        @apply border-neutral px-3 py-2;
         @apply focus:ring-2 focus:ring-green-500 focus:border-transparent;
-        @apply dark:bg-neutral-700 dark:text-neutral-100 dark:border-neutral-600;
+        @apply dark:bg-neutral-700 dark:text-primary dark:border-neutral;
     }
 
-    /* Dark Mode Toggle Button */
+    /* Navigation Components */
+    .nav-item {
+        @apply flex items-center space-x-2 px-4 py-2 rounded-2xl text-stone-primary;
+        @apply bg-surface-glass-hover interactive group;
+    }
+
+    .nav-item-admin {
+        @apply nav-item hover:text-amber-600;
+    }
+
+    .nav-item-logout {
+        @apply nav-item hover:text-red-500;
+    }
+
+    .nav-mobile-menu {
+        @apply glass-island rounded-2xl p-6 min-w-[280px] lg:hidden animate-bloom-in;
+    }
+
+    /* Theme Components */
     .theme-toggle {
-        @apply p-2 rounded-lg bg-neutral-800 text-neutral-400;
-        @apply hover:bg-neutral-700 hover:text-neutral-100;
-        @apply transition-colors duration-200;
+        @apply p-2 rounded-lg bg-surface-elevated text-secondary;
+        @apply hover:bg-neutral-700 hover:text-primary;
+        @apply interactive;
     }
 
-    /* Responsive Grid Classes */
-    .grid-responsive {
-        @apply space-y-4; /* 16px default */
+    /* Footer Components */
+    .footer-base {
+        @apply bg-surface border-t border-neutral mt-auto;
     }
 
-    /* Medium screens and up */
-    .md\:grid-responsive {
-        @apply md:space-y-6; /* 24px auf mittleren Bildschirmen */
+    .footer-link {
+        @apply text-secondary link-primary text-sm;
     }
 
-    /* Large screens and up */
-    .lg\:grid-responsive {
-        @apply lg:space-y-8; /* 32px auf großen Bildschirmen */
+    .footer-heading {
+        @apply text-lg font-semibold text-primary mb-4;
+    }
+
+    .footer-text {
+        @apply text-secondary text-sm;
+    }
+
+    /* Logo Components */
+    .logo-icon {
+        @apply w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center group-hover:bg-green-600 interactive;
+    }
+
+    .logo-text {
+        @apply text-lg font-semibold text-stone-primary group-hover:text-moss-600 interactive tracking-wide;
+    }
+
+    /* Mobile Components */
+    .mobile-menu-item {
+        @apply flex items-center space-x-3 p-3 rounded-2xl text-stone-primary;
+        @apply bg-surface-glass-hover interactive w-full;
+    }
+
+    .mobile-menu-divider {
+        @apply border-t border-stone-700 my-3;
     }
 }
 
-/* Utilities für spezielle Effekte */
+/* Enhanced Utilities */
 @layer utilities {
-    /* 8px Grid Utilities */
-    .grid-8 {
-        @apply space-y-2; /* 8px vertical spacing */
-    }
-
-    .grid-16 {
-        @apply space-y-4; /* 16px vertical spacing */
-    }
-
-    .grid-24 {
-        @apply space-y-6; /* 24px vertical spacing */
-    }
-
-    /* Naturstein-Textur Simulation */
-    .texture-stone {
-        background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
-        background-size: 20px 20px;
-    }
-
-    /* Hover-Effekte für Cards */
-    .card-hover {
-        @apply transition-all duration-300;
-    }
-
-    .card-hover:hover {
-        @apply shadow-lg -translate-y-1;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Custom Animationen - direkt als CSS definiert */
-    .fade-in {
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    .slide-up {
-        animation: slideUp 0.3s ease-out;
-    }
-
-    .pulse-green {
-        animation: pulseGreen 2s infinite;
-    }
-
-    /* Design Guide konforme Spacing Utilities */
+    /* Spacing Utilities */
     .space-design-sm {
         @apply space-y-2 sm:space-y-4;
     }
@@ -163,13 +166,45 @@
         @apply space-y-6 lg:space-y-8;
     }
 
-    /* Custom Dark Mode Shadows */
+    /* Effect Utilities */
+    .texture-stone {
+        background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+        background-size: 20px 20px;
+    }
+
+    .card-hover {
+        @apply interactive;
+    }
+
+    .card-hover:hover {
+        @apply shadow-lg -translate-y-1;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    }
+
     .shadow-dark-lg {
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
     }
+
+    /* Animation Utilities */
+    .fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .slide-up {
+        animation: slideUp 0.3s ease-out;
+    }
+
+    .pulse-green {
+        animation: pulseGreen 2s infinite;
+    }
+
+    /* Responsive Grid Utilities */
+    .grid-responsive {
+        @apply space-design-sm md:space-design-md lg:space-design-lg;
+    }
 }
 
-/* Custom Keyframes definiert außerhalb der Layers */
+/* Custom Keyframes */
 @keyframes fadeIn {
     0% { opacity: 0; }
     100% { opacity: 1; }

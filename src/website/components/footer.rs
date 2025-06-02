@@ -4,7 +4,6 @@ use dioxus::prelude::*;
 #[component]
 pub fn Footer() -> Element {
     // Define theme-aware classes (simplified to dark theme)
-    let footer_bg = "bg-neutral-900";
     let border_color = "border-neutral-700";
     let heading_color = "text-neutral-100";
     let text_color = "text-neutral-400";
@@ -13,7 +12,7 @@ pub fn Footer() -> Element {
 
     rsx! {
         footer {
-            class: format!("{} border-t {} mt-auto", footer_bg, border_color),
+            class: "bg-neutral-900 border-t border-neutral-700 mt-auto",
             div {
                 class: "max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8",
 
