@@ -61,3 +61,4 @@ coverage/
 *.lock
 *.local.json
 *.png
+*.md
