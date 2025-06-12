@@ -60,3 +60,4 @@ coverage/
 *.backup
 *.lock
 *.local.json
+*.png

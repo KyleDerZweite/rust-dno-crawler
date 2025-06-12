@@ -1,21 +1,21 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
+use crate::components::ui::*;
 
 #[component]
 pub fn Contact() -> Element {
     let mut form_submitted = use_signal(|| false);
     let mut selected_category = use_signal(|| "general".to_string());
 
-    // Theme-aware classes (simplified to dark theme)
-    let bg_color = "bg-neutral-900";
-    let card_bg = "bg-neutral-800 shadow-xl border border-neutral-700";
-    let heading_color = "text-neutral-100";
-    let text_color = "text-neutral-400";
-    let label_color = "text-neutral-100";
-    let input_bg = "bg-neutral-700 border-neutral-600 text-neutral-100 focus:border-green-500 focus:ring-green-500";
-    let select_bg = "bg-neutral-700 border-neutral-600 text-neutral-100 focus:border-green-500 focus:ring-green-500";
-    let info_card_bg = "bg-green-900/20 border border-green-800/30";
-    let info_text = "text-green-300";
+    // Theme-aware classes using custom color palette
+    let bg_color = "bg-dark-charcoal-800";
+    let heading_color = "text-light-beige-200";
+    let text_color = "text-light-beige-500";
+    let label_color = "text-light-beige-300";
+    let input_bg = "bg-dark-charcoal-500 border-dark-charcoal-400 text-light-beige-300 focus:border-forest-green-500 focus:ring-forest-green-500";
+    let select_bg = "bg-dark-charcoal-500 border-dark-charcoal-400 text-light-beige-300 focus:border-forest-green-500 focus:ring-forest-green-500";
+    let info_card_bg = "bg-forest-green-900/20 border border-forest-green-800/30";
+    let info_text = "text-forest-green-300";
 
     rsx! {
         div {
@@ -30,7 +30,7 @@ pub fn Contact() -> Element {
                     div {
                         class: "flex justify-center mb-6",
                         div {
-                            class: "w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center",
+                            class: "w-16 h-16 bg-forest-green-500 rounded-2xl flex items-center justify-center",
                             svg {
                                 class: "w-8 h-8 text-white",
                                 fill: "none",
@@ -63,8 +63,9 @@ pub fn Contact() -> Element {
                         class: "lg:col-span-1 space-y-6",
 
                         // Quick Contact Info
-                        div {
-                            class: format!("{} rounded-2xl p-6", card_bg),
+                        Card {
+                            variant: CardVariant::Glass,
+                            padding: CardPadding::Medium,
                             h3 {
                                 class: format!("text-xl font-semibold {} mb-4", heading_color),
                                 "Contact Information"
@@ -76,7 +77,7 @@ pub fn Contact() -> Element {
                                 div {
                                     class: "flex items-start space-x-3",
                                     div {
-                                        class: "flex-shrink-0 w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center",
+                                        class: "flex-shrink-0 w-10 h-10 bg-forest-green-500 rounded-lg flex items-center justify-center",
                                         svg {
                                             class: "w-5 h-5 text-white",
                                             fill: "none",
@@ -97,7 +98,7 @@ pub fn Contact() -> Element {
                                         }
                                         a {
                                             href: "mailto:info@kylehub.dev",
-                                            class: format!("{} text-sm hover:text-green-500 transition-colors", text_color),
+                                            class: format!("{} text-sm hover:text-forest-green-400 transition-colors", text_color),
                                             "info@kylehub.dev"
                                         }
                                     }
@@ -107,7 +108,7 @@ pub fn Contact() -> Element {
                                 div {
                                     class: "flex items-start space-x-3",
                                     div {
-                                        class: "flex-shrink-0 w-10 h-10 bg-neutral-600 rounded-lg flex items-center justify-center",
+                                        class: "flex-shrink-0 w-10 h-10 bg-dark-charcoal-400 rounded-lg flex items-center justify-center",
                                         svg {
                                             class: "w-5 h-5 text-white",
                                             fill: "currentColor",
@@ -124,7 +125,7 @@ pub fn Contact() -> Element {
                                             href: "https://github.com/KyleDerZweite",
                                             target: "_blank",
                                             rel: "noopener noreferrer",
-                                            class: format!("{} text-sm hover:text-green-500 transition-colors", text_color),
+                                            class: format!("{} text-sm hover:text-forest-green-400 transition-colors", text_color),
                                             "@KyleDerZweite"
                                         }
                                     }
@@ -134,7 +135,7 @@ pub fn Contact() -> Element {
                                 div {
                                     class: "flex items-start space-x-3",
                                     div {
-                                        class: "flex-shrink-0 w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center",
+                                        class: "flex-shrink-0 w-10 h-10 bg-amber-brown-500 rounded-lg flex items-center justify-center",
                                         svg {
                                             class: "w-5 h-5 text-white",
                                             fill: "none",
@@ -163,8 +164,10 @@ pub fn Contact() -> Element {
                         }
 
                         // Additional Info
-                        div {
-                            class: format!("{} rounded-2xl p-6", info_card_bg),
+                        Card {
+                            variant: CardVariant::Elevated,
+                            padding: CardPadding::Medium,
+                            class: "bg-forest-green-900/20 border border-forest-green-800/30".to_string(),
                             h4 {
                                 class: format!("font-semibold {} mb-2", info_text),
                                 "Open Source Project"
@@ -179,15 +182,16 @@ pub fn Contact() -> Element {
                     // Contact Form
                     div {
                         class: "lg:col-span-2",
-                        div {
-                            class: format!("{} rounded-2xl p-8", card_bg),
+                        Card {
+                            variant: CardVariant::Glass,
+                            padding: CardPadding::Large,
 
                             if form_submitted() {
                                 // Success Message
                                 div {
                                     class: "text-center py-12",
                                     div {
-                                        class: "w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4",
+                                        class: "w-16 h-16 bg-forest-green-500 rounded-full flex items-center justify-center mx-auto mb-4",
                                         svg {
                                             class: "w-8 h-8 text-white",
                                             fill: "none",
@@ -211,7 +215,7 @@ pub fn Contact() -> Element {
                                     }
                                     button {
                                         onclick: move |_| form_submitted.set(false),
-                                        class: "text-green-500 hover:text-green-600 font-medium transition-colors underline-offset-4 hover:underline",
+                                        class: "text-forest-green-400 hover:text-forest-green-300 font-medium transition-colors underline-offset-4 hover:underline",
                                         "Send another message"
                                     }
                                 }
@@ -261,13 +265,12 @@ pub fn Contact() -> Element {
                                                 class: format!("block text-sm font-medium {} mb-2", label_color),
                                                 "Name *"
                                             }
-                                            input {
-                                                id: "name",
-                                                name: "name",
-                                                r#type: "text",
+                                            Input {
+                                                id: "name".to_string(),
+                                                name: "name".to_string(),
+                                                input_type: "text".to_string(),
+                                                placeholder: "Your full name".to_string(),
                                                 required: true,
-                                                class: format!("w-full px-3 py-2 rounded-xl {} transition-all duration-200", input_bg),
-                                                placeholder: "Your full name"
                                             }
                                         }
                                         div {
@@ -276,13 +279,12 @@ pub fn Contact() -> Element {
                                                 class: format!("block text-sm font-medium {} mb-2", label_color),
                                                 "Email *"
                                             }
-                                            input {
-                                                id: "email",
-                                                name: "email",
-                                                r#type: "email",
+                                            Input {
+                                                id: "email".to_string(),
+                                                name: "email".to_string(),
+                                                input_type: "email".to_string(),
+                                                placeholder: "your@email.com".to_string(),
                                                 required: true,
-                                                class: format!("w-full px-3 py-2 rounded-xl {} transition-all duration-200", input_bg),
-                                                placeholder: "your@email.com"
                                             }
                                         }
                                     }
@@ -294,12 +296,10 @@ pub fn Contact() -> Element {
                                             class: format!("block text-sm font-medium {} mb-2", label_color),
                                             "Subject *"
                                         }
-                                        input {
-                                            id: "subject",
-                                            name: "subject",
-                                            r#type: "text",
-                                            required: true,
-                                            class: format!("w-full px-3 py-2 rounded-xl {} transition-all duration-200", input_bg),
+                                        Input {
+                                            id: "subject".to_string(),
+                                            name: "subject".to_string(),
+                                            input_type: "text".to_string(),
                                             placeholder: match selected_category().as_str() {
                                                 "technical" => "Technical issue with...",
                                                 "bug" => "Bug found in...",
@@ -307,7 +307,8 @@ pub fn Contact() -> Element {
                                                 "contribution" => "I'd like to contribute to...",
                                                 "business" => "Business inquiry about...",
                                                 _ => "Subject of your message"
-                                            }
+                                            }.to_string(),
+                                            required: true,
                                         }
                                     }
 
@@ -341,22 +342,24 @@ pub fn Contact() -> Element {
 
                                     // Submit Button
                                     div {
-                                        button {
-                                            r#type: "submit",
-                                            class: "w-full bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl text-base font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center space-x-2",
-                                            svg {
-                                                class: "w-5 h-5",
-                                                fill: "none",
-                                                stroke: "currentColor",
-                                                view_box: "0 0 24 24",
-                                                path {
-                                                    stroke_linecap: "round",
-                                                    stroke_linejoin: "round",
-                                                    stroke_width: "2",
-                                                    d: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                                        PrimaryButton {
+                                            size: ButtonSize::Large,
+                                            class: "w-full".to_string(),
+                                            span { class: "flex items-center justify-center space-x-2",
+                                                svg {
+                                                    class: "w-5 h-5",
+                                                    fill: "none",
+                                                    stroke: "currentColor",
+                                                    view_box: "0 0 24 24",
+                                                    path {
+                                                        stroke_linecap: "round",
+                                                        stroke_linejoin: "round",
+                                                        stroke_width: "2",
+                                                        d: "M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                                                    }
                                                 }
+                                                span { "Send Message" }
                                             }
-                                            span { "Send Message" }
                                         }
                                     }
                                 }
