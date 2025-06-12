@@ -1,0 +1,108 @@
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+@theme {
+  --color-dark-charcoal-100: #4A4A4A;
+  --color-dark-charcoal-200: #3D3D3D;
+  --color-dark-charcoal-300: #303030;
+  --color-dark-charcoal-400: #282828;
+  --color-dark-charcoal-500: #1C1C1C;
+  --color-dark-charcoal-600: #171717;
+  --color-dark-charcoal-700: #121212;
+  --color-dark-charcoal-800: #0D0D0D;
+  --color-dark-charcoal-900: #080808;
+  
+  --color-forest-green-100: #AEC1B1;
+  --color-forest-green-200: #93AD99;
+  --color-forest-green-300: #789982;
+  --color-forest-green-400: #5D856B;
+  --color-forest-green-500: #3B533E;
+  --color-forest-green-600: #324736;
+  --color-forest-green-700: #293B2E;
+  --color-forest-green-800: #202F26;
+  --color-forest-green-900: #17231E;
+  
+  --color-light-beige-100: #FFFFFF;
+  --color-light-beige-200: #F7F1EB;
+  --color-light-beige-300: #EEE7E1;
+  --color-light-beige-400: #E5DED7;
+  --color-light-beige-500: #DCC09B;
+  --color-light-beige-600: #C3A984;
+  --color-light-beige-700: #AA926D;
+  --color-light-beige-800: #917B56;
+  --color-light-beige-900: #78643F;
+  
+  --color-amber-brown-100: #F5D1B8;
+  --color-amber-brown-200: #EBB394;
+  --color-amber-brown-300: #E19570;
+  --color-amber-brown-400: #D7774C;
+  --color-amber-brown-500: #C37D57;
+  --color-amber-brown-600: #B06845;
+  --color-amber-brown-700: #9D5333;
+  --color-amber-brown-800: #8A3E21;
+  --color-amber-brown-900: #77290F;
+  
+  --color-sienna-brown-100: #E1B89B;
+  --color-sienna-brown-200: #C99E82;
+  --color-sienna-brown-300: #B18469;
+  --color-sienna-brown-400: #996A50;
+  --color-sienna-brown-500: #8B5C3D;
+  --color-sienna-brown-600: #784B30;
+  --color-sienna-brown-700: #653A23;
+  --color-sienna-brown-800: #522916;
+  --color-sienna-brown-900: #3F1809;
+}
+
+body {
+    background-color: var(--color-dark-charcoal-800);
+    color: var(--color-light-beige-400);
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    scroll-behavior: smooth;
+}
+
+a {
+    color: #5D856B; /* forest-green-400 equivalent */
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+    color: #789982; /* forest-green-300 equivalent */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #EEE7E1; /* light-beige-300 equivalent */
+    margin-bottom: 0.5em;
+    line-height: 1.2;
+}
+
+/* Example: Basic styles for a content wrapper */
+.container {
+    max-width: 1280px; /* Max width for your content */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/*
+ * Add any other custom global styles here that you want to apply
+ * outside of Tailwind utility classes.
+ *
+ * Example: Custom scrollbar styling for dark themes (browser-specific)
+ */
+/*
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: theme('colors.dark-charcoal.700');
+}
+::-webkit-scrollbar-thumb {
+  background: theme('colors.dark-charcoal.500');
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.dark-charcoal.400');
+}
+*/

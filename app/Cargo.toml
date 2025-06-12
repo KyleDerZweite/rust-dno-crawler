@@ -1,0 +1,27 @@
+[package]
+name = "app"
+edition = "2021"
+version.workspace = true
+
+[[bin]]
+name = "rust-dno-crawler"
+path = "src/main.rs"
+
+[dependencies]
+# Workspace crates
+core = { path = "../core" }
+auth = { path = "../auth" }
+api = { path = "../api" }
+website = { path = "../website" }
+
+# Dependencies for main binary
+axum-login = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+dotenv = { workspace = true }
+axum = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+chrono = { workspace = true }

@@ -1,9 +1,0 @@
-pub mod error_404;
-pub mod dashboard;
-pub mod login;
-pub mod register;
-pub mod privacy;
-pub mod terms;
-pub mod contact;
-pub mod user_management;
-pub mod impressum;

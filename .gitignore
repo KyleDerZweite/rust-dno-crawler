@@ -12,7 +12,7 @@
 *.sqlite3
 
 # --- Rust build artifacts
-/target/
+*target*
 **/*.rs.bk
 
 # --- Rust package manager
@@ -21,10 +21,10 @@ Cargo.lock
 # Remove above line if it's a binary crate (keep Cargo.lock in git)
 
 # --- Node (used for TailwindCSS build pipeline)
-/node_modules/
-/package-lock.json
-/yarn.lock
-/npm-debug.log*
+*/node_modules/
+*/package-lock.json
+*/yarn.lock
+*/npm-debug.log*
 
 # --- Build artifacts from TailwindCSS or frontend bundlers
 /public/build/
@@ -59,3 +59,4 @@ coverage/
 *.rej
 *.backup
 *.lock
+*.local.json

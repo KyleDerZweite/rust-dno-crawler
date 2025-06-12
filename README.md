@@ -1,101 +1,96 @@
-## Project: rust-dno-crawler
+# rust-dno-crawler
 
-**Description**
+A high-performance, asynchronous web crawler and HTTP API for collecting, processing, and serving data from German Distribution Network Operators (DNOs). Built in Rust with a modular Cargo workspace: separate crates for core logic, authentication, crawling, API server, and frontend.
 
-`rust-dno-crawler` is a high-performance, asynchronous web crawler for collecting and standardizing data from German Distribution Network Operators (DNOs). It uses Tokio for concurrency, Reqwest for HTTP requests, Scraper for HTML parsing, and Serde for data serialization. Integration with a local Ollama instance allows downstream AI-based interpretation and normalization of unstructured data.
+## Workspace Structure
 
----
+- **core/**   : Shared data models, database integration (SQLx + SQLite), utility functions.
+- **auth/**   : Authentication library (password hashing, JWT) for secure access.
+- **api/**    : HTTP server (Axum) exposing RESTful endpoints. Offers both library and binary.
+- **crawler/**: Web crawler logic and CLI tool for data harvesting. Provides library and binary.
+- **website/**: Dioxus-based frontend (SSR + SPA). Runs standalone with mock or DB data. Library + binary.
+- **public/** : Static assets for the frontend (CSS, images).
+- **tests/**  : Integration and end-to-end tests.
 
-### Features
+## Prerequisites
 
-* Asynchronous, concurrent crawling with configurable limits.
-* Directed brute-crawl strategy with prioritized URL queuing.
-* Automatic scheduling (yearly, interval-based) via configuration.
-* Configurable file-pattern matching for PDF and data extraction.
-* JSON-based data store (`data_store.json`) matching existing schema.
-* HTTP interface to Ollama for AI-based data interpretation.
+- Rust >=1.70 (stable) with Cargo
+- SQLite3 development libraries
+- Node.js & npm (for website/tailwind asset pipeline)
 
----
+## Building the Project
 
-### Roadmap / Next Steps
+At the root of the workspace:
 
-1. **Project Initialization**: Create Cargo.toml, src scaffolding.
-2. **Configuration Module**: Implement Serde structs for `data_store.json`.
-3. **Crawler Core**: Tokio + Reqwest + Scraper + Semaphore-based concurrency.
-4. **Data Extraction**: Pattern-based discovery and download.
-5. **Ollama Client**: HTTP wrapper for prompt-based analysis.
-6. **CLI & Scheduler**: Command-line options and auto-crawl intervals.
-7. **Testing & Documentation**: Unit tests, integration tests, full documentation.
+```bash
+# Prepare database file if needed
+touch data.db
 
----
+# Build all crates
+cargo build --workspace
 
-### Usage
-
-1. Clone repository:
-
-   ```bash
-   git clone https://github.com/your-org/rust-dno-crawler.git
-   cd rust-dno-crawler
-   ```
-
-2. Configure your `data_store.json` in the project root (template provided):
-
-   ```json
-   {
-     "example-dno": {
-       "metadata": { /* ... */ },
-       "crawl": { /* ... */ },
-       "data": { /* ... */ }
-     }
-   }
-   ```
-
-3. Build and run:
-
-   ```bash
-   cargo build --release
-   ./target/release/rust-dno-crawler --config data_store.json
-   ```
-
----
-
-### Configuration Format (`data_store.json`)
-
-Structure must follow the existing schema:
-
-```json
-{
-  "<dno-key>": {
-    "metadata": { /* name, description, region */ },
-    "crawl": { /* type, source URLs, file patterns, settings */ },
-    "data": { /* year-indexed results */ }
-  }
-}
+# Build frontend assets
+npm install --prefix website
+npm run build --prefix website
 ```
 
-Refer to `/config/template_data_store.json` for a full example.
+## Running Components
 
----
+### API Server
 
-### Folder Structure
-
-```
-rust-dno-crawler/
-├── src/
-│   ├── main.rs
-│   ├── crawler.rs
-│   ├── config.rs
-│   ├── ollama_client.rs
-│   └── data_store.rs
-├── config/
-│   └── template_data_store.json
-├── assets/       # downloaded files/PDFs
-├── README.md
-└── Cargo.toml
+```bash
+cd api
+cargo run --bin api
 ```
 
+### Crawler CLI
+
+```bash
+cd crawler
+cargo run --bin crawler -- [OPTIONS]
+```
+
+### Frontend Website
+
+```bash
+cd website
+cargo run --bin website
+# or serve static assets in public/
+```
+
+## Configuration
+
+Environment variables (via `.env` or shell):
+
+- `DATABASE_URL` (SQLite path)
+- `JWT_SECRET`
+- `OLLAMA_ENDPOINT`
+
+Refer to `.env.example` for full list.
+
+## Testing
+
+- Run unit tests per crate: `cargo test --package <crate>`
+- Run all tests: `cargo test --workspace`
+- Frontend component tests: `cargo test --package website`
+
+## Contributing
+
+1. Fork the repo and create a feature branch.
+2. Adhere to Rust standards: `cargo fmt`, `cargo clippy`.
+3. Write tests for new features.
+4. Use Conventional Commits (`feat:`, `fix:`, `chore:`, etc.).
+5. Submit a pull request with a clear description.
+
+## Roadmap
+
+- Formalize database migrations (SQLx Migrations).
+- Complete decoupling of monolith to crates.
+- Add scheduler and automations for periodic crawling.
+- Enhance frontend UI and user management.
+
+## License
+
+Licensed under the MIT License. See [LICENSE.md](LICENSE.md) for details.
+
 ---
-
-### License
-
-MIT © 2025
