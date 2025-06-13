@@ -135,7 +135,7 @@ pub fn Contact() -> Element {
                                 div {
                                     class: "flex items-start space-x-3",
                                     div {
-                                        class: "flex-shrink-0 w-10 h-10 bg-amber-brown-500 rounded-lg flex items-center justify-center",
+                                        class: "flex-shrink-0 w-10 h-10 bg-vibrant-orange-500 rounded-lg flex items-center justify-center",
                                         svg {
                                             class: "w-5 h-5 text-white",
                                             fill: "none",
@@ -344,8 +344,8 @@ pub fn Contact() -> Element {
                                     div {
                                         PrimaryButton {
                                             size: ButtonSize::Large,
-                                            class: "w-full".to_string(),
-                                            span { class: "flex items-center justify-center space-x-2",
+                                            class: "w-full justify-center".to_string(),
+                                            span { class: "flex items-center space-x-2",
                                                 svg {
                                                     class: "w-5 h-5",
                                                     fill: "none",

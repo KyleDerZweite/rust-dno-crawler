@@ -47,11 +47,11 @@ pub fn Badge(props: BadgeProps) -> Element {
     let variant_classes = match props.variant {
         BadgeVariant::Default => "bg-dark-charcoal-500 text-light-beige-400 border border-dark-charcoal-300",
         BadgeVariant::Primary => "bg-forest-green-500/20 text-forest-green-300 border border-forest-green-500/30",
-        BadgeVariant::Secondary => "bg-amber-brown-500/20 text-amber-brown-300 border border-amber-brown-500/30",
+        BadgeVariant::Secondary => "bg-vibrant-orange-500/20 text-vibrant-orange-300 border border-vibrant-orange-500/30",
         BadgeVariant::Success => "bg-forest-green-400/20 text-forest-green-300 border border-forest-green-400/30",
-        BadgeVariant::Warning => "bg-amber-brown-400/20 text-amber-brown-300 border border-amber-brown-400/30",
-        BadgeVariant::Danger => "bg-sienna-brown-500/20 text-sienna-brown-300 border border-sienna-brown-500/30",
-        BadgeVariant::Info => "bg-muted-olive-500/20 text-muted-olive-300 border border-muted-olive-500/30",
+        BadgeVariant::Warning => "bg-vibrant-orange-400/20 text-vibrant-orange-300 border border-vibrant-orange-400/30",
+        BadgeVariant::Danger => "bg-vibrant-orange-500/20 text-vibrant-orange-300 border border-vibrant-orange-500/30",
+        BadgeVariant::Info => "bg-blue-500/20 text-blue-600 border border-blue-500/30",
     };
 
     let classes = format!("{} {} {} {}", base_classes, size_classes, variant_classes, props.class);

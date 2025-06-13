@@ -12,15 +12,15 @@
   --color-dark-charcoal-800: #0D0D0D;
   --color-dark-charcoal-900: #080808;
   
-  --color-forest-green-100: #AEC1B1;
-  --color-forest-green-200: #93AD99;
-  --color-forest-green-300: #789982;
-  --color-forest-green-400: #5D856B;
-  --color-forest-green-500: #3B533E;
-  --color-forest-green-600: #324736;
-  --color-forest-green-700: #293B2E;
-  --color-forest-green-800: #202F26;
-  --color-forest-green-900: #17231E;
+  --color-forest-green-100: #D1F2E8;
+  --color-forest-green-200: #A3E5D1;
+  --color-forest-green-300: #75D8BA;
+  --color-forest-green-400: #47CBA3;
+  --color-forest-green-500: #00C49A;
+  --color-forest-green-600: #00A582;
+  --color-forest-green-700: #008569;
+  --color-forest-green-800: #006651;
+  --color-forest-green-900: #004738;
   
   --color-light-beige-100: #FFFFFF;
   --color-light-beige-200: #F7F1EB;
@@ -32,25 +32,25 @@
   --color-light-beige-800: #917B56;
   --color-light-beige-900: #78643F;
   
-  --color-amber-brown-100: #F5D1B8;
-  --color-amber-brown-200: #EBB394;
-  --color-amber-brown-300: #E19570;
-  --color-amber-brown-400: #D7774C;
-  --color-amber-brown-500: #C37D57;
-  --color-amber-brown-600: #B06845;
-  --color-amber-brown-700: #9D5333;
-  --color-amber-brown-800: #8A3E21;
-  --color-amber-brown-900: #77290F;
+  --color-electric-teal-100: #E0F7F4;
+  --color-electric-teal-200: #B8F0E9;
+  --color-electric-teal-300: #90E8DE;
+  --color-electric-teal-400: #68E1D3;
+  --color-electric-teal-500: #1DD1A1;
+  --color-electric-teal-600: #17A589;
+  --color-electric-teal-700: #138A70;
+  --color-electric-teal-800: #0F6E58;
+  --color-electric-teal-900: #0B5240;
   
-  --color-sienna-brown-100: #E1B89B;
-  --color-sienna-brown-200: #C99E82;
-  --color-sienna-brown-300: #B18469;
-  --color-sienna-brown-400: #996A50;
-  --color-sienna-brown-500: #8B5C3D;
-  --color-sienna-brown-600: #784B30;
-  --color-sienna-brown-700: #653A23;
-  --color-sienna-brown-800: #522916;
-  --color-sienna-brown-900: #3F1809;
+  --color-vibrant-orange-100: #FFE8D1;
+  --color-vibrant-orange-200: #FFD1A3;
+  --color-vibrant-orange-300: #FFBA75;
+  --color-vibrant-orange-400: #FFA347;
+  --color-vibrant-orange-500: #FF8C19;
+  --color-vibrant-orange-600: #E6790E;
+  --color-vibrant-orange-700: #CC6600;
+  --color-vibrant-orange-800: #B35300;
+  --color-vibrant-orange-900: #994000;
 }
 
 body {
@@ -61,13 +61,13 @@ body {
 }
 
 a {
-    color: #5D856B; /* forest-green-400 equivalent */
+    color: #47CBA3; /* forest-green-400 vibrant equivalent */
     text-decoration: none;
     transition: color 0.2s ease-in-out;
 }
 
 a:hover {
-    color: #789982; /* forest-green-300 equivalent */
+    color: #75D8BA; /* forest-green-300 vibrant equivalent */
 }
 
 h1, h2, h3, h4, h5, h6 {

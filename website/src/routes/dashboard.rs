@@ -4,11 +4,11 @@ use chrono::{Local, Datelike, Timelike};
 
 #[derive(Props, Clone, PartialEq)]
 pub struct DashboardProps {
-    #[props(default = String::new())]
+    #[props(default = "Demo User".to_string())]
     pub name: String,
-    #[props(default = String::new())]
+    #[props(default = "demo@example.com".to_string())]
     pub email: String,
-    #[props(default = String::new())]
+    #[props(default = "user".to_string())]
     pub role: String,
 }
 
@@ -131,7 +131,8 @@ pub fn Dashboard(props: DashboardProps) -> Element {
             use_future(move || {
                 let value = input_value.clone();
                 async move {
-                    tokio::time::sleep(tokio::time::Duration::from_millis(2_000)).await;
+                    // Simulate processing delay for demo
+                    // In a real app, this would be an API call
 
                     let response_time = Local::now();
                     let ai_response = ChatMessage {
@@ -153,7 +154,7 @@ pub fn Dashboard(props: DashboardProps) -> Element {
         // Mock JWT copy - in real app, use web_sys clipboard API
         show_jwt_copied.set(true);
         use_future(move || async move {
-            tokio::time::sleep(tokio::time::Duration::from_millis(2_000)).await;
+            // Simulate processing delay for demo
             show_jwt_copied.set(false);
         });
     };
@@ -299,7 +300,7 @@ pub fn Dashboard(props: DashboardProps) -> Element {
                                 }
                                 span {
                                     class: if mock_role == "admin" {
-                                        "inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-amber-brown-500/20 text-amber-brown-400 border border-amber-brown-500/30"
+                                        "inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-vibrant-orange-500/20 text-vibrant-orange-400 border border-vibrant-orange-500/30"
                                     } else {
                                         "inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-forest-green-500/20 text-forest-green-400 border border-forest-green-500/30"
                                     },
@@ -450,7 +451,7 @@ pub fn Dashboard(props: DashboardProps) -> Element {
                                                     class: if process.status == "Running" {
                                                         "text-xs bg-forest-green-500/20 text-forest-green-400 px-2 py-1 rounded border border-forest-green-500/30"
                                                     } else {
-                                                        "text-xs bg-amber-brown-500/20 text-amber-brown-400 px-2 py-1 rounded border border-amber-brown-500/30"
+                                                        "text-xs bg-vibrant-orange-500/20 text-vibrant-orange-400 px-2 py-1 rounded border border-vibrant-orange-500/30"
                                                     },
                                                     "{process.status}"
                                                 }
@@ -504,7 +505,7 @@ pub fn Dashboard(props: DashboardProps) -> Element {
                                     class: "flex items-center space-x-2",
                                     div {
                                         class: if is_processing() {
-                                            "w-3 h-3 bg-amber-brown-500 rounded-full animate-bounce"
+                                            "w-3 h-3 bg-vibrant-orange-500 rounded-full animate-bounce"
                                         } else {
                                             "w-3 h-3 bg-forest-green-500 rounded-full"
                                         }

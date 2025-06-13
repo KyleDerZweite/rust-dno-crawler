@@ -1,6 +1,5 @@
 [application]
-name = "Dno-Crawler"
-
+name = "rust-dno-crawler-website"
 default_platform = "web"
 
 # `build` & `serve` dist path
@@ -10,13 +9,27 @@ out_dir = "dist"
 asset_dir = "public"
 
 [web.app]
-
 # HTML title tag content
-title = "dno-crawler"
+title = "DNO Crawler - Development"
+base_path = "dist"
 
 [web.watcher]
 # when watcher trigger, regenerate the `index.html`
 reload_html = true
+# enable CSS hot-reload
+reload_css = true
 
 # which files or dirs will be watcher monitoring
-watch_path = ["src", "public"]
+watch_path = ["src", "public", "../tailwind_input.css"]
+
+[web.resource]
+# include CSS files
+style = ["tailwind_output.css"]
+
+[web.proxy]
+# backend server for API calls during development
+backend = "http://localhost:3000"
+
+[build]
+# development optimizations
+default_platform = "web"

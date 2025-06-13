@@ -53,16 +53,16 @@ pub fn Input(props: InputProps) -> Element {
     let base_classes = "w-full transition-all duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50";
     
     let size_classes = match props.size {
-        InputSize::Small => "px-4 py-3 text-base sm:px-3 sm:py-1.5 sm:text-sm rounded-lg min-h-[44px] sm:min-h-[36px] touch-manipulation",
-        InputSize::Medium => "px-5 py-3 text-base sm:px-4 sm:py-2 sm:text-sm rounded-xl min-h-[44px] sm:min-h-[40px] touch-manipulation",
-        InputSize::Large => "px-6 py-4 text-lg sm:px-5 sm:py-3 sm:text-base rounded-xl min-h-[48px] sm:min-h-[44px] touch-manipulation",
+        InputSize::Small => "px-4 py-2.5 text-base sm:px-3 sm:py-2 sm:text-sm rounded-lg min-h-[44px] sm:min-h-[40px] touch-manipulation",
+        InputSize::Medium => "px-4 py-3 text-base sm:px-4 sm:py-2.5 sm:text-sm rounded-xl min-h-[48px] sm:min-h-[44px] touch-manipulation",
+        InputSize::Large => "px-6 py-3.5 text-lg sm:px-5 sm:py-3 sm:text-base rounded-xl min-h-[52px] sm:min-h-[48px] touch-manipulation",
     };
 
     let variant_classes = match props.variant {
         InputVariant::Default => "bg-dark-charcoal-400 border border-dark-charcoal-300 text-light-beige-300 placeholder-light-beige-600 focus:border-forest-green-500 focus:ring-forest-green-500/20",
         InputVariant::Success => "bg-dark-charcoal-400 border border-forest-green-400 text-light-beige-300 placeholder-light-beige-600 focus:border-forest-green-400 focus:ring-forest-green-400/20",
-        InputVariant::Warning => "bg-dark-charcoal-400 border border-amber-brown-500 text-light-beige-300 placeholder-light-beige-600 focus:border-amber-brown-500 focus:ring-amber-brown-500/20",
-        InputVariant::Error => "bg-dark-charcoal-400 border border-sienna-brown-500 text-light-beige-300 placeholder-light-beige-600 focus:border-sienna-brown-500 focus:ring-sienna-brown-500/20",
+        InputVariant::Warning => "bg-dark-charcoal-400 border border-vibrant-orange-500 text-light-beige-300 placeholder-light-beige-600 focus:border-vibrant-orange-500 focus:ring-vibrant-orange-500/20",
+        InputVariant::Error => "bg-dark-charcoal-400 border border-vibrant-orange-500 text-light-beige-300 placeholder-light-beige-600 focus:border-vibrant-orange-500 focus:ring-vibrant-orange-500/20",
     };
 
     let classes = format!("{} {} {} {}", base_classes, size_classes, variant_classes, props.class);
@@ -78,7 +78,7 @@ pub fn Input(props: InputProps) -> Element {
                 class: "relative",
                 if let Some(icon) = props.icon_start {
                     div {
-                        class: "absolute left-3 top-1/2 transform -translate-y-1/2 text-light-beige-600",
+                        class: "absolute left-4 top-1/2 transform -translate-y-1/2 text-light-beige-600 pointer-events-none",
                         {icon}
                     }
                 }
@@ -102,13 +102,13 @@ pub fn Input(props: InputProps) -> Element {
                     id: props.id,
                     class: format!("{} {} {}", 
                         classes,
-                        if has_start_icon { "pl-10" } else { "" },
-                        if has_end_icon { "pr-10" } else { "" }
+                        if has_start_icon { "pl-11" } else { "" },
+                        if has_end_icon { "pr-11" } else { "" }
                     ),
                 }
                 if let Some(icon) = props.icon_end {
                     div {
-                        class: "absolute right-3 top-1/2 transform -translate-y-1/2 text-light-beige-600",
+                        class: "absolute right-4 top-1/2 transform -translate-y-1/2 text-light-beige-600 pointer-events-none",
                         {icon}
                     }
                 }
@@ -181,8 +181,8 @@ pub fn Textarea(props: TextareaProps) -> Element {
     let variant_classes = match props.variant {
         InputVariant::Default => "bg-dark-charcoal-400 border border-dark-charcoal-300 text-light-beige-300 placeholder-light-beige-600 focus:border-forest-green-500 focus:ring-forest-green-500/20",
         InputVariant::Success => "bg-dark-charcoal-400 border border-forest-green-400 text-light-beige-300 placeholder-light-beige-600 focus:border-forest-green-400 focus:ring-forest-green-400/20",
-        InputVariant::Warning => "bg-dark-charcoal-400 border border-amber-brown-500 text-light-beige-300 placeholder-light-beige-600 focus:border-amber-brown-500 focus:ring-amber-brown-500/20",
-        InputVariant::Error => "bg-dark-charcoal-400 border border-sienna-brown-500 text-light-beige-300 placeholder-light-beige-600 focus:border-sienna-brown-500 focus:ring-sienna-brown-500/20",
+        InputVariant::Warning => "bg-dark-charcoal-400 border border-vibrant-orange-500 text-light-beige-300 placeholder-light-beige-600 focus:border-vibrant-orange-500 focus:ring-vibrant-orange-500/20",
+        InputVariant::Error => "bg-dark-charcoal-400 border border-vibrant-orange-500 text-light-beige-300 placeholder-light-beige-600 focus:border-vibrant-orange-500 focus:ring-vibrant-orange-500/20",
     };
 
     let classes = format!("{} {} {} {}", base_classes, size_classes, variant_classes, props.class);

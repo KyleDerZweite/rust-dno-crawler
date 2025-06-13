@@ -153,7 +153,7 @@ pub fn get_custom_palette() -> HashMap<&'static str, HashMap<u16, &'static str>>
     amber_brown.insert(700, "#9D5333");
     amber_brown.insert(800, "#8A3E21");
     amber_brown.insert(900, "#77290F");
-    palette.insert("amber-brown", amber_brown);
+    palette.insert("vibrant-orange", amber_brown);
     
     // Sienna Brown
     let mut sienna_brown = HashMap::new();
@@ -166,7 +166,7 @@ pub fn get_custom_palette() -> HashMap<&'static str, HashMap<u16, &'static str>>
     sienna_brown.insert(700, "#653A23");
     sienna_brown.insert(800, "#522916");
     sienna_brown.insert(900, "#3F1809");
-    palette.insert("sienna-brown", sienna_brown);
+    palette.insert("vibrant-orange", sienna_brown);
     
     // Muted Olive
     let mut muted_olive = HashMap::new();

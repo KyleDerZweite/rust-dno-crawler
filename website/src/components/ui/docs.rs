@@ -118,7 +118,7 @@ pub fn get_component_docs() -> HashMap<String, ComponentDoc> {
                 },
                 VariantDoc {
                     name: "Secondary".to_string(),
-                    description: "Secondary action button with amber-brown background".to_string(),
+                    description: "Secondary action button with vibrant-orange background".to_string(),
                     use_case: "Secondary actions like cancel or alternative options".to_string(),
                     example: "variant: ButtonVariant::Secondary".to_string(),
                 },

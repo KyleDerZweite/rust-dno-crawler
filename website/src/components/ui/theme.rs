@@ -176,44 +176,44 @@ pub mod theme_variants {
         match (variant, contrast) {
             (ThemeVariant::Dark, ContrastLevel::Standard) => ButtonThemeClasses {
                 primary: "bg-forest-green-500 hover:bg-forest-green-600 text-light-beige-200 shadow-lg",
-                secondary: "bg-amber-brown-500 hover:bg-amber-brown-600 text-light-beige-200 shadow-lg",
+                secondary: "bg-vibrant-orange-500 hover:bg-vibrant-orange-600 text-light-beige-200 shadow-lg",
                 ghost: "bg-transparent hover:bg-dark-charcoal-600 text-light-beige-500 hover:text-light-beige-300",
                 outline: "bg-transparent hover:bg-forest-green-500 text-forest-green-400 hover:text-light-beige-200 border-2 border-forest-green-500",
-                danger: "bg-sienna-brown-600 hover:bg-sienna-brown-700 text-light-beige-200 shadow-lg",
+                danger: "bg-vibrant-orange-600 hover:bg-vibrant-orange-700 text-light-beige-200 shadow-lg",
                 success: "bg-forest-green-400 hover:bg-forest-green-500 text-light-beige-200 shadow-lg",
             },
             (ThemeVariant::Dark, ContrastLevel::Enhanced) => ButtonThemeClasses {
                 primary: "bg-forest-green-400 hover:bg-forest-green-300 text-light-beige-100 shadow-lg border border-light-beige-400",
-                secondary: "bg-amber-brown-400 hover:bg-amber-brown-300 text-light-beige-100 shadow-lg border border-light-beige-400",
+                secondary: "bg-vibrant-orange-400 hover:bg-vibrant-orange-300 text-light-beige-100 shadow-lg border border-light-beige-400",
                 ghost: "bg-transparent hover:bg-dark-charcoal-500 text-light-beige-200 hover:text-light-beige-100",
                 outline: "bg-transparent hover:bg-forest-green-400 text-forest-green-300 hover:text-light-beige-100 border-2 border-forest-green-400",
-                danger: "bg-sienna-brown-500 hover:bg-sienna-brown-400 text-light-beige-100 shadow-lg border border-light-beige-400",
+                danger: "bg-vibrant-orange-500 hover:bg-vibrant-orange-400 text-light-beige-100 shadow-lg border border-light-beige-400",
                 success: "bg-forest-green-300 hover:bg-forest-green-200 text-light-beige-100 shadow-lg border border-light-beige-400",
             },
             (ThemeVariant::HighContrast, _) => ButtonThemeClasses {
                 primary: "bg-forest-green-400 hover:bg-forest-green-300 text-light-beige-100 shadow-xl border-2 border-light-beige-300",
-                secondary: "bg-amber-brown-400 hover:bg-amber-brown-300 text-light-beige-100 shadow-xl border-2 border-light-beige-300",
+                secondary: "bg-vibrant-orange-400 hover:bg-vibrant-orange-300 text-light-beige-100 shadow-xl border-2 border-light-beige-300",
                 ghost: "bg-transparent hover:bg-dark-charcoal-500 text-light-beige-200 hover:text-light-beige-100 border border-light-beige-400",
                 outline: "bg-transparent hover:bg-forest-green-400 text-forest-green-200 hover:text-light-beige-100 border-3 border-forest-green-400",
-                danger: "bg-sienna-brown-500 hover:bg-sienna-brown-400 text-light-beige-100 shadow-xl border-2 border-light-beige-300",
+                danger: "bg-vibrant-orange-500 hover:bg-vibrant-orange-400 text-light-beige-100 shadow-xl border-2 border-light-beige-300",
                 success: "bg-forest-green-300 hover:bg-forest-green-200 text-light-beige-100 shadow-xl border-2 border-light-beige-300",
             },
             (ThemeVariant::ReducedMotion, contrast) => {
                 match contrast {
                     ContrastLevel::Standard => ButtonThemeClasses {
                         primary: "bg-forest-green-500 hover:bg-forest-green-600 text-light-beige-200 shadow-lg transition-none",
-                        secondary: "bg-amber-brown-500 hover:bg-amber-brown-600 text-light-beige-200 shadow-lg transition-none",
+                        secondary: "bg-vibrant-orange-500 hover:bg-vibrant-orange-600 text-light-beige-200 shadow-lg transition-none",
                         ghost: "bg-transparent hover:bg-dark-charcoal-600 text-light-beige-500 hover:text-light-beige-300 transition-none",
                         outline: "bg-transparent hover:bg-forest-green-500 text-forest-green-400 hover:text-light-beige-200 border-2 border-forest-green-500 transition-none",
-                        danger: "bg-sienna-brown-600 hover:bg-sienna-brown-700 text-light-beige-200 shadow-lg transition-none",
+                        danger: "bg-vibrant-orange-600 hover:bg-vibrant-orange-700 text-light-beige-200 shadow-lg transition-none",
                         success: "bg-forest-green-400 hover:bg-forest-green-500 text-light-beige-200 shadow-lg transition-none",
                     },
                     ContrastLevel::Enhanced => ButtonThemeClasses {
                         primary: "bg-forest-green-400 hover:bg-forest-green-300 text-light-beige-100 shadow-xl border-2 border-light-beige-300 transition-none",
-                        secondary: "bg-amber-brown-400 hover:bg-amber-brown-300 text-light-beige-100 shadow-xl border-2 border-light-beige-300 transition-none",
+                        secondary: "bg-vibrant-orange-400 hover:bg-vibrant-orange-300 text-light-beige-100 shadow-xl border-2 border-light-beige-300 transition-none",
                         ghost: "bg-transparent hover:bg-dark-charcoal-500 text-light-beige-200 hover:text-light-beige-100 border border-light-beige-400 transition-none",
                         outline: "bg-transparent hover:bg-forest-green-400 text-forest-green-200 hover:text-light-beige-100 border-3 border-forest-green-400 transition-none",
-                        danger: "bg-sienna-brown-500 hover:bg-sienna-brown-400 text-light-beige-100 shadow-xl border-2 border-light-beige-300 transition-none",
+                        danger: "bg-vibrant-orange-500 hover:bg-vibrant-orange-400 text-light-beige-100 shadow-xl border-2 border-light-beige-300 transition-none",
                         success: "bg-forest-green-300 hover:bg-forest-green-200 text-light-beige-100 shadow-xl border-2 border-light-beige-300 transition-none",
                     }
                 }
@@ -267,34 +267,34 @@ pub mod theme_variants {
             (ThemeVariant::Dark, ContrastLevel::Standard) => InputThemeClasses {
                 default: "bg-dark-charcoal-400 border border-dark-charcoal-300 text-light-beige-300 placeholder-light-beige-600",
                 success: "bg-dark-charcoal-400 border border-forest-green-400 text-light-beige-300 placeholder-light-beige-600",
-                warning: "bg-dark-charcoal-400 border border-amber-brown-500 text-light-beige-300 placeholder-light-beige-600",
-                error: "bg-dark-charcoal-400 border border-sienna-brown-500 text-light-beige-300 placeholder-light-beige-600",
+                warning: "bg-dark-charcoal-400 border border-vibrant-orange-500 text-light-beige-300 placeholder-light-beige-600",
+                error: "bg-dark-charcoal-400 border border-vibrant-orange-500 text-light-beige-300 placeholder-light-beige-600",
             },
             (ThemeVariant::Dark, ContrastLevel::Enhanced) => InputThemeClasses {
                 default: "bg-dark-charcoal-500 border-2 border-light-beige-500 text-light-beige-200 placeholder-light-beige-500",
                 success: "bg-dark-charcoal-500 border-2 border-forest-green-300 text-light-beige-200 placeholder-light-beige-500",
-                warning: "bg-dark-charcoal-500 border-2 border-amber-brown-400 text-light-beige-200 placeholder-light-beige-500",
-                error: "bg-dark-charcoal-500 border-2 border-sienna-brown-400 text-light-beige-200 placeholder-light-beige-500",
+                warning: "bg-dark-charcoal-500 border-2 border-vibrant-orange-400 text-light-beige-200 placeholder-light-beige-500",
+                error: "bg-dark-charcoal-500 border-2 border-vibrant-orange-400 text-light-beige-200 placeholder-light-beige-500",
             },
             (ThemeVariant::HighContrast, _) => InputThemeClasses {
                 default: "bg-dark-charcoal-500 border-2 border-light-beige-400 text-light-beige-200 placeholder-light-beige-500",
                 success: "bg-dark-charcoal-500 border-2 border-forest-green-300 text-light-beige-200 placeholder-light-beige-500",
-                warning: "bg-dark-charcoal-500 border-2 border-amber-brown-400 text-light-beige-200 placeholder-light-beige-500",
-                error: "bg-dark-charcoal-500 border-2 border-sienna-brown-400 text-light-beige-200 placeholder-light-beige-500",
+                warning: "bg-dark-charcoal-500 border-2 border-vibrant-orange-400 text-light-beige-200 placeholder-light-beige-500",
+                error: "bg-dark-charcoal-500 border-2 border-vibrant-orange-400 text-light-beige-200 placeholder-light-beige-500",
             },
             (ThemeVariant::ReducedMotion, contrast) => {
                 match contrast {
                     ContrastLevel::Standard => InputThemeClasses {
                         default: "bg-dark-charcoal-400 border border-dark-charcoal-300 text-light-beige-300 placeholder-light-beige-600 transition-none",
                         success: "bg-dark-charcoal-400 border border-forest-green-400 text-light-beige-300 placeholder-light-beige-600 transition-none",
-                        warning: "bg-dark-charcoal-400 border border-amber-brown-500 text-light-beige-300 placeholder-light-beige-600 transition-none",
-                        error: "bg-dark-charcoal-400 border border-sienna-brown-500 text-light-beige-300 placeholder-light-beige-600 transition-none",
+                        warning: "bg-dark-charcoal-400 border border-vibrant-orange-500 text-light-beige-300 placeholder-light-beige-600 transition-none",
+                        error: "bg-dark-charcoal-400 border border-vibrant-orange-500 text-light-beige-300 placeholder-light-beige-600 transition-none",
                     },
                     ContrastLevel::Enhanced => InputThemeClasses {
                         default: "bg-dark-charcoal-500 border-2 border-light-beige-400 text-light-beige-200 placeholder-light-beige-500 transition-none",
                         success: "bg-dark-charcoal-500 border-2 border-forest-green-300 text-light-beige-200 placeholder-light-beige-500 transition-none",
-                        warning: "bg-dark-charcoal-500 border-2 border-amber-brown-400 text-light-beige-200 placeholder-light-beige-500 transition-none",
-                        error: "bg-dark-charcoal-500 border-2 border-sienna-brown-400 text-light-beige-200 placeholder-light-beige-500 transition-none",
+                        warning: "bg-dark-charcoal-500 border-2 border-vibrant-orange-400 text-light-beige-200 placeholder-light-beige-500 transition-none",
+                        error: "bg-dark-charcoal-500 border-2 border-vibrant-orange-400 text-light-beige-200 placeholder-light-beige-500 transition-none",
                     }
                 }
             }

@@ -229,9 +229,9 @@ pub fn get_color_palette() -> HashMap<String, Vec<ColorToken>> {
     ]);
     
     // Amber Brown - Secondary accents
-    palette.insert("amber-brown".to_string(), vec![
+    palette.insert("vibrant-orange".to_string(), vec![
         ColorToken {
-            name: "amber-brown-500".to_string(),
+            name: "vibrant-orange-500".to_string(),
             hex_value: "#C37D57".to_string(),
             description: "Secondary accent for warm elements".to_string(),
             usage: vec![

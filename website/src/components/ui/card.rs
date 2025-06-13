@@ -43,9 +43,9 @@ pub fn Card(props: CardProps) -> Element {
 
     let padding_classes = match props.padding {
         CardPadding::None => "",
-        CardPadding::Small => "p-6 sm:p-4",
-        CardPadding::Medium => "p-8 sm:p-6", 
-        CardPadding::Large => "p-10 sm:p-8",
+        CardPadding::Small => "p-4 sm:p-5 md:p-6",
+        CardPadding::Medium => "p-5 sm:p-6 md:p-8", 
+        CardPadding::Large => "p-6 sm:p-8 md:p-10",
     };
 
     let interactive_classes = if props.onclick.is_some() {

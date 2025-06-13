@@ -9,15 +9,15 @@ pub struct Error404Props {
 
 #[component]
 pub fn Error404(props: Error404Props) -> Element {
-    // Theme-aware classes (simplified to dark theme)
-    let container_bg = "bg-neutral-800 shadow-xl border border-neutral-700";
-    let heading_color = "text-neutral-100";
-    let text_color = "text-neutral-400";
-    let error_number_color = "text-amber-600";
-    let log_bg = "bg-red-900/20 border border-red-800/30";
-    let log_text = "text-amber-400";
-    let icon_color = "text-neutral-500";
-    let dashboard_button = "border-neutral-600 text-neutral-300 hover:text-green-500 hover:bg-green-900/20 hover:border-green-500 bg-transparent";
+    // Theme-aware classes using custom color palette
+    let container_bg = "bg-dark-charcoal-600/80 backdrop-blur-lg border border-dark-charcoal-400/30 shadow-xl shadow-dark-charcoal-900/10";
+    let heading_color = "text-light-beige-200";
+    let text_color = "text-light-beige-500";
+    let error_number_color = "text-vibrant-orange-400";
+    let log_bg = "bg-vibrant-orange-500/20 border border-vibrant-orange-500/30";
+    let log_text = "text-light-beige-300";
+    let icon_color = "text-light-beige-600";
+    let dashboard_button = "border-forest-green-500 text-forest-green-400 hover:text-light-beige-200 hover:bg-forest-green-500 hover:border-forest-green-600 bg-transparent";
 
     rsx! {
         div {
@@ -103,7 +103,7 @@ pub fn Error404(props: Error404Props) -> Element {
 
                 // Additional help text
                 div {
-                    class: "mt-8 pt-6 border-t border-gray-200 dark:border-neutral-700",
+                    class: "mt-8 pt-6 border-t border-dark-charcoal-400",
                     p {
                         class: format!("{} text-sm", text_color),
                         "Still lost? Try using the navigation menu above or "
@@ -111,7 +111,7 @@ pub fn Error404(props: Error404Props) -> Element {
                             href: "https://github.com/KyleDerZweite/rust-dno-crawler/issues",
                             target: "_blank",
                             rel: "noopener noreferrer",
-                            class: "text-amber-600 hover:text-amber-700 underline font-medium transition-colors underline-offset-4 hover:underline",
+                            class: "text-vibrant-orange-400 hover:text-vibrant-orange-300 underline font-medium transition-colors underline-offset-4 hover:underline",
                             "report this issue"
                         }
                         " if you think this is a bug."

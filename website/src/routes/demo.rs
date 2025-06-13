@@ -14,8 +14,8 @@ pub fn Demo() -> Element {
             // Page Header
             div {
                 class: "text-center mb-12",
-                h1 { class: "text-4xl font-bold text-neutral-100 mb-4", "UI Components Demo" }
-                p { class: "text-neutral-400", "A showcase of all available UI components in the design system" }
+                h1 { class: "text-4xl font-bold text-light-beige-200 mb-4", "UI Components Demo" }
+                p { class: "text-light-beige-500", "A showcase of all available UI components in the design system" }
             }
 
             // Buttons Section
@@ -210,7 +210,7 @@ pub fn Demo() -> Element {
             }
             
             ModalBody {
-                p { class: "text-neutral-300", 
+                p { class: "text-light-beige-400", 
                     "This is an example modal dialog. You can put any content here including forms, images, or other components."
                 }
             }

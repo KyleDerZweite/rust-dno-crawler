@@ -151,7 +151,7 @@ pub fn Footer() -> Element {
                             class: format!("flex items-center space-x-4 text-xs {}", secondary_text),
                             span { "Built with " }
                             span {
-                                class: "text-amber-brown-400 font-medium",
+                                class: "text-vibrant-orange-400 font-medium",
                                 "Rust"
                             }
                             span { "+" }

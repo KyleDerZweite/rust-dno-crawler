@@ -17,7 +17,7 @@ pub fn Header(props: HeaderProps) -> Element {
     let island_bg = "bg-dark-charcoal-900/80 backdrop-blur-lg border border-dark-charcoal-400/40 shadow-2xl shadow-black/20";
     let island_hover_bg = "hover:bg-dark-charcoal-700/90";
     let text_primary = "text-light-beige-300";
-    let text_secondary = "text-light-beige-500";
+    let _text_secondary = "text-light-beige-500";
 
     rsx! {
         // Floating Island Navigation
