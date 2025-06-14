@@ -5,13 +5,10 @@ default_platform = "web"
 # `build` & `serve` dist path
 out_dir = "dist"
 
-# resource (public) file folder
-asset_dir = "public"
-
 [web.app]
 # HTML title tag content
 title = "DNO Crawler - Development"
-base_path = "dist"
+# base_path = "" # Re-add or adjust if you need a non-root base path for your app's URLs
 
 [web.watcher]
 # when watcher trigger, regenerate the `index.html`
@@ -23,12 +20,22 @@ reload_css = true
 watch_path = ["src", "public", "../tailwind_input.css"]
 
 [web.resource]
-# include CSS files
-style = ["tailwind_output.css"]
+# Resource (static asset) configuration
+# These sections define where static files are found for dev and prod builds.
 
-[web.proxy]
+[web.resource.dev]
+# Resource (public) file folder for development builds
+dir = "public"
+
+[web.resource.prod]
+# Resource (public) file folder for production builds
+dir = "public"
+
+# The proxy configuration now expects an array of proxy rules.
+# Each rule is a table within the array.
+[[web.proxy]]
 # backend server for API calls during development
-backend = "http://localhost:3000"
+backend = "http://localhost:3000/api" # <--- CHANGED: Added trailing slash
 
 [build]
 # development optimizations

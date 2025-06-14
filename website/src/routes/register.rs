@@ -1,196 +1,169 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::components::ui::*;
+// Simplified without custom components
 
 #[component]
 pub fn Register() -> Element {
-    // Theme-aware classes using custom color palette
-    let bg_color = "bg-dark-charcoal-800";
-    let heading_color = "text-light-beige-200";
-    let text_color = "text-light-beige-500";
-    let label_color = "text-light-beige-300";
-    let divider_bg = "bg-dark-charcoal-600";
-    let divider_border = "border-dark-charcoal-400";
-
     rsx! {
         div {
-            class: format!("min-h-screen flex items-center justify-center {} py-12 px-4 sm:px-6 lg:px-8", bg_color),
+            class: "min-h-screen flex items-center justify-center py-12 px-4",
             div {
-                class: "max-w-md w-full space-y-8",
+                class: "max-w-md w-full bg-gray-900/80 backdrop-blur-lg border border-white/10 p-8 rounded-xl shadow-2xl",
 
-                // Header Section
+                // Header
                 div {
                     class: "text-center",
-                    // Logo
                     div {
                         class: "flex justify-center mb-6",
                         div {
-                            class: "w-12 h-12 bg-forest-green-500 rounded-xl flex items-center justify-center",
-                            span { class: "text-light-beige-200 font-bold text-xl", "K" }
+                            class: "w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg",
+                            span { class: "text-white font-bold text-xl", "K" }
                         }
                     }
                     h2 {
-                        class: format!("text-3xl font-bold {} mb-2", heading_color),
+                        class: "text-3xl font-bold text-white mb-2",
                         "Join KyleHub"
                     }
                     p {
-                        class: format!("{} text-sm", text_color),
+                        class: "text-gray-400 text-sm",
                         "Create your account to get started"
                     }
                 }
 
                 // Register Form
-                Card {
-                    variant: CardVariant::Glass,
-                    padding: CardPadding::Large,
-                    class: "mt-8".to_string(),
-                    form {
-                        class: "space-y-6",
-                        method: "POST",
-                        action: "/register",
+                form {
+                    class: "space-y-6",
+                    method: "POST",
+                    action: "/register",
 
+                    div {
+                        class: "space-y-4",
+
+                        // Full Name Field
                         div {
-                            class: "space-y-4",
-
-                            // Full Name Field
-                            div {
-                                label {
-                                    r#for: "name",
-                                    class: format!("block text-sm font-medium {} mb-2", label_color),
-                                    "Full name"
-                                }
-                                Input {
-                                    id: "name".to_string(),
-                                    name: "name".to_string(),
-                                    input_type: "text".to_string(),
-                                    placeholder: "Enter your full name".to_string(),
-                                    required: true,
-                                }
+                            label {
+                                r#for: "name",
+                                class: "block text-sm font-medium text-gray-300 mb-2",
+                                "Full name"
                             }
-
-                            // Email Field
-                            div {
-                                label {
-                                    r#for: "email",
-                                    class: format!("block text-sm font-medium {} mb-2", label_color),
-                                    "Email address"
-                                }
-                                Input {
-                                    id: "email".to_string(),
-                                    name: "email".to_string(),
-                                    input_type: "email".to_string(),
-                                    placeholder: "Enter your email address".to_string(),
-                                    required: true,
-                                }
-                            }
-
-                            // Password Field
-                            div {
-                                label {
-                                    r#for: "password",
-                                    class: format!("block text-sm font-medium {} mb-2", label_color),
-                                    "Password"
-                                }
-                                Input {
-                                    id: "password".to_string(),
-                                    name: "password".to_string(),
-                                    input_type: "password".to_string(),
-                                    placeholder: "Create a secure password".to_string(),
-                                    required: true,
-                                }
-                                p {
-                                    class: format!("mt-1 text-xs {}", text_color),
-                                    "At least 8 characters with numbers and symbols"
-                                }
-                            }
-
-                            // Confirm Password Field
-                            div {
-                                label {
-                                    r#for: "confirm-password",
-                                    class: format!("block text-sm font-medium {} mb-2", label_color),
-                                    "Confirm password"
-                                }
-                                Input {
-                                    id: "confirm-password".to_string(),
-                                    name: "confirm-password".to_string(),
-                                    input_type: "password".to_string(),
-                                    placeholder: "Confirm your password".to_string(),
-                                    required: true,
-                                }
+                            input {
+                                id: "name",
+                                name: "name",
+                                r#type: "text",
+                                required: true,
+                                class: "w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300",
+                                placeholder: "Enter your full name"
                             }
                         }
 
-                        // Terms and Privacy
+                        // Email Field
                         div {
-                            class: "flex items-start",
-                            div {
-                                class: "flex items-center h-5",
-                                input {
-                                    id: "terms",
-                                    name: "terms",
-                                    r#type: "checkbox",
-                                    required: true,
-                                    class: format!("h-4 w-4 text-forest-green-500 focus:ring-forest-green-500 rounded border-dark-charcoal-400 bg-dark-charcoal-500")
-                                }
+                            label {
+                                r#for: "email",
+                                class: "block text-sm font-medium text-gray-300 mb-2",
+                                "Email address"
                             }
-                            div {
-                                class: "ml-3 text-sm",
-                                label {
-                                    r#for: "terms",
-                                    class: format!("{}", text_color),
-                                    "I agree to the "
-                                    a {
-                                        href: "/terms",
-                                        class: "text-forest-green-400 hover:text-forest-green-300 transition-colors underline-offset-4 hover:underline",
-                                        "Terms of Service"
-                                    }
-                                    " and "
-                                    a {
-                                        href: "/privacy",
-                                        class: "text-forest-green-400 hover:text-forest-green-300 transition-colors underline-offset-4 hover:underline",
-                                        "Privacy Policy"
-                                    }
-                                }
+                            input {
+                                id: "email",
+                                name: "email",
+                                r#type: "email",
+                                required: true,
+                                class: "w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300",
+                                placeholder: "Enter your email address"
                             }
                         }
 
-                        // Submit Button (Primary - Forest Green for new user registration)
+                        // Password Field
                         div {
-                            PrimaryButton {
-                                size: ButtonSize::Large,
-                                class: "w-full".to_string(),
-                                "Create account"
+                            label {
+                                r#for: "password",
+                                class: "block text-sm font-medium text-gray-300 mb-2",
+                                "Password"
+                            }
+                            input {
+                                id: "password",
+                                name: "password",
+                                r#type: "password",
+                                required: true,
+                                class: "w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300",
+                                placeholder: "Create a secure password"
+                            }
+                            p {
+                                class: "mt-1 text-xs text-gray-400",
+                                "At least 8 characters with numbers and symbols"
+                            }
+                        }
+
+                        // Confirm Password Field
+                        div {
+                            label {
+                                r#for: "confirm-password",
+                                class: "block text-sm font-medium text-gray-300 mb-2",
+                                "Confirm password"
+                            }
+                            input {
+                                id: "confirm-password",
+                                name: "confirm-password",
+                                r#type: "password",
+                                required: true,
+                                class: "w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300",
+                                placeholder: "Confirm your password"
                             }
                         }
                     }
 
-                    // Divider
+                    // Terms and Privacy
                     div {
-                        class: "mt-6",
+                        class: "flex items-start",
                         div {
-                            class: "relative",
-                            div {
-                                class: "absolute inset-0 flex items-center",
-                                div { class: format!("w-full border-t {}", divider_border) }
+                            class: "flex items-center h-5",
+                            input {
+                                id: "terms",
+                                name: "terms",
+                                r#type: "checkbox",
+                                required: true,
+                                class: "h-4 w-4 text-emerald-500 focus:ring-emerald-500 border-gray-400 rounded bg-gray-700"
                             }
-                            div {
-                                class: "relative flex justify-center text-sm",
-                                span {
-                                    class: format!("px-2 {} {}", divider_bg, text_color),
-                                    "Already have an account?"
+                        }
+                        div {
+                            class: "ml-3 text-sm",
+                            label {
+                                r#for: "terms",
+                                class: "text-gray-400",
+                                "I agree to the "
+                                a {
+                                    href: "/terms",
+                                    class: "text-emerald-400 hover:text-emerald-300 transition-colors hover:underline",
+                                    "Terms of Service"
+                                }
+                                " and "
+                                a {
+                                    href: "/privacy",
+                                    class: "text-emerald-400 hover:text-emerald-300 transition-colors hover:underline",
+                                    "Privacy Policy"
                                 }
                             }
                         }
                     }
 
-                    // Login Link (Green hover for existing user action)
-                    div {
-                        class: "mt-6 text-center",
+                    // Submit Button
+                    button {
+                        r#type: "submit",
+                        class: "w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-lg hover:shadow-xl transform hover:scale-[1.02]",
+                        "Create account"
+                    }
+                }
+
+                // Login Link
+                div {
+                    class: "text-center pt-4 border-t border-gray-700",
+                    p {
+                        class: "text-gray-400 text-sm",
+                        "Already have an account? "
                         a {
                             href: "/login",
-                            class: "text-forest-green-400 hover:text-forest-green-300 font-medium transition-colors underline-offset-4 hover:underline",
-                            "Sign in to your account"
+                            class: "text-emerald-400 hover:text-emerald-300 transition-colors hover:underline font-medium",
+                            "Sign in"
                         }
                     }
                 }

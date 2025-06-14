@@ -5,11 +5,7 @@
   "main": "tailwind.config.js",
   "scripts": {
     "build:css": "tailwindcss -i ./tailwind_input.css -o ./public/tailwind_output.css --minify",
-    "watch:css": "tailwindcss -i ./tailwind_input.css -o ./public/tailwind_output.css --watch",
-    "dev:css": "tailwindcss -i ./tailwind_input.css -o ./public/tailwind_output.css --watch --poll",
-    "build:prod": "tailwindcss -i ./tailwind_input.css -o ./public/tailwind_output.css --minify --optimize",
-    "clean": "rm -f ./public/tailwind_output.css",
-    "rebuild": "npm run clean && npm run build:css"
+    "clean": "rm -f ./public/tailwind_output.css"
   },
   "keywords": [
     "rust",

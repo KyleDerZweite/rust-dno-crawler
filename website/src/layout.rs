@@ -1,32 +1,21 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
 use crate::components::{header::Header, footer::Footer};
-
-#[derive(Props, Clone, PartialEq)]
-pub struct LayoutProps {
-    #[props(default = None)]
-    pub user_role: Option<String>,
-    #[props(default = false)]
-    pub is_authenticated: bool,
-    pub children: Element,
-}
+use crate::routes::Route;
 
 #[component]
-pub fn Layout(props: LayoutProps) -> Element {
+pub fn Layout() -> Element {
+    let user_role: Option<String> = None;
+    let is_authenticated = false;
+    
     rsx! {
-        head {
-            title { "DNO Crawler" }
-            link { rel: "stylesheet", href: "/public/tailwind_output.css" }
-            meta { charset: "utf-8" }
-            meta { name: "viewport", content: "width=device-width, initial-scale=1" }
-        }
-        div { class: "bg-dark-charcoal-800 min-h-screen flex flex-col",
+        div { class: "bg-black min-h-screen flex flex-col",
             Header {
-                user_role: props.user_role.clone(),
-                is_authenticated: props.is_authenticated,
+                user_role: user_role.clone(),
+                is_authenticated: is_authenticated,
             }
-            main { class: "flex-grow w-full",
-                {props.children}
+            main { class: "flex-grow w-full pt-24 px-4",
+                Outlet::<Route> {}
             }
             Footer {}
         }

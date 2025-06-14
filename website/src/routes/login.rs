@@ -1,152 +1,122 @@
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use crate::components::ui::*;
+// Simplified without custom components
 
 #[component]
 pub fn Login() -> Element {
-    // Theme-aware classes using custom color palette
-    let bg_color = "bg-dark-charcoal-800";
-    let heading_color = "text-light-beige-200";
-    let text_color = "text-light-beige-500";
-    let label_color = "text-light-beige-300";
-    let divider_bg = "bg-dark-charcoal-500";
-    let divider_border = "border-dark-charcoal-400";
-
     rsx! {
         div {
-            class: format!("min-h-screen flex items-center justify-center {} py-12 px-4 sm:px-6 lg:px-8", bg_color),
+            class: "min-h-screen flex items-center justify-center py-12 px-4",
             div {
-                class: "max-w-md w-full space-y-8",
+                class: "max-w-md w-full bg-gray-900/80 backdrop-blur-lg border border-white/10 p-8 rounded-xl shadow-2xl",
 
-                // Header Section
+                // Header
                 div {
                     class: "text-center",
-                    // Logo
                     div {
                         class: "flex justify-center mb-6",
                         div {
-                            class: "w-12 h-12 bg-forest-green-500 rounded-xl flex items-center justify-center",
-                            span { class: "text-light-beige-200 font-bold text-xl", "K" }
+                            class: "w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg",
+                            span { class: "text-white font-bold text-xl", "K" }
                         }
                     }
                     h2 {
-                        class: format!("text-3xl font-bold {} mb-2", heading_color),
+                        class: "text-3xl font-bold text-white mb-2",
                         "Welcome back"
                     }
                     p {
-                        class: format!("{} text-sm", text_color),
-                        "Sign in to your KyleHub account"
+                        class: "text-gray-400 text-sm",
+                        "Sign in to your account"
                     }
                 }
 
                 // Login Form
-                Card {
-                    variant: CardVariant::Glass,
-                    padding: CardPadding::Large,
-                    class: "mt-8".to_string(),
-                    form {
-                        class: "space-y-6",
-                        method: "POST",
-                        action: "/login",
+                form {
+                    class: "space-y-6",
+                    method: "POST",
+                    action: "/login",
 
+                    div {
+                        class: "space-y-4",
+
+                        // Email Field
                         div {
-                            class: "space-y-4",
-
-                            // Email Field
-                            div {
-                                label {
-                                    r#for: "email",
-                                    class: format!("block text-sm font-medium {} mb-2", label_color),
-                                    "Email address"
-                                }
-                                Input {
-                                    id: "email".to_string(),
-                                    name: "email".to_string(),
-                                    input_type: "email".to_string(),
-                                    placeholder: "Enter your email address".to_string(),
-                                    required: true,
-                                }
+                            label {
+                                r#for: "email",
+                                class: "block text-sm font-medium text-gray-300 mb-2",
+                                "Email address"
                             }
-
-                            // Password Field
-                            div {
-                                label {
-                                    r#for: "password",
-                                    class: format!("block text-sm font-medium {} mb-2", label_color),
-                                    "Password"
-                                }
-                                Input {
-                                    id: "password".to_string(),
-                                    name: "password".to_string(),
-                                    input_type: "password".to_string(),
-                                    placeholder: "Enter your password".to_string(),
-                                    required: true,
-                                }
+                            input {
+                                id: "email",
+                                name: "email",
+                                r#type: "email",
+                                required: true,
+                                class: "w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300",
+                                placeholder: "Enter your email"
                             }
                         }
 
-                        // Remember Me & Forgot Password
+                        // Password Field
                         div {
-                            class: "flex items-center justify-between",
-                            div {
-                                class: "flex items-center",
-                                input {
-                                    id: "remember-me",
-                                    name: "remember-me",
-                                    r#type: "checkbox",
-                                    class: format!("h-4 w-4 text-forest-green-500 focus:ring-forest-green-500 rounded border-dark-charcoal-400 bg-dark-charcoal-500")
-                                }
-                                label {
-                                    r#for: "remember-me",
-                                    class: format!("ml-2 block text-sm {}", text_color),
-                                    "Remember me"
-                                }
+                            label {
+                                r#for: "password",
+                                class: "block text-sm font-medium text-gray-300 mb-2",
+                                "Password"
                             }
-                            div {
-                                a {
-                                    href: "/forgot-password",
-                                    class: "text-sm text-forest-green-400 hover:text-forest-green-300 transition-colors underline-offset-4 hover:underline",
-                                    "Forgot your password?"
-                                }
-                            }
-                        }
-
-                        // Submit Button (Primary - Green)
-                        div {
-                            PrimaryButton {
-                                size: ButtonSize::Large,
-                                class: "w-full".to_string(),
-                                "Sign in"
+                            input {
+                                id: "password",
+                                name: "password",
+                                r#type: "password",
+                                required: true,
+                                class: "w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300",
+                                placeholder: "Enter your password"
                             }
                         }
                     }
 
-                    // Divider
+                    // Remember Me & Forgot Password
                     div {
-                        class: "mt-6",
+                        class: "flex items-center justify-between",
                         div {
-                            class: "relative",
-                            div {
-                                class: "absolute inset-0 flex items-center",
-                                div { class: format!("w-full border-t {}", divider_border) }
+                            class: "flex items-center",
+                            input {
+                                id: "remember-me",
+                                name: "remember-me",
+                                r#type: "checkbox",
+                                class: "h-4 w-4 text-emerald-500 focus:ring-emerald-500 border-gray-400 rounded bg-gray-700"
                             }
-                            div {
-                                class: "relative flex justify-center text-sm",
-                                span {
-                                    class: format!("px-2 {} {}", divider_bg, text_color),
-                                    "New to KyleHub?"
-                                }
+                            label {
+                                r#for: "remember-me",
+                                class: "ml-2 block text-sm text-gray-400",
+                                "Remember me"
+                            }
+                        }
+                        div {
+                            a {
+                                href: "/forgot-password",
+                                class: "text-sm text-emerald-400 hover:text-emerald-300 transition-colors hover:underline",
+                                "Forgot password?"
                             }
                         }
                     }
 
-                    // Register Link (Secondary - Green hover for user registration)
-                    div {
-                        class: "mt-6 text-center",
-                        SecondaryButton {
-                            href: "/register".to_string(),
-                            size: ButtonSize::Large,
-                            class: "w-full".to_string(),
+                    // Submit Button
+                    button {
+                        r#type: "submit",
+                        class: "w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-lg hover:shadow-xl transform hover:scale-[1.02]",
+                        "Sign in"
+                    }
+                }
+
+                // Register Link
+                div {
+                    class: "text-center pt-4 border-t border-gray-700",
+                    p {
+                        class: "text-gray-400 text-sm",
+                        "New to KyleHub? "
+                        a {
+                            href: "/register",
+                            class: "text-emerald-400 hover:text-emerald-300 transition-colors hover:underline font-medium",
                             "Create an account"
                         }
                     }
