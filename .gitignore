@@ -4,7 +4,6 @@
 
 # --- Environment variables and secrets
 .env
-.env.*
 
 # --- SQLite database
 *.db
@@ -62,3 +61,4 @@ coverage/
 *.local.json
 *.png
 *.md
+.claude/

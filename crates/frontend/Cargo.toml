@@ -1,0 +1,34 @@
+[package]
+name = "frontend"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Shared types
+shared.workspace = true
+
+# Frontend framework
+dioxus.workspace = true
+dioxus-web.workspace = true
+dioxus-router.workspace = true
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# HTTP client
+reqwest.workspace = true
+
+# Logging
+tracing.workspace = true
+
+# Error handling
+thiserror.workspace = true
+
+# Date/Time
+chrono.workspace = true
+
+# UUID
+uuid.workspace = true

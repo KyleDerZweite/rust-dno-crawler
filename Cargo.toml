@@ -1,66 +1,69 @@
 [workspace]
 resolver = "2"
-members = [ "app", "api", "auth", "core", "crawler", "website"]
-
+members = [
+    "crates/shared",
+    "crates/api", 
+    "crates/crawler",
+    "crates/frontend"
+]
 
 [workspace.package]
 version = "0.0.1"
+edition = "2021"
+authors = ["KyleDerZweite"]
+license = "MIT"
+repository = "https://github.com/yourusername/dno-data-gatherer"
 
 [workspace.dependencies]
-anyhow = { version = "1.0.97" }
-serde_json = { version = "1.0.140" }
-tokio = { version = "1.45.0", features = ["full"] }
-reqwest = { version = "0.12.15", features = ["json"] }
-scraper = { version = "0.23.1" }
-serde = { version = "1.0.219", features = ["derive"] }
-spider = { version = "2.37.52", default-features = false }
+# Async runtime
+tokio = { version = "1.0", features = ["full"] }
+tokio-util = "0.7"
 
-dioxus = { version = "0.6.3" , features = ["router"]}
-dioxus-ssr = { version = "0.6.2" }
+# Web framework
+axum = "0.7"
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "fs"] }
 
-sqlx = { version = "0.7.4", features = ["sqlite", "runtime-tokio-native-tls", "macros", "chrono", "uuid"] }
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "sqlite", "chrono", "uuid"] }
 
-# New auth dependencies
-axum-login = { version = "0.15.3" }
-axum = { version = "0.7.9" }
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 
-# Password hashing - using the recommended argon2 approach
-argon2 = { version = "0.5.3" }
+# HTTP client
+reqwest = { version = "0.11", features = ["json"] }
 
-async-trait = { version = "0.1.87" }
-
-tower = "0.5"
-tower-http = { version = "0.5.2", features = ["cors", "fs"] }
+# Authentication
 jsonwebtoken = "9.0"
-chrono = { version = "0.4", features = ["serde"] }
-uuid = { version = "1.0", features = ["v4", "serde"] }
-thiserror = "1.0.69"
-regex = "1.0"
 
+# CLI
+clap = { version = "4.0", features = ["derive"] }
+
+# Logging
 tracing = "0.1"
-tracing-subscriber = "0.3"
-dotenv = "0.15"
-web-sys = { version = "0.3.77", features = ["Storage", "DomTokenList"] }
-gloo-timers = { version = "0.3.0", features = ["futures"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
 
-[profile]
+# Date/Time
+chrono = { version = "0.4", features = ["serde"] }
 
-[profile.wasm-dev]
-inherits = "dev"
-opt-level = 1
+# UUID
+uuid = { version = "1.0", features = ["v4", "serde"] }
 
-[profile.server-dev]
-inherits = "dev"
+# Frontend
+dioxus = "0.4"
+dioxus-web = "0.4"
+dioxus-router = "0.4"
 
-[profile.android-dev]
-inherits = "dev"
+# HTML parsing and web crawling
+scraper = "0.18"
+url = "2.5"
+regex = "1.10"
+async-trait = "0.1"
 
-[profile.release]
-opt-level = "z"
-debug = false
-lto = true
-codegen-units = 1
-panic = "abort"
-strip = true
-incremental = false
+# Shared types
+shared = { path = "crates/shared" }

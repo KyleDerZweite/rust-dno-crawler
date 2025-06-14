@@ -1,96 +1,179 @@
-# rust-dno-crawler
+# DNO Data Gatherer 🌿
 
-A high-performance, asynchronous web crawler and HTTP API for collecting, processing, and serving data from German Distribution Network Operators (DNOs). Built in Rust with a modular Cargo workspace: separate crates for core logic, authentication, crawling, API server, and frontend.
+A modern, simple Rust application for automatically gathering and processing data from German Distribution Network Operators (DNOs).
 
-## Workspace Structure
+## Features ✨
 
-- **core/**   : Shared data models, database integration (SQLx + SQLite), utility functions.
-- **auth/**   : Authentication library (password hashing, JWT) for secure access.
-- **api/**    : HTTP server (Axum) exposing RESTful endpoints. Offers both library and binary.
-- **crawler/**: Web crawler logic and CLI tool for data harvesting. Provides library and binary.
-- **website/**: Dioxus-based frontend (SSR + SPA). Runs standalone with mock or DB data. Library + binary.
-- **public/** : Static assets for the frontend (CSS, images).
-- **tests/**  : Integration and end-to-end tests.
+- 🔍 **Smart Search**: Integrated SearXNG for privacy-respecting web searches
+- 🤖 **AI Processing**: Local Ollama integration for intelligent data extraction
+- 📱 **Cross-Platform**: Single codebase for web and mobile using Dioxus
+- 🚀 **Fast & Efficient**: Built with Rust for maximum performance
+- 🔐 **Secure**: JWT authentication with refresh tokens
+- 🎨 **Beautiful UI**: Dark theme with nature-inspired accents
+- 📊 **Real-time Updates**: WebSocket support for live data
 
-## Prerequisites
+## Quick Start 🏃
 
-- Rust >=1.70 (stable) with Cargo
-- SQLite3 development libraries
-- Node.js & npm (for website/tailwind asset pipeline)
+### Prerequisites
 
-## Building the Project
+- Rust (latest stable)
+- SQLite
+- Node.js (for Tailwind CSS)
+- Docker (optional, for production setup)
+- SearXNG instance
+- Ollama installed locally
 
-At the root of the workspace:
+### Installation
 
 ```bash
-# Prepare database file if needed
-touch data.db
+# Clone the repository
+git clone https://github.com/yourusername/dno-data-gatherer.git
+cd dno-data-gatherer
 
-# Build all crates
-cargo build --workspace
+# Install dependencies
+make setup
 
-# Build frontend assets
-npm install --prefix website
-npm run build --prefix website
+# Run database migrations
+make migrate
+
+# Start development server
+make dev
 ```
 
-## Running Components
-
-### API Server
+### Running Individual Components
 
 ```bash
-cd api
+# API Server only
 cargo run --bin api
+
+# Crawler CLI
+cargo run --bin crawler -- --help
+
+# Frontend with mock data
+cd crates/frontend && npm run dev
 ```
 
-### Crawler CLI
+## Architecture 🏗️
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Dioxus    │────▶│   Axum API  │────▶│   SQLite    │
+│  Web/Mobile │     │   Server    │     │  Database   │
+└─────────────┘     └─────────────┘     └─────────────┘
+                           │
+                    ┌──────┴──────┐
+                    │             │
+              ┌─────▼─────┐ ┌────▼────┐
+              │  Crawler  │ │ Ollama  │
+              │  Engine   │ │   AI    │
+              └─────┬─────┘ └─────────┘
+                    │
+              ┌─────▼─────┐
+              │ SearXNG   │
+              │  Search   │
+              └───────────┘
+```
+
+## Configuration ⚙️
+
+Create a `.env` file in the root directory:
+
+```env
+# Database
+DATABASE_URL=sqlite://data.db
+
+# API Server
+API_PORT=8080
+JWT_SECRET=your-secret-key
+
+# SearXNG
+SEARXNG_URL=http://localhost:8888
+
+# Ollama
+OLLAMA_URL=http://localhost:11434
+OLLAMA_MODEL=llama3
+
+# Frontend
+VITE_API_URL=http://localhost:8080
+```
+
+## Development 👩‍💻
+
+### Available Commands
 
 ```bash
-cd crawler
-cargo run --bin crawler -- [OPTIONS]
+make dev        # Start all services in development mode
+make test       # Run all tests
+make lint       # Run clippy and format check
+make build      # Build release binaries
+make docker     # Build Docker images
 ```
 
-### Frontend Website
+### Project Structure
+
+- `/crates/api` - Axum REST API server
+- `/crates/crawler` - Standalone crawling engine
+- `/crates/frontend` - Dioxus web/mobile application
+- `/crates/shared` - Shared types and utilities
+
+## API Documentation 📚
+
+API documentation is available at `http://localhost:8080/swagger` when running in development mode.
+
+### Key Endpoints
+
+- `POST /auth/login` - User authentication
+- `GET /api/dnos` - List all DNOs
+- `POST /api/search` - Search DNO data
+- `GET /api/crawl/status` - Crawl job status
+- `WS /ws` - WebSocket for real-time updates
+
+## Deployment 🚀
+
+### Using Docker Compose
 
 ```bash
-cd website
-cargo run --bin website
-# or serve static assets in public/
+# Development
+docker-compose up
+
+# Production
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
-## Configuration
+### Manual Deployment
 
-Environment variables (via `.env` or shell):
+1. Build release binaries: `make build-release`
+2. Set up PostgreSQL and Redis (production)
+3. Configure environment variables
+4. Run migrations: `./api migrate`
+5. Start services with systemd or supervisor
 
-- `DATABASE_URL` (SQLite path)
-- `JWT_SECRET`
-- `OLLAMA_ENDPOINT`
+## Design Philosophy 🎨
 
-Refer to `.env.example` for full list.
+Our UI follows a nature-inspired dark theme:
+- **Base**: Deep blackstone colors
+- **Accents**: Forest greens and warm amber/orange tones
+- **Effects**: Subtle glass morphism and smooth animations
+- **Typography**: Clean, modern sans-serif
 
-## Testing
+## Contributing 🤝
 
-- Run unit tests per crate: `cargo test --package <crate>`
-- Run all tests: `cargo test --workspace`
-- Frontend component tests: `cargo test --package website`
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## Contributing
+## License 📄
 
-1. Fork the repo and create a feature branch.
-2. Adhere to Rust standards: `cargo fmt`, `cargo clippy`.
-3. Write tests for new features.
-4. Use Conventional Commits (`feat:`, `fix:`, `chore:`, etc.).
-5. Submit a pull request with a clear description.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Roadmap
+## Acknowledgments 🙏
 
-- Formalize database migrations (SQLx Migrations).
-- Complete decoupling of monolith to crates.
-- Add scheduler and automations for periodic crawling.
-- Enhance frontend UI and user management.
-
-## License
-
-Licensed under the MIT License. See [LICENSE.md](LICENSE.md) for details.
+- Built with love for KyleDerZweite and German friends
+- Powered by the amazing Rust ecosystem
+- Special thanks to the Dioxus and Axum communities
 
 ---
+
+**Need help?** Open an issue or reach out in discussions!
