@@ -3,7 +3,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum AppError {
     #[error("Database error: {0}")]
-    Database(String),
+    Database(#[from] sqlx::Error),
 
     #[error("HTTP request failed: {0}")]
     Http(#[from] reqwest::Error),
@@ -31,6 +31,9 @@ pub enum AppError {
 
     #[error("External service unavailable: {0}")]
     ServiceUnavailable(String),
+
+    #[error("External service error: {0}")]
+    External(String),
 
     #[error("Configuration error: {0}")]
     Config(String),
@@ -70,6 +73,7 @@ impl AppError {
             AppError::Conflict(_) => "CONFLICT",
             AppError::RateLimit => "RATE_LIMIT",
             AppError::ServiceUnavailable(_) => "SERVICE_UNAVAILABLE",
+            AppError::External(_) => "EXTERNAL_ERROR",
             AppError::Config(_) => "CONFIG_ERROR",
             AppError::Io(_) => "IO_ERROR",
             AppError::Internal(_) => "INTERNAL_ERROR",

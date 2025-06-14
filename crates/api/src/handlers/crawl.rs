@@ -2,9 +2,9 @@ use axum::{
     extract::{State, Path},
     response::Json,
 };
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize};
 use serde_json::{json, Value};
-use shared::{AppError, CrawlJob, CrawlStatus};
+use shared::{CrawlJob, CrawlStatus};
 use uuid::Uuid;
 use crate::AppState;
 
@@ -42,22 +42,46 @@ pub async fn list_jobs(
 }
 
 pub async fn create_job(
-    State(_state): State<AppState>,
+    State(state): State<AppState>,
     Json(req): Json<CreateCrawlJobRequest>,
-) -> Json<Value> {
-    // TODO: Implement actual job creation and queue
+) -> Result<Json<Value>, Json<Value>> {
     let job_id = Uuid::new_v4();
     
-    Json(json!({
-        "success": true,
-        "data": {
-            "id": job_id,
-            "url": req.url,
-            "status": "pending",
-            "created_at": chrono::Utc::now()
+    // Start crawling immediately (in a real implementation, this would be queued)
+    match state.crawl_service.crawl(&req.url).await {
+        Ok(result) => {
+            // In a real implementation, save to database here
+            Ok(Json(json!({
+                "success": true,
+                "data": {
+                    "id": job_id,
+                    "url": req.url,
+                    "status": "completed",
+                    "created_at": chrono::Utc::now(),
+                    "completed_at": chrono::Utc::now(),
+                    "result": {
+                        "title": result.title,
+                        "status_code": result.status_code,
+                        "links_found": result.links.len(),
+                        "emails_found": result.emails.len(),
+                        "phones_found": result.phone_numbers.len(),
+                        "metadata": result.metadata
+                    }
+                },
+                "message": "Crawl job completed successfully"
+            })))
         },
-        "message": "Crawl job created successfully"
-    }))
+        Err(err) => {
+            tracing::error!("Crawl failed for {}: {}", req.url, err);
+            Err(Json(json!({
+                "success": false,
+                "error": {
+                    "code": "CRAWL_FAILED",
+                    "message": format!("Crawl failed: {}", err)
+                }
+            })))
+        }
+    }
 }
 
 pub async fn get_job(

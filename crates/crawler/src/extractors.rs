@@ -115,7 +115,7 @@ impl DnoDataExtractor {
         
         let found_regions: Vec<Value> = regions
             .iter()
-            .filter(|region| text.contains(region))
+            .filter(|region| text.contains(*region))
             .map(|region| Value::String(region.to_string()))
             .collect();
             
@@ -138,7 +138,7 @@ impl DnoDataExtractor {
         
         let found_services: Vec<Value> = services
             .iter()
-            .filter(|service| text.contains(service))
+            .filter(|service| text.contains(*service))
             .map(|service| Value::String(service.to_string()))
             .collect();
             

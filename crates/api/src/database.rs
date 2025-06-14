@@ -15,7 +15,7 @@ pub async fn create_pool(config: &DatabaseConfig) -> Result<SqlitePool, AppError
         .await
         .map_err(|e| {
             error!("Failed to connect to database: {}", e);
-            AppError::Database(e.to_string())
+            AppError::Database(e)
         })?;
 
     info!("Database connection pool created successfully");
@@ -30,7 +30,7 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), AppError> {
         .await
         .map_err(|e| {
             error!("Failed to run migrations: {}", e);
-            AppError::Database(e.to_string())
+            AppError::Database(e)
         })?;
 
     info!("Database migrations completed successfully");

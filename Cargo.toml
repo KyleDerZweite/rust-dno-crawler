@@ -55,15 +55,19 @@ chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1.0", features = ["v4", "serde"] }
 
 # Frontend
-dioxus = "0.4"
-dioxus-web = "0.4"
-dioxus-router = "0.4"
+dioxus = "0.6.3"
+dioxus-web = "0.6.3"
+dioxus-router = "0.6.3"
 
 # HTML parsing and web crawling
 scraper = "0.18"
 url = "2.5"
 regex = "1.10"
 async-trait = "0.1"
+
+# Cryptography and encoding
+sha2 = "0.10"
+base64 = "0.22"
 
 # Shared types
 shared = { path = "crates/shared" }

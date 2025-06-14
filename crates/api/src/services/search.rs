@@ -8,6 +8,7 @@ pub trait SearchSource {
     fn name(&self) -> &'static str;
 }
 
+#[derive(Clone)]
 pub struct SearxngSource {
     base_url: String,
     client: reqwest::Client,
@@ -83,6 +84,7 @@ impl SearchSource for SearxngSource {
     }
 }
 
+#[derive(Clone)]
 pub struct MockSearchSource;
 
 #[async_trait]
@@ -109,5 +111,35 @@ impl SearchSource for MockSearchSource {
     
     fn name(&self) -> &'static str {
         "Mock Search"
+    }
+}
+
+#[derive(Clone)]
+pub struct SearchService {
+    searxng: Option<SearxngSource>,
+    mock: MockSearchSource,
+}
+
+impl SearchService {
+    pub fn new(searxng_url: Option<String>) -> Self {
+        Self {
+            searxng: searxng_url.map(|url| SearxngSource::new(url)),
+            mock: MockSearchSource,
+        }
+    }
+    
+    pub async fn search(&self, query: &str, limit: Option<u32>) -> Result<Vec<SearchResult>, AppError> {
+        // Try SearXNG first if available, fall back to mock
+        if let Some(searxng) = &self.searxng {
+            match searxng.search(query, limit).await {
+                Ok(results) => return Ok(results),
+                Err(e) => {
+                    tracing::warn!("SearXNG search failed, falling back to mock: {}", e);
+                }
+            }
+        }
+        
+        // Use mock source as fallback
+        self.mock.search(query, limit).await
     }
 }

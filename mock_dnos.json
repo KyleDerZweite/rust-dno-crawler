@@ -1,0 +1,52 @@
+[
+  {
+    "id": "1694512f-823b-413a-810b-499cb3e61d2f",
+    "name": "Avacon Netz GmbH",
+    "region": "Niedersachsen",
+    "website": "https://www.avacon-netz.de",
+    "contact_info": {
+      "email": "info@avacon-netz.de",
+      "phone": "+49 5361 189-0",
+      "address": null
+    },
+    "data_sources": [
+      {
+        "id": "09f0f3d1-0917-4d99-88b8-f949a6c45720",
+        "url": "https://www.avacon-netz.de/de/netz/netzanschluss",
+        "source_type": "Website",
+        "last_crawled": null,
+        "status": "Pending",
+        "metadata": {
+          "category": "netzanschluss"
+        }
+      }
+    ],
+    "created_at": "2025-06-14T19:28:45.882490595Z",
+    "updated_at": "2025-06-14T19:28:45.882493260Z"
+  },
+  {
+    "id": "16488ec0-655c-4913-af35-2edb2e13be05",
+    "name": "Bayernwerk Netz GmbH",
+    "region": "Bayern",
+    "website": "https://www.bayernwerk-netz.de",
+    "contact_info": {
+      "email": "info@bayernwerk-netz.de",
+      "phone": "+49 941 201-0",
+      "address": null
+    },
+    "data_sources": [
+      {
+        "id": "3c2f9e54-1a6f-4c98-8bee-c164ff45ef25",
+        "url": "https://www.bayernwerk-netz.de/de/netz/netzanschluss",
+        "source_type": "Website",
+        "last_crawled": null,
+        "status": "Pending",
+        "metadata": {
+          "category": "netzanschluss"
+        }
+      }
+    ],
+    "created_at": "2025-06-14T19:28:45.882495885Z",
+    "updated_at": "2025-06-14T19:28:45.882496055Z"
+  }
+]

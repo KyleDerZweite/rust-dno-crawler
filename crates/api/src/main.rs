@@ -2,6 +2,7 @@ mod routes;
 mod handlers;
 mod middleware;
 mod database;
+mod services;
 
 use axum::{
     Router,
@@ -12,6 +13,7 @@ use axum::{
 };
 use serde_json::{json, Value};
 use shared::{Config, AppError};
+use services::{SearchService, CrawlService, OllamaService, SearchOrchestrator, PdfAnalysisService};
 use tower::ServiceBuilder;
 use tower_http::cors::{CorsLayer, Any};
 use tracing::{info, error};
@@ -35,6 +37,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Initialize database
     let db_pool = database::create_pool(&config.database).await?;
     database::run_migrations(&db_pool).await?;
+    
+    // Initialize services
+    let search_service = SearchService::new(Some(config.external.searxng.url.clone()));
+    let crawl_service = CrawlService::new();
+    let ai_service = OllamaService::new(config.external.ollama.url.clone(), config.external.ollama.model.clone());
+    let pdf_service = PdfAnalysisService::new(db_pool.clone(), config.external.ollama.url.clone());
+    let search_orchestrator = SearchOrchestrator::new(
+        ai_service.clone(),
+        search_service.clone(),
+        crawl_service.clone(),
+        db_pool.clone(),
+    );
 
     // Build CORS layer
     let cors = CorsLayer::new()
@@ -55,6 +69,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_state(AppState {
             db: db_pool,
             config: config.clone(),
+            search_service,
+            crawl_service,
+            ai_service,
+            search_orchestrator,
+            pdf_service,
         });
 
     // Start the server
@@ -72,6 +91,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 pub struct AppState {
     pub db: sqlx::SqlitePool,
     pub config: Config,
+    pub search_service: SearchService,
+    pub crawl_service: CrawlService,
+    pub ai_service: OllamaService,
+    pub search_orchestrator: SearchOrchestrator,
+    pub pdf_service: PdfAnalysisService,
 }
 
 async fn health_check() -> Json<Value> {

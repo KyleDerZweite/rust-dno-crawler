@@ -47,7 +47,7 @@ pub fn Footer() -> Element {
 fn NavLink(to: Route, children: Element) -> Element {
     rsx! {
         Link {
-            to,
+            to: to,
             class: "text-stone-300 hover:text-green-400 transition-colors px-3 py-2 rounded-md hover:bg-stone-700/50",
             {children}
         }

@@ -60,12 +60,9 @@ impl WebCrawler {
                         return Ok(response);
                     } else {
                         warn!("HTTP {} for {} on attempt {}", response.status(), url, attempt);
-                        last_error = AppError::Http(reqwest::Error::from(
-                            reqwest::Error::from(std::io::Error::new(
-                                std::io::ErrorKind::Other,
-                                format!("HTTP {}", response.status())
-                            ))
-                        ));
+                        last_error = AppError::ServiceUnavailable(
+                            format!("HTTP {}", response.status())
+                        );
                     }
                 }
                 Err(e) => {
@@ -83,7 +80,7 @@ impl WebCrawler {
         Err(last_error)
     }
 
-    fn extract_metadata(&self, document: &Html, url: &str) -> PageMetadata {
+    fn extract_metadata(&self, document: &Html, _url: &str) -> PageMetadata {
         let title = document
             .select(&Selector::parse("title").unwrap())
             .next()

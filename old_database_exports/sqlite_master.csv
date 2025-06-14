@@ -1,0 +1,63 @@
+table,metadata,metadata,2,"CREATE TABLE metadata (
+            key TEXT PRIMARY KEY,
+            dno_name TEXT NOT NULL, -- JSON string for Vec<String>
+            description TEXT,
+            region TEXT
+        )"
+index,sqlite_autoindex_metadata_1,metadata,3,
+table,crawl,crawl,4,"CREATE TABLE crawl (
+            key TEXT PRIMARY KEY,
+            crawl_type TEXT NOT NULL,
+            netzentgelte_source_url TEXT,
+            hlzf_source_url TEXT,
+            netzentgelte_file_pattern TEXT,
+            hlzf_file_pattern TEXT,
+            auto_crawl INTEGER NOT NULL DEFAULT 0, -- 0 for false, 1 for true
+            auto_crawl_increment INTEGER NOT NULL DEFAULT 0, -- 0 for false, 1 for true
+            auto_crawl_years TEXT NOT NULL -- JSON string for Vec<i32>
+        )"
+index,sqlite_autoindex_crawl_1,crawl,5,
+table,hlzf_data,hlzf_data,6,"CREATE TABLE hlzf_data (
+            key TEXT NOT NULL,
+            year INTEGER NOT NULL,
+            update_timestamp INTEGER NOT NULL,
+            value_id TEXT NOT NULL,
+            value TEXT, -- Storing time strings or NULL
+            PRIMARY KEY (key, year, value_id)
+        )"
+index,sqlite_autoindex_hlzf_data_1,hlzf_data,7,
+table,netzentgelte_data,netzentgelte_data,8,"CREATE TABLE netzentgelte_data (
+            key TEXT NOT NULL,
+            year INTEGER NOT NULL,
+            update_timestamp INTEGER NOT NULL,
+            voltage_level TEXT NOT NULL,
+            value_id TEXT NOT NULL,
+            value REAL, -- Storing numeric values or NULL
+            PRIMARY KEY (key, year, voltage_level, value_id)
+        )"
+index,sqlite_autoindex_netzentgelte_data_1,netzentgelte_data,9,
+table,data_source_yearly,data_source_yearly,10,"CREATE TABLE data_source_yearly (
+            key TEXT NOT NULL,
+            year INTEGER NOT NULL,
+            source_type TEXT,
+            hlzf_url TEXT,
+            netzentgelte_url TEXT,
+            hlzf_file TEXT,
+            netzentgelte_file TEXT,
+            PRIMARY KEY (key, year)
+        )"
+index,sqlite_autoindex_data_source_yearly_1,data_source_yearly,11,
+table,users,users,15,"CREATE TABLE ""users""
+(
+    id            TEXT
+        primary key,
+    name          TEXT                               not null,
+    email         TEXT                               not null
+        unique,
+    password_hash TEXT                               not null,
+    role          TEXT     default 'user'            not null,
+    created_at    DATETIME default CURRENT_TIMESTAMP not null,
+    last_login    DATETIME
+)"
+index,sqlite_autoindex_users_1,users,16,
+index,sqlite_autoindex_users_2,users,17,

@@ -25,12 +25,9 @@ impl ApiClient {
             .map_err(AppError::Http)?;
             
         if !response.status().is_success() {
-            return Err(AppError::Http(reqwest::Error::from(
-                std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    format!("HTTP {}", response.status())
-                )
-            )));
+            return Err(AppError::ServiceUnavailable(
+                format!("HTTP {}", response.status())
+            ));
         }
         
         let results = response.json().await.map_err(AppError::Http)?;
@@ -46,12 +43,9 @@ impl ApiClient {
             .map_err(AppError::Http)?;
             
         if !response.status().is_success() {
-            return Err(AppError::Http(reqwest::Error::from(
-                std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    format!("HTTP {}", response.status())
-                )
-            )));
+            return Err(AppError::ServiceUnavailable(
+                format!("HTTP {}", response.status())
+            ));
         }
         
         let dnos = response.json().await.map_err(AppError::Http)?;
@@ -70,12 +64,9 @@ impl ApiClient {
             .map_err(AppError::Http)?;
             
         if !response.status().is_success() {
-            return Err(AppError::Http(reqwest::Error::from(
-                std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    format!("HTTP {}", response.status())
-                )
-            )));
+            return Err(AppError::ServiceUnavailable(
+                format!("HTTP {}", response.status())
+            ));
         }
         
         let job = response.json().await.map_err(AppError::Http)?;

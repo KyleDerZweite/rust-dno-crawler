@@ -12,3 +12,4 @@ chrono.workspace = true
 uuid.workspace = true
 thiserror.workspace = true
 reqwest.workspace = true
+sqlx.workspace = true
