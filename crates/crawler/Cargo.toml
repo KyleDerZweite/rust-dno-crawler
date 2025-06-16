@@ -42,3 +42,9 @@ scraper.workspace = true
 url.workspace = true
 regex.workspace = true
 async-trait.workspace = true
+
+# File management and hashing
+sha2.workspace = true
+
+# Additional dependencies for file operations
+tempfile.workspace = true

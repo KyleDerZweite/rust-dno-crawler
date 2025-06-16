@@ -69,5 +69,8 @@ async-trait = "0.1"
 sha2 = "0.10"
 base64 = "0.22"
 
+# Testing utilities
+tempfile = "3.8"
+
 # Shared types
 shared = { path = "crates/shared" }

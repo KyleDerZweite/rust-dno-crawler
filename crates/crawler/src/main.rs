@@ -1,7 +1,11 @@
 mod cli;
 mod crawler;
-mod sources;
+mod crawler_orchestrator;
 mod extractors;
+mod learning_engine;
+mod master_orchestrator;
+mod source_manager;
+mod sources;
 
 use clap::Parser;
 use shared::Config;
