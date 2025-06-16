@@ -48,3 +48,4 @@ sha2.workspace = true
 
 # Additional dependencies for file operations
 tempfile.workspace = true
+futures.workspace = true

@@ -1,19 +1,16 @@
 use std::path::{Path, PathBuf};
 use std::fs;
 use std::collections::HashMap;
-use std::time::SystemTime;
-use std::borrow::Cow;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sha2::{Sha256, Digest};
 use uuid::Uuid;
 use thiserror::Error;
-use tracing::{info, warn, error, debug, trace};
+use tracing::{info, warn, error, debug};
 use tokio::fs as async_fs;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use shared::{
-    DataSourceV2, SourceType, ExtractionMethod, AdminDataVerificationStatus,
-    LiveCrawlSession, CrawlSessionStatus, LogLevel, LiveLog
+    SourceType, ExtractionMethod, AdminDataVerificationStatus
 };
 
 /// Comprehensive source tracking and file management system

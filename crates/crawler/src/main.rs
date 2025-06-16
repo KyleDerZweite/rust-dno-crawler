@@ -3,13 +3,13 @@ mod crawler;
 mod crawler_orchestrator;
 mod extractors;
 mod learning_engine;
-mod master_orchestrator;
+// mod master_orchestrator; // Temporarily disabled due to compilation issues
+mod reverse_crawler;
 mod source_manager;
 mod sources;
 
 use clap::Parser;
-use shared::Config;
-use tracing::{info, error};
+use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[derive(Parser)]
@@ -49,6 +49,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         cli::Commands::Mock => {
             info!("Generating mock data");
             cli::handle_mock().await?;
+        }
+        cli::Commands::Reverse { dno_key, years, max_depth, max_time, aggressive } => {
+            info!("Starting reverse crawl for DNO: {}", dno_key);
+            cli::handle_reverse(dno_key, years, max_depth, max_time, aggressive).await?;
         }
     }
 

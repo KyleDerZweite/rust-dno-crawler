@@ -16,10 +16,11 @@ use tracing::{debug, error, info, warn};
 use url::Url;
 use uuid::Uuid;
 
-use crate::learning_engine::{CrawlResult, CrawlStrategy, LearningEngine};
+use crate::learning_engine::LearningEngine;
+use crate::crawler_orchestrator::CrawlStrategy;
 use shared::{
     CrawlIntelligence, CrawlSessionStatus, DataSourceV2, ExtractionMethod, LiveCrawlSession,
-    LiveLog, LogLevel, NavigationStep, PatternType, SourceType,
+    LiveLog, LogLevel, NavigationStep, PatternType, SourceType, CrawlResult,
 };
 
 /// Different crawling modes for adaptive strategy selection

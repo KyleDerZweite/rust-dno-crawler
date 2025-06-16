@@ -72,5 +72,8 @@ base64 = "0.22"
 # Testing utilities
 tempfile = "3.8"
 
+# Async utilities
+futures = "0.3"
+
 # Shared types
 shared = { path = "crates/shared" }
