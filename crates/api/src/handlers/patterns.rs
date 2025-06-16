@@ -25,12 +25,56 @@ pub struct PatternQueryParams {
     pub sort_by: Option<String>, // confidence, success_count, last_success
 }
 
-#[derive(Debug, Deserialize)]
+impl From<PatternQueryParams> for shared::LearningInsightsParams {
+    fn from(params: PatternQueryParams) -> Self {
+        Self {
+            dno_key: params.dno_key,
+            pattern_type: params.pattern_type.and_then(|s| {
+                match s.as_str() {
+                    "url" => Some(PatternType::Url),
+                    "navigation" => Some(PatternType::Navigation),
+                    "content" => Some(PatternType::Content),
+                    "file_naming" => Some(PatternType::FileNaming),
+                    "structural" => Some(PatternType::Structural),
+                    _ => None,
+                }
+            }),
+            time_range: None,
+            min_confidence: params.min_confidence,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct LearningInsightsParams {
     pub dno_key: Option<String>,
     pub pattern_type: Option<String>,
     pub days_back: Option<u32>,
     pub include_predictions: Option<bool>,
+}
+
+impl From<LearningInsightsParams> for shared::LearningInsightsParams {
+    fn from(params: LearningInsightsParams) -> Self {
+        Self {
+            dno_key: params.dno_key,
+            pattern_type: params.pattern_type.and_then(|s| {
+                match s.as_str() {
+                    "url" => Some(PatternType::Url),
+                    "navigation" => Some(PatternType::Navigation),
+                    "content" => Some(PatternType::Content),
+                    "file_naming" => Some(PatternType::FileNaming),
+                    "structural" => Some(PatternType::Structural),
+                    _ => None,
+                }
+            }),
+            time_range: params.days_back.map(|days| {
+                let end = chrono::Utc::now();
+                let start = end - chrono::Duration::days(days as i64);
+                shared::DateRange { start, end }
+            }),
+            min_confidence: None,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -39,6 +83,17 @@ pub struct PatternTestRequest {
     pub pattern_type: PatternType,
     pub pattern_data: Value,
     pub test_urls: Vec<String>,
+}
+
+impl From<PatternTestRequest> for shared::PatternTestRequest {
+    fn from(req: PatternTestRequest) -> Self {
+        Self {
+            pattern_id: uuid::Uuid::new_v4().to_string(), // Generate a temp ID
+            test_dno_key: req.dno_key,
+            test_year: chrono::Utc::now().year(),
+            simulation_mode: true,
+        }
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -63,11 +118,12 @@ pub async fn get_patterns(
     State(state): State<AppState>,
     Query(params): Query<PatternQueryParams>,
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
+    let offset = params.offset.unwrap_or(0) as usize;
+    let limit = params.limit.unwrap_or(50) as usize;
+    
     match state.pattern_service.get_patterns(params.into()).await {
         Ok(patterns) => {
             let total = patterns.len();
-            let offset = params.offset.unwrap_or(0) as usize;
-            let limit = params.limit.unwrap_or(50) as usize;
             
             let paginated_patterns: Vec<_> = patterns
                 .into_iter()
@@ -238,7 +294,7 @@ pub async fn test_pattern(
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
     info!("Testing pattern for {} against {} URLs", req.dno_key, req.test_urls.len());
 
-    match state.pattern_service.test_pattern(req).await {
+    match state.pattern_service.test_pattern(req.into()).await {
         Ok(test_result) => {
             Ok(Json(json!({
                 "success": true,
@@ -475,7 +531,7 @@ pub async fn reset_pattern(
     Path(pattern_id): Path<String>,
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
     match state.pattern_service.reset_pattern(pattern_id.clone()).await {
-        Ok(()) => {
+        Ok(reset_result) => {
             Ok(Json(json!({
                 "success": true,
                 "data": {

@@ -260,8 +260,7 @@ async fn get_learning_statistics(db: &sqlx::SqlitePool) -> Result<Value, AppErro
     )
     .fetch_one(db)
     .await
-    .map_err(|e| AppError::Database(e))?
-    .unwrap_or(0);
+    .map_err(|e| AppError::Database(e))?;
 
     let avg_success_rate = sqlx::query_scalar!(
         "SELECT AVG(success_rate) as avg_rate FROM query_learning"

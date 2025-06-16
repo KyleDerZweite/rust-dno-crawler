@@ -4,3 +4,8 @@ pub mod search;
 pub mod crawl;
 pub mod intelligent;
 pub mod dno;
+pub mod orchestrator;
+pub mod admin;
+pub mod patterns;
+pub mod reverse_crawl;
+pub mod sources;

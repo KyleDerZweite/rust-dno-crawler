@@ -23,6 +23,19 @@ pub struct ReverseCrawlRequest {
     pub extract_patterns: Option<bool>, // Whether to learn patterns from the source
 }
 
+impl From<ReverseCrawlRequest> for shared::ReverseCrawlRequest {
+    fn from(req: ReverseCrawlRequest) -> Self {
+        Self {
+            target_url: req.source_urls.first().cloned().unwrap_or_default(),
+            dno_key: req.target_dno_key,
+            max_depth: req.analysis_depth,
+            extraction_hints: req.extract_patterns.map(|extract| {
+                serde_json::json!({"extract_patterns": extract})
+            }),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct SourceAnalysisRequest {
     pub source_url: String,
@@ -30,7 +43,17 @@ pub struct SourceAnalysisRequest {
     pub include_metadata: Option<bool>,
 }
 
-#[derive(Debug, Deserialize)]
+impl From<SourceAnalysisRequest> for shared::SourceAnalysisRequest {
+    fn from(req: SourceAnalysisRequest) -> Self {
+        Self {
+            source_url: req.source_url,
+            analysis_type: req.analysis_type,
+            deep_analysis: req.include_metadata,
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Clone)]
 pub struct DiscoveryQueryParams {
     pub limit: Option<u32>,
     pub offset: Option<u32>,
@@ -38,6 +61,59 @@ pub struct DiscoveryQueryParams {
     pub verification_status: Option<String>,
     pub confidence_threshold: Option<f64>,
     pub days_back: Option<u32>,
+}
+
+impl From<DiscoveryQueryParams> for shared::SourceQueryParams {
+    fn from(params: DiscoveryQueryParams) -> Self {
+        Self {
+            source_type: None,
+            status: None,
+            dno_key: None,
+            limit: params.limit,
+            offset: params.offset,
+        }
+    }
+}
+
+impl From<DiscoveryQueryParams> for shared::CrawlHistoryParams {
+    fn from(params: DiscoveryQueryParams) -> Self {
+        Self {
+            dno_key: None,
+            time_range: params.days_back.map(|days| {
+                let end = chrono::Utc::now();
+                let start = end - chrono::Duration::days(days as i64);
+                shared::DateRange { start, end }
+            }),
+            limit: params.limit,
+            offset: params.offset,
+        }
+    }
+}
+
+impl From<DiscoveryQueryParams> for shared::DiscoveryQueryParams {
+    fn from(params: DiscoveryQueryParams) -> Self {
+        Self {
+            discovery_type: params.discovery_type.and_then(|s| {
+                match s.as_str() {
+                    "new_dno" => Some(shared::DiscoveryType::NewDno),
+                    "new_data_source" => Some(shared::DiscoveryType::NewDataSource),
+                    "archive_discovery" => Some(shared::DiscoveryType::ArchiveDiscovery),
+                    "pattern_evolution" => Some(shared::DiscoveryType::PatternEvolution),
+                    _ => None,
+                }
+            }),
+            status: params.verification_status.and_then(|s| {
+                match s.as_str() {
+                    "pending" => Some(shared::DiscoveryVerificationStatus::Pending),
+                    "verified" => Some(shared::DiscoveryVerificationStatus::Verified),
+                    "rejected" => Some(shared::DiscoveryVerificationStatus::Rejected),
+                    _ => None,
+                }
+            }),
+            limit: params.limit,
+            offset: params.offset,
+        }
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -70,19 +146,11 @@ pub async fn trigger_reverse_crawl(
     info!("Triggering reverse crawl for {} sources targeting {} {}", 
           req.source_urls.len(), req.target_dno_key, req.target_year);
 
-    match state.reverse_crawl_service.trigger_reverse_crawl(req).await {
+    match state.reverse_crawl_service.trigger_reverse_crawl(req.into()).await {
         Ok(result) => {
             Ok(Json(json!({
                 "success": true,
-                "data": {
-                    "crawl_id": result.crawl_id,
-                    "discovered_sources_count": result.discovered_sources.len(),
-                    "learned_patterns_count": result.learned_patterns.len(),
-                    "navigation_paths_count": result.navigation_paths.len(),
-                    "confidence_score": result.confidence_score,
-                    "recommendations": result.recommendations,
-                    "status": "completed"
-                },
+                "data": result,
                 "metadata": {
                     "timestamp": chrono::Utc::now(),
                     "version": "1.0.0"
@@ -112,7 +180,7 @@ pub async fn analyze_source(
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
     info!("Analyzing source: {} (type: {})", req.source_url, req.analysis_type);
 
-    match state.reverse_crawl_service.analyze_source(req).await {
+    match state.reverse_crawl_service.analyze_source(req.into()).await {
         Ok(result) => {
             Ok(Json(json!({
                 "success": true,
@@ -144,7 +212,7 @@ pub async fn get_discovered_sources(
     State(state): State<AppState>,
     Query(params): Query<DiscoveryQueryParams>,
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
-    match state.reverse_crawl_service.get_discovered_sources(params.into()).await {
+    match state.reverse_crawl_service.get_discovered_sources(params.clone().into()).await {
         Ok(sources) => {
             let total = sources.len();
             let offset = params.offset.unwrap_or(0) as usize;
@@ -189,7 +257,7 @@ pub async fn get_reverse_crawl_history(
     State(state): State<AppState>,
     Query(params): Query<DiscoveryQueryParams>,
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
-    match state.reverse_crawl_service.get_crawl_history(params.into()).await {
+    match state.reverse_crawl_service.get_crawl_history(params.clone().into()).await {
         Ok(history) => {
             let total = history.len();
             let offset = params.offset.unwrap_or(0) as usize;
@@ -242,8 +310,8 @@ pub async fn get_navigation_paths(
                     "crawl_id": crawl_id,
                     "navigation_paths": paths,
                     "path_count": paths.len(),
-                    "average_depth": paths.iter().map(|p| p.max_depth_reached).sum::<i32>() as f64 / paths.len() as f64,
-                    "success_rate": paths.iter().filter(|p| p.success_confidence > 0.8).count() as f64 / paths.len() as f64
+                    "total_steps": paths.len(),
+                    "unique_urls": paths.iter().map(|p| &p.url).collect::<std::collections::HashSet<_>>().len()
                 },
                 "metadata": {
                     "timestamp": chrono::Utc::now(),
@@ -306,7 +374,7 @@ pub async fn get_discovery_tracking(
     State(state): State<AppState>,
     Query(params): Query<DiscoveryQueryParams>,
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
-    match state.reverse_crawl_service.get_discovery_tracking(params.into()).await {
+    match state.reverse_crawl_service.get_discovery_tracking(params.clone().into()).await {
         Ok(discoveries) => {
             let total = discoveries.len();
             let offset = params.offset.unwrap_or(0) as usize;

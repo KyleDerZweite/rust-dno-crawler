@@ -30,7 +30,7 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), AppError> {
         .await
         .map_err(|e| {
             error!("Failed to run migrations: {}", e);
-            AppError::Database(e)
+            AppError::Internal(format!("Migration failed: {}", e))
         })?;
 
     info!("Database migrations completed successfully");

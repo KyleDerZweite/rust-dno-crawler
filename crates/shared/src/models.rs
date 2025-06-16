@@ -333,7 +333,7 @@ pub struct CrawlIntelligence {
     pub last_success_at: Option<DateTime<Utc>>,
     pub last_failure_at: Option<DateTime<Utc>>,
     pub pattern_metadata: serde_json::Value,
-    pub admin_verified: AdminVerificationStatus,
+    pub admin_verification_status: AdminVerificationStatus,
     pub admin_flagged: bool,
     pub admin_notes: Option<String>,
     pub created_at: DateTime<Utc>,
@@ -354,7 +354,20 @@ pub enum PatternType {
     Structural,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+impl std::fmt::Display for PatternType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let display_str = match self {
+            PatternType::Url => "URL Pattern",
+            PatternType::Navigation => "Navigation Pattern",
+            PatternType::Content => "Content Pattern",
+            PatternType::FileNaming => "File Naming Pattern",
+            PatternType::Structural => "Structural Pattern",
+        };
+        write!(f, "{}", display_str)
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum AdminVerificationStatus {
     #[serde(rename = "not_reviewed")]
     NotReviewed,
@@ -710,7 +723,7 @@ pub enum DiscoveryType {
     PatternEvolution,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum DiscoveryVerificationStatus {
     #[serde(rename = "pending")]
     Pending,
@@ -731,6 +744,7 @@ pub struct CrawlSessionRequest {
     pub created_by_user: Option<String>,
     pub strategy_preference: Option<serde_json::Value>,
     pub constraints: Option<serde_json::Value>,
+    pub scheduled_for: Option<chrono::DateTime<chrono::Utc>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -832,6 +846,30 @@ pub enum Priority {
     Critical,
 }
 
+impl From<Priority> for i32 {
+    fn from(priority: Priority) -> Self {
+        match priority {
+            Priority::Low => 1,
+            Priority::Medium => 2,
+            Priority::High => 3,
+            Priority::Critical => 4,
+        }
+    }
+}
+
+impl From<i32> for Priority {
+    fn from(value: i32) -> Self {
+        match value {
+            1 => Priority::Low,
+            2 => Priority::Medium,
+            3 => Priority::High,
+            4 => Priority::Critical,
+            _ => Priority::Medium,
+        }
+    }
+}
+
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CrawlConstraints {
     pub max_pages: Option<u32>,
@@ -842,10 +880,95 @@ pub struct CrawlConstraints {
     pub blocked_domains: Option<Vec<String>>,
 }
 
+// Use FlagSeverity as the main type, and create Severity as an alias
+pub type Severity = FlagSeverity;
+
+// Additional types needed by handlers
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum Severity {
-    Low,
-    Medium,
-    High,
-    Critical,
+pub struct LearningInsightsParams {
+    pub dno_key: Option<String>,
+    pub pattern_type: Option<PatternType>,
+    pub time_range: Option<DateRange>,
+    pub min_confidence: Option<f64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PatternTestRequest {
+    pub pattern_id: String,
+    pub test_dno_key: String,
+    pub test_year: i32,
+    pub simulation_mode: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReverseCrawlRequest {
+    pub target_url: String,
+    pub dno_key: String,
+    pub max_depth: Option<u32>,
+    pub extraction_hints: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SourceAnalysisRequest {
+    pub source_url: String,
+    pub analysis_type: String,
+    pub deep_analysis: Option<bool>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DiscoveryQueryParams {
+    pub discovery_type: Option<DiscoveryType>,
+    pub status: Option<DiscoveryVerificationStatus>,
+    pub limit: Option<u32>,
+    pub offset: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SourceQueryParams {
+    pub source_type: Option<SourceType>,
+    pub status: Option<AdminDataVerificationStatus>,
+    pub dno_key: Option<String>,
+    pub limit: Option<u32>,
+    pub offset: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SourceMetricsParams {
+    pub time_range: Option<DateRange>,
+    pub group_by: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SourceUpdateRequest {
+    pub source_type: Option<SourceType>,
+    pub extraction_method: Option<ExtractionMethod>,
+    pub admin_notes: Option<String>,
+    pub is_active: Option<bool>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BulkSourceRequest {
+    pub operation: String,
+    pub source_ids: Vec<String>,
+    pub parameters: Option<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SourceInventoryParams {
+    pub format: Option<String>,
+    pub include_content: Option<bool>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CrawlHistoryParams {
+    pub dno_key: Option<String>,
+    pub time_range: Option<DateRange>,
+    pub limit: Option<u32>,
+    pub offset: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SourceComparisonRequest {
+    pub source_urls: Vec<String>,
+    pub comparison_metrics: Vec<String>,
 }

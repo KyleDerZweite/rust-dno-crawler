@@ -125,7 +125,7 @@ impl PdfAnalysisService {
             .map_err(|e| AppError::Internal(format!("Failed to parse extracted data: {}", e)))?;
 
         Ok(PdfAnalysisResult {
-            id: Uuid::parse_str(&row.id)
+            id: Uuid::parse_str(&row.id.ok_or_else(|| AppError::Internal("Missing ID in database".to_string()))?)
                 .map_err(|e| AppError::Internal(format!("Invalid UUID in database: {}", e)))?,
             file_path: row.file_path,
             file_hash: row.file_hash,

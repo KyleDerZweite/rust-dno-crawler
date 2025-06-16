@@ -142,4 +142,53 @@ impl SearchService {
         // Use mock source as fallback
         self.mock.search(query, limit).await
     }
+
+    // Source service methods (placeholder implementations)
+    pub async fn get_sources(&self, _params: shared::SourceQueryParams) -> Result<Vec<shared::DataSourceV2>, AppError> {
+        Ok(vec![])
+    }
+
+    pub async fn get_source_details(&self, _source_id: String) -> Result<Option<shared::DataSourceV2>, AppError> {
+        Ok(None)
+    }
+
+    pub async fn get_source_usage(&self, _source_id: String) -> Result<Vec<serde_json::Value>, AppError> {
+        Ok(vec![])
+    }
+
+    pub async fn get_source_usage_history(&self, _source_id: String) -> Result<Vec<serde_json::Value>, AppError> {
+        Ok(vec![])
+    }
+
+    pub async fn update_source(&self, _source_id: String, _req: shared::SourceUpdateRequest) -> Result<serde_json::Value, AppError> {
+        Ok(serde_json::json!({"success": true}))
+    }
+
+    pub async fn delete_source(&self, _source_id: String) -> Result<serde_json::Value, AppError> {
+        Ok(serde_json::json!({"success": true}))
+    }
+
+    pub async fn bulk_operations(&self, _req: shared::BulkSourceRequest) -> Result<serde_json::Value, AppError> {
+        Ok(serde_json::json!({"success": true}))
+    }
+
+    pub async fn get_source_metrics(&self, _params: shared::SourceMetricsParams) -> Result<serde_json::Value, AppError> {
+        Ok(serde_json::json!({"metrics": []}))
+    }
+
+    pub async fn reanalyze_source(&self, _source_id: String) -> Result<serde_json::Value, AppError> {
+        Ok(serde_json::json!({"success": true}))
+    }
+
+    pub async fn get_source_content(&self, _source_id: String, _preview_only: bool, _max_size: Option<usize>) -> Result<serde_json::Value, AppError> {
+        Ok(serde_json::json!({"content": ""}))
+    }
+
+    pub async fn cleanup_orphaned_sources(&self) -> Result<serde_json::Value, AppError> {
+        Ok(serde_json::json!({"cleaned": 0}))
+    }
+
+    pub async fn export_source_inventory(&self, _params: shared::SourceInventoryParams) -> Result<serde_json::Value, AppError> {
+        Ok(serde_json::json!({"export_url": "/exports/inventory.json"}))
+    }
 }

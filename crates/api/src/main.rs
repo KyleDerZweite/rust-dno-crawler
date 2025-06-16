@@ -13,7 +13,7 @@ use axum::{
 };
 use serde_json::{json, Value};
 use shared::{Config, AppError};
-use services::{SearchService, CrawlService, OllamaService, SearchOrchestrator, PdfAnalysisService};
+use services::{SearchService, CrawlService, OllamaService, SearchOrchestrator, PdfAnalysisService, PatternService, ReverseCrawlService};
 use tower::ServiceBuilder;
 use tower_http::cors::{CorsLayer, Any};
 use tracing::{info, error};
@@ -49,6 +49,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         crawl_service.clone(),
         db_pool.clone(),
     );
+    let pattern_service = PatternService::new(db_pool.clone());
+    let reverse_crawl_service = ReverseCrawlService::new(db_pool.clone(), crawl_service.clone());
 
     // Build CORS layer
     let cors = CorsLayer::new()
@@ -69,11 +71,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_state(AppState {
             db: db_pool,
             config: config.clone(),
-            search_service,
+            search_service: search_service.clone(),
             crawl_service,
             ai_service,
             search_orchestrator,
             pdf_service,
+            pattern_service,
+            reverse_crawl_service,
+            source_service: search_service, // Use search_service as source_service
         });
 
     // Start the server
@@ -96,6 +101,9 @@ pub struct AppState {
     pub ai_service: OllamaService,
     pub search_orchestrator: SearchOrchestrator,
     pub pdf_service: PdfAnalysisService,
+    pub pattern_service: PatternService,
+    pub reverse_crawl_service: ReverseCrawlService,
+    pub source_service: SearchService,
 }
 
 async fn health_check() -> Json<Value> {

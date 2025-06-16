@@ -28,11 +28,50 @@ pub struct SourceQueryParams {
     pub include_inactive: Option<bool>,
 }
 
+impl From<SourceQueryParams> for shared::SourceQueryParams {
+    fn from(params: SourceQueryParams) -> Self {
+        Self {
+            source_type: params.source_type.and_then(|s| {
+                match s.as_str() {
+                    "webpage" => Some(shared::SourceType::Webpage),
+                    "pdf" => Some(shared::SourceType::Pdf),
+                    "image" => Some(shared::SourceType::Image),
+                    "api" => Some(shared::SourceType::Api),
+                    "text" => Some(shared::SourceType::Text),
+                    _ => None,
+                }
+            }),
+            status: params.verification_status.and_then(|s| {
+                match s.as_str() {
+                    "pending" => Some(shared::AdminDataVerificationStatus::Pending),
+                    "verified" => Some(shared::AdminDataVerificationStatus::Verified),
+                    "rejected" => Some(shared::AdminDataVerificationStatus::Rejected),
+                    _ => None,
+                }
+            }),
+            dno_key: params.dno_key,
+            limit: params.limit,
+            offset: params.offset,
+        }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct SourceUpdateRequest {
     pub is_active: Option<bool>,
     pub admin_notes: Option<String>,
     pub verification_status: Option<AdminDataVerificationStatus>,
+}
+
+impl From<SourceUpdateRequest> for shared::SourceUpdateRequest {
+    fn from(req: SourceUpdateRequest) -> Self {
+        Self {
+            source_type: None,
+            extraction_method: None,
+            admin_notes: req.admin_notes,
+            is_active: req.is_active,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -67,11 +106,12 @@ pub async fn get_sources(
     State(state): State<AppState>,
     Query(params): Query<SourceQueryParams>,
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
+    let offset = params.offset.unwrap_or(0) as usize;
+    let limit = params.limit.unwrap_or(50) as usize;
+    
     match state.source_service.get_sources(params.into()).await {
         Ok(sources) => {
             let total = sources.len();
-            let offset = params.offset.unwrap_or(0) as usize;
-            let limit = params.limit.unwrap_or(50) as usize;
             
             let paginated_sources: Vec<_> = sources
                 .into_iter()
@@ -173,8 +213,8 @@ pub async fn update_source(
     Path(source_id): Path<String>,
     Json(req): Json<SourceUpdateRequest>,
 ) -> Result<Json<Value>, (StatusCode, Json<Value>)> {
-    match state.source_service.update_source(source_id.clone(), req).await {
-        Ok(()) => {
+    match state.source_service.update_source(source_id.clone(), req.into()).await {
+        Ok(update_result) => {
             Ok(Json(json!({
                 "success": true,
                 "data": {
