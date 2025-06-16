@@ -822,3 +822,30 @@ pub struct AdminFlagResponse {
     pub status: FlagResolutionStatus,
     pub created_at: DateTime<Utc>,
 }
+
+// Additional types needed by handlers
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Priority {
+    Low,
+    Medium,
+    High,
+    Critical,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CrawlConstraints {
+    pub max_pages: Option<u32>,
+    pub max_depth: Option<u32>,
+    pub timeout_ms: Option<u32>,
+    pub rate_limit_ms: Option<u32>,
+    pub allowed_domains: Option<Vec<String>>,
+    pub blocked_domains: Option<Vec<String>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Severity {
+    Low,
+    Medium,
+    High,
+    Critical,
+}

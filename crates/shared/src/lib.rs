@@ -7,4 +7,4 @@ pub use error::*;
 pub use config::*;
 
 // Explicit re-exports for commonly used types
-pub use crate::models::{DnoDataType, DnoQueryParseResult, PdfAnalysisType};
+pub use crate::models::{DnoDataType, DnoQueryParseResult, PdfAnalysisType, Priority, CrawlConstraints, Severity};
