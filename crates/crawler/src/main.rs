@@ -1,11 +1,6 @@
 mod cli;
-mod crawler;
-mod crawler_orchestrator;
-mod extractors;
-mod learning_engine;
-// mod master_orchestrator; // Temporarily disabled due to compilation issues
-mod reverse_crawler;
-mod source_manager;
+mod ai_agent;
+mod evaluation_engine;
 mod sources;
 
 use clap::Parser;
@@ -34,25 +29,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
     
     match cli.command {
-        cli::Commands::Search { query } => {
-            info!("Searching for: {}", query);
-            cli::handle_search(query).await?;
+        cli::Commands::Search { query, json } => {
+            info!("Testing SearXNG connectivity with query: {}", query);
+            cli::handle_search(query, json).await?;
         }
-        cli::Commands::Crawl { url } => {
-            info!("Crawling URL: {}", url);
-            cli::handle_crawl(url).await?;
-        }
-        cli::Commands::Batch { file } => {
-            info!("Processing batch file: {}", file);
-            cli::handle_batch(file).await?;
-        }
-        cli::Commands::Mock => {
-            info!("Generating mock data");
-            cli::handle_mock().await?;
-        }
-        cli::Commands::Reverse { dno_key, years, max_depth, max_time, aggressive } => {
-            info!("Starting reverse crawl for DNO: {}", dno_key);
-            cli::handle_reverse(dno_key, years, max_depth, max_time, aggressive).await?;
+        cli::Commands::AiGather { dno, data_types, years, json, max_time, priority } => {
+            info!("AI-driven data gathering for DNO: {}", dno);
+            cli::handle_ai_gather(dno, data_types, years, json, max_time, priority).await?;
         }
     }
 

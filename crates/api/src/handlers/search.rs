@@ -2,6 +2,7 @@ use axum::{
     extract::State,
     response::Json,
 };
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use shared::{SearchQuery};
 use uuid::Uuid;
@@ -62,4 +63,69 @@ pub async fn search_history(
         "success": true,
         "data": mock_history
     }))
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct GatherRequest {
+    pub dno: String,
+    pub years: String,
+    pub max_urls: Option<u32>,
+    pub max_time: Option<u64>,
+}
+
+pub async fn gather(
+    State(_state): State<AppState>,
+    Json(request): Json<GatherRequest>,
+) -> Json<Value> {
+    use std::process::Command;
+    
+    // Execute the CLI gather command
+    let years = request.years;
+    let dno = request.dno;
+    let max_urls = request.max_urls.unwrap_or(10);
+    let max_time = request.max_time.unwrap_or(300);
+    
+    match Command::new("cargo")
+        .args(&[
+            "run", "--bin", "crawler", "--", "gather", 
+            &dno, "--years", &years, "--json", 
+            "--max-urls", &max_urls.to_string(),
+            "--max-time", &max_time.to_string()
+        ])
+        .output()
+    {
+        Ok(output) => {
+            if output.status.success() {
+                let stdout = String::from_utf8_lossy(&output.stdout);
+                match serde_json::from_str::<Value>(&stdout) {
+                    Ok(json_result) => Json(json!({
+                        "success": true,
+                        "data": json_result
+                    })),
+                    Err(_) => Json(json!({
+                        "success": true,
+                        "data": {
+                            "raw_output": stdout.to_string()
+                        }
+                    }))
+                }
+            } else {
+                let stderr = String::from_utf8_lossy(&output.stderr);
+                Json(json!({
+                    "success": false,
+                    "error": {
+                        "code": "CRAWLER_FAILED",
+                        "message": stderr.to_string()
+                    }
+                }))
+            }
+        },
+        Err(err) => Json(json!({
+            "success": false,
+            "error": {
+                "code": "EXECUTION_FAILED",
+                "message": format!("Failed to execute crawler: {}", err)
+            }
+        }))
+    }
 }

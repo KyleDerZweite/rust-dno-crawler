@@ -638,7 +638,7 @@ pub struct DataQualityFlag {
     pub updated_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum FlagType {
     #[serde(rename = "incorrect_data")]
     IncorrectData,
@@ -648,6 +648,16 @@ pub enum FlagType {
     VerificationNeeded,
     #[serde(rename = "false_positive")]
     FalsePositive,
+    #[serde(rename = "low_confidence")]
+    LowConfidence,
+    #[serde(rename = "data_quality_issue")]
+    DataQualityIssue,
+    #[serde(rename = "manual_review")]
+    ManualReview,
+    #[serde(rename = "security_concern")]
+    SecurityConcern,
+    #[serde(rename = "performance_issue")]
+    PerformanceIssue,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -971,4 +981,70 @@ pub struct CrawlHistoryParams {
 pub struct SourceComparisonRequest {
     pub source_urls: Vec<String>,
     pub comparison_metrics: Vec<String>,
+}
+
+// Admin and Authentication Types
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AdminAction {
+    pub id: Uuid,
+    pub admin_user_id: String,
+    pub admin_username: String,
+    pub action_type: String,
+    pub entity_type: String,
+    pub entity_id: String,
+    pub details: serde_json::Value,
+    pub timestamp: DateTime<Utc>,
+    pub result: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AdminFlag {
+    pub id: Uuid,
+    pub entity_type: String,
+    pub entity_id: String,
+    pub flag_type: FlagType,
+    pub flagged_by: String,
+    pub flagged_by_username: String,
+    pub reason: String,
+    pub status: String, // "pending", "approved", "rejected"
+    pub preserve_learning: bool,
+    pub metadata: serde_json::Value,
+    pub created_at: DateTime<Utc>,
+    pub reviewed_at: Option<DateTime<Utc>>,
+    pub reviewed_by: Option<String>,
+    pub review_notes: Option<String>,
+}
+
+
+// Job Management Types
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AutomatedJobConfig {
+    pub job_id: Uuid,
+    pub job_type: String,
+    pub schedule: Option<String>, // Cron expression
+    pub enabled: bool,
+    pub config: serde_json::Value,
+    pub created_by: String,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct JobExecution {
+    pub execution_id: Uuid,
+    pub job_id: Uuid,
+    pub started_at: DateTime<Utc>,
+    pub completed_at: Option<DateTime<Utc>>,
+    pub status: String, // "running", "completed", "failed", "cancelled"
+    pub results: Option<serde_json::Value>,
+    pub error_details: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct JobControl {
+    pub job_id: Uuid,
+    pub action: String, // "start", "stop", "pause", "resume"
+    pub requested_by: String,
+    pub requested_at: DateTime<Utc>,
+    pub reason: Option<String>,
 }

@@ -5,6 +5,7 @@ use axum::{
     Extension,
 };
 use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
 use shared::{
     AdminFlagRequest, AdminFlagResponse, DataQualityFlag, FlagType, Severity,
     CrawlIntelligence, AdminVerificationStatus, DataSourceV2
@@ -13,7 +14,7 @@ use std::collections::HashMap;
 use tracing::{error, info, warn};
 use uuid::Uuid;
 
-use crate::{AppState, AppError};
+use crate::{AppState, AppError, middleware::AdminUserClaims};
 
 #[derive(Debug, Deserialize)]
 pub struct FlagDataRequest {
@@ -87,12 +88,9 @@ pub struct PatternListResponse {
 /// Get admin dashboard with pending items and statistics
 pub async fn get_admin_dashboard(
     State(state): State<AppState>,
-    Extension(user_id): Extension<Uuid>,
+    Extension(admin_user): Extension<AdminUserClaims>,
 ) -> Result<Json<AdminDashboard>, AppError> {
-    info!("Retrieving admin dashboard");
-
-    // Verify admin permissions
-    // TODO: Add authentication
+    info!("Admin {} retrieving dashboard", admin_user.username);
 
     // Placeholder implementation - will integrate with actual database
     let dashboard = AdminDashboard {

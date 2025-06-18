@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: dno_postgres
+    environment:
+      POSTGRES_USER: dno_user
+      POSTGRES_PASSWORD: dno_password
+      POSTGRES_DB: dno_crawler
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dno_user -d dno_crawler"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dno_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: dno_redis
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dno_network
+
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: dno_searxng
+    ports:
+      - "8888:8080"
+    volumes:
+      - ./searxng:/etc/searxng
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8888/
+      - SEARXNG_SECRET_KEY=please_change_this_secret_key
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+    networks:
+      - dno_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  dno_network:
+    driver: bridge

@@ -8,6 +8,7 @@ license.workspace = true
 [dependencies]
 # Shared types
 shared.workspace = true
+crawler = { path = "../crawler" }
 
 # Async runtime
 tokio.workspace = true

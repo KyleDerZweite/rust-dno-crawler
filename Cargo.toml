@@ -11,8 +11,8 @@ members = [
 version = "0.0.1"
 edition = "2021"
 authors = ["KyleDerZweite"]
-license = "MIT"
-repository = "https://github.com/yourusername/dno-data-gatherer"
+license = "Apache-2.0"
+repository = "https://github.com/KyleDerZweite/rust-dno-crawler"
 
 [workspace.dependencies]
 # Async runtime
@@ -74,6 +74,9 @@ tempfile = "3.8"
 
 # Async utilities
 futures = "0.3"
+
+# AI and ML
+rand = "0.8"
 
 # Shared types
 shared = { path = "crates/shared" }
