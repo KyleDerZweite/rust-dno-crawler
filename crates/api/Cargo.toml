@@ -6,9 +6,7 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies]
-# Shared types
-shared.workspace = true
-crawler = { path = "../crawler" }
+core.workspace = true
 
 # Async runtime
 tokio.workspace = true

@@ -1,7 +1,4 @@
 mod cli;
-mod ai_agent;
-mod evaluation_engine;
-mod sources;
 
 use clap::Parser;
 use tracing::info;
@@ -9,7 +6,7 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 #[derive(Parser)]
 #[command(name = "crawler")]
-#[command(about = "DNO Data Crawler - Extract data from German Distribution Network Operators")]
+#[command(about = "DNO Data Crawler - Extract storage from German Distribution Network Operators")]
 struct Cli {
     #[command(subcommand)]
     command: cli::Commands,
@@ -34,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             cli::handle_search(query, json).await?;
         }
         cli::Commands::AiGather { dno, data_types, years, json, max_time, priority } => {
-            info!("AI-driven data gathering for DNO: {}", dno);
+            info!("AI-driven storage gathering for DNO: {}", dno);
             cli::handle_ai_gather(dno, data_types, years, json, max_time, priority).await?;
         }
     }

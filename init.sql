@@ -2,7 +2,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create custom types
-CREATE TYPE user_role AS ENUM ('user', 'admin');
+CREATE TYPE user_role AS ENUM ('pending', 'user', 'admin');
 CREATE TYPE job_status AS ENUM ('pending', 'running', 'completed', 'failed', 'cancelled');
 CREATE TYPE crawl_type AS ENUM ('file', 'table', 'api');
 CREATE TYPE data_type AS ENUM ('netzentgelte', 'hlzf', 'all');
@@ -41,7 +41,7 @@ CREATE TABLE dno_crawl_configs (
                                    UNIQUE(dno_id)
 );
 
--- Netzentgelte data table
+-- Netzentgelte storage table
 CREATE TABLE netzentgelte_data (
                                    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                                    dno_id UUID NOT NULL REFERENCES dnos(id) ON DELETE CASCADE,
@@ -58,7 +58,7 @@ CREATE TABLE netzentgelte_data (
 
 CREATE INDEX idx_netzentgelte_dno_year ON netzentgelte_data(dno_id, year);
 
--- HLZF (Hauptlastzeiten) data table
+-- HLZF (Hauptlastzeiten) storage table
 CREATE TABLE hlzf_data (
                            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                            dno_id UUID NOT NULL REFERENCES dnos(id) ON DELETE CASCADE,
@@ -99,10 +99,14 @@ CREATE TABLE users (
                        email VARCHAR(255) UNIQUE NOT NULL,
                        password_hash VARCHAR(255) NOT NULL,
                        name VARCHAR(255) NOT NULL,
-                       role user_role DEFAULT 'user',
+                       role user_role DEFAULT 'pending',
                        profile_picture_url VARCHAR(500),
                        is_active BOOLEAN DEFAULT true,
                        email_verified BOOLEAN DEFAULT false,
+                       verification_status VARCHAR(50) DEFAULT 'awaiting_approval',
+                       approved_by UUID REFERENCES users(id),
+                       approved_at TIMESTAMPTZ,
+                       rejected_at TIMESTAMPTZ,
                        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                        deleted_at TIMESTAMPTZ
@@ -134,6 +138,26 @@ CREATE TABLE api_keys (
 
 CREATE INDEX idx_api_keys_user_id ON api_keys(user_id);
 CREATE INDEX idx_api_keys_key_hash ON api_keys(key_hash);
+
+-- Sessions table for JWT token management
+CREATE TABLE sessions (
+                          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                          user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                          token_hash VARCHAR(255) NOT NULL UNIQUE,
+                          refresh_token_hash VARCHAR(255) UNIQUE,
+                          expires_at TIMESTAMPTZ NOT NULL,
+                          refresh_expires_at TIMESTAMPTZ,
+                          ip_address INET,
+                          user_agent TEXT,
+                          is_active BOOLEAN DEFAULT true,
+                          created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                          last_used TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_sessions_user_id ON sessions(user_id);
+CREATE INDEX idx_sessions_token_hash ON sessions(token_hash);
+CREATE INDEX idx_sessions_expires_at ON sessions(expires_at);
+CREATE INDEX idx_sessions_is_active ON sessions(is_active);
 
 -- Query logs
 CREATE TABLE query_logs (
@@ -222,6 +246,49 @@ CREATE TABLE automated_jobs (
                                 updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Add verification tracking to storage tables
+ALTER TABLE netzentgelte_data ADD COLUMN verification_status VARCHAR(20) DEFAULT 'unverified';
+ALTER TABLE netzentgelte_data ADD COLUMN verified_by UUID REFERENCES users(id);
+ALTER TABLE netzentgelte_data ADD COLUMN verified_at TIMESTAMPTZ;
+ALTER TABLE netzentgelte_data ADD COLUMN verification_notes TEXT;
+
+ALTER TABLE hlzf_data ADD COLUMN verification_status VARCHAR(20) DEFAULT 'unverified';
+ALTER TABLE hlzf_data ADD COLUMN verified_by UUID REFERENCES users(id);
+ALTER TABLE hlzf_data ADD COLUMN verified_at TIMESTAMPTZ;
+ALTER TABLE hlzf_data ADD COLUMN verification_notes TEXT;
+
+-- Data entry history for audit trail
+CREATE TABLE data_entry_history (
+                                    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                                    entry_type VARCHAR(20) NOT NULL, -- 'netzentgelte' or 'hlzf'
+                                    entry_id UUID NOT NULL,
+                                    version INTEGER NOT NULL,
+                                    changed_by UUID REFERENCES users(id),
+                                    changed_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+                                    changes TEXT NOT NULL,
+                                    data_before JSONB,
+                                    data_after JSONB
+);
+
+-- Metrics table for Prometheus
+CREATE TABLE metrics (
+                         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                         metric_name VARCHAR(255) NOT NULL,
+                         metric_type VARCHAR(20) NOT NULL, -- 'counter', 'gauge', 'histogram'
+                         value DOUBLE PRECISION NOT NULL,
+                         labels JSONB,
+                         timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_metrics_name_timestamp ON metrics(metric_name, timestamp);
+CREATE INDEX idx_metrics_labels ON metrics USING GIN(labels);
+
+-- Add extraction details to data_sources
+ALTER TABLE data_sources ADD COLUMN extraction_method VARCHAR(50);
+ALTER TABLE data_sources ADD COLUMN extraction_region JSONB;
+ALTER TABLE data_sources ADD COLUMN ocr_text TEXT;
+ALTER TABLE data_sources ADD COLUMN extraction_log JSONB;
+
 -- Create update timestamp trigger
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -256,7 +323,7 @@ CREATE TRIGGER update_crawl_jobs_updated_at BEFORE UPDATE ON crawl_jobs
 CREATE TRIGGER update_automated_jobs_updated_at BEFORE UPDATE ON automated_jobs
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Insert example data from the JSON
+-- Insert example storage from the JSON
 INSERT INTO dnos (slug, name, official_name, description, region) VALUES
     ('netze-bw', 'Netze BW', 'Netze BW GmbH', 'Netzbetreiber in Baden-Württemberg', 'Baden-Württemberg');
 
@@ -282,7 +349,7 @@ INSERT INTO dno_crawl_configs (
              true, 'yearly', ARRAY[2024]
          );
 
--- Insert 2024 Netzentgelte data
+-- Insert 2024 Netzentgelte storage
 INSERT INTO netzentgelte_data (dno_id, year, voltage_level, leistung, arbeit, leistung_unter_2500h, arbeit_unter_2500h) VALUES
                                                                                                                             (dno_id, 2024, 'hs', 58.21, 1.26, 2.56, 7.14),
                                                                                                                             (dno_id, 2024, 'hs/ms', 79.84, 1.42, 3.14, 8.28),
@@ -290,11 +357,11 @@ INSERT INTO netzentgelte_data (dno_id, year, voltage_level, leistung, arbeit, le
                                                                                                                             (dno_id, 2024, 'ms/ns', 142.11, 2.63, 6.24, 14.58),
                                                                                                                             (dno_id, 2024, 'ns', 169.42, 3.15, 7.05, 16.97);
 
--- Insert HLZF data (only winter periods from the JSON)
+-- Insert HLZF storage (only winter periods from the JSON)
 INSERT INTO hlzf_data (dno_id, year, season, period_number, start_time, end_time) VALUES
     (dno_id, 2024, 'winter', 1, '06:00:00', '22:00:00');
 
--- Insert data source information
+-- Insert storage source information
 INSERT INTO data_sources (dno_id, year, data_type, source_type, file_path, extracted_at) VALUES
                                                                                              (dno_id, 2024, 'netzentgelte', 'file', 'dno-assets/netze-bw/Netzentgelte Strom 2024.pdf', '2025-04-20T12:41:32Z'),
                                                                                              (dno_id, 2024, 'hlzf', 'file', 'dno-assets/netze-bw/Regelungen für die Nutzung des Stromverteilnetzes 2024.pdf', '2025-04-20T12:41:32Z');

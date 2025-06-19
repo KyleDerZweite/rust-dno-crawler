@@ -1,58 +1,86 @@
+mod account;
+mod admin;
+mod auth;
+mod dashboard;
+mod files;
+mod health;
+mod metrics;
+mod query;
+mod websocket;
+
 use axum::{
     Router,
-    routing::{get, post, put, delete},
+    routing::{get, post, put, delete, patch},
 };
-use crate::{handlers, AppState};
+use crate::AppState;
 
 pub fn api_routes() -> Router<AppState> {
     Router::new()
+        // Public endpoints (no auth required)
+        .route("/health", get(health::health_check))
+        .route("/ready", get(health::readiness_check))
         .nest("/auth", auth_routes())
-        .nest("/dnos", dno_routes())
-        .nest("/search", search_routes())
-        .nest("/crawl", crawl_routes())
-        .nest("/dno", dno_data_routes())
+        // User authenticated endpoints
+        .nest("/query", query_routes())
+        .nest("/dashboard", dashboard_routes())
+        .nest("/account", account_routes())
+        // Admin only endpoints
         .nest("/admin", admin_routes())
-        .nest("/jobs", job_routes())
-        .nest("/ai", ai_crawl_routes())
+        .nest("/metrics", metrics_routes())
+        .nest("/files", files_routes())
+        .route("/ws", get(websocket::websocket_handler))
 }
 
 fn auth_routes() -> Router<AppState> {
     Router::new()
-        .route("/login", post(handlers::auth::login))
-        .route("/register", post(handlers::auth::register))
-        .route("/refresh", post(handlers::auth::refresh_token))
-        .route("/logout", post(handlers::auth::logout))
+        .route("/login", post(auth::login))
+        .route("/register", post(auth::register))
+        .route("/refresh", post(auth::refresh))
+        .route("/logout", post(auth::logout))
 }
 
-fn dno_routes() -> Router<AppState> {
+fn query_routes() -> Router<AppState> {
+    use axum::middleware;
+    use crate::middleware::user_auth_middleware;
+    
     Router::new()
-        .route("/", get(handlers::dnos::list_dnos))
-        .route("/", post(handlers::dnos::create_dno))
-        .route("/:id", get(handlers::dnos::get_dno))
-        .route("/:id", put(handlers::dnos::update_dno))
-        .route("/:id", delete(handlers::dnos::delete_dno))
+        .route("/natural", post(query::natural_query))
+        .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
 }
 
-fn search_routes() -> Router<AppState> {
+fn dashboard_routes() -> Router<AppState> {
+    use axum::middleware;
+    use crate::middleware::user_auth_middleware;
+    
     Router::new()
-        .route("/", post(handlers::search::search))
-        .route("/history", get(handlers::search::search_history))
-        .route("/gather", post(handlers::search::gather))
+        .route("/stats", get(dashboard::get_stats))
+        .route("/history", get(dashboard::get_history))
+        .route("/history/:id", delete(dashboard::delete_history))
+        .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
 }
 
-fn crawl_routes() -> Router<AppState> {
+fn account_routes() -> Router<AppState> {
+    use axum::middleware;
+    use crate::middleware::{user_auth_middleware, pending_allowed_middleware};
+    
     Router::new()
-        .route("/jobs", get(handlers::crawl::list_jobs))
-        .route("/jobs", post(handlers::crawl::create_job))
-        .route("/jobs/:id", get(handlers::crawl::get_job))
-        .route("/jobs/:id/status", get(handlers::crawl::job_status))
-}
-
-fn dno_data_routes() -> Router<AppState> {
-    Router::new()
-        .route("/query", post(handlers::dno::query_dno_data))
-        .route("/analyze", post(handlers::dno::analyze_pdf))
-        .route("/stats", get(handlers::dno::get_query_learning_stats))
+        // Profile GET is allowed for pending users (read-only)
+        .route("/profile", get(account::get_profile))
+        .layer(middleware::from_fn_with_state(AppState::default(), pending_allowed_middleware))
+        .merge(
+            Router::new()
+                // All other account endpoints require user/admin role
+                .route("/profile", patch(account::update_profile))
+                .route("/change-email", post(account::change_email))
+                .route("/change-password", post(account::change_password))
+                .route("/profile-picture", post(account::upload_profile_picture))
+                .route("/profile-picture", delete(account::delete_profile_picture))
+                .route("/api-keys", get(account::list_api_keys))
+                .route("/api-keys", post(account::create_api_key))
+                .route("/api-keys/:id", delete(account::delete_api_key))
+                .route("/", delete(account::delete_account))
+                .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
+        )
 }
 
 fn admin_routes() -> Router<AppState> {
@@ -60,39 +88,49 @@ fn admin_routes() -> Router<AppState> {
     use crate::middleware::admin_auth_middleware;
     
     Router::new()
-        .route("/dashboard", get(handlers::admin::get_admin_dashboard))
-        .route("/flags", get(handlers::admin::get_data_flags))
-        .route("/flags", post(handlers::admin::flag_data))
-        .route("/flags/:id/resolve", post(handlers::admin::resolve_flag))
-        .route("/patterns", get(handlers::admin::get_patterns_for_verification))
-        .route("/patterns/:id/verify", post(handlers::admin::verify_pattern))
-        .route("/patterns/bulk-verify", post(handlers::admin::bulk_verify_patterns))
-        .route("/sources", get(handlers::admin::get_flagged_sources))
-        .route("/sources/:id/verify", post(handlers::admin::verify_source))
-        .route("/audit", get(handlers::admin::get_audit_log))
-        .layer(middleware::from_fn(admin_auth_middleware))
+        .route("/overview", get(admin::get_overview))
+        .route("/users", get(admin::list_users))
+        .route("/users/:id", patch(admin::update_user))
+        .route("/users/:id", delete(admin::delete_user))
+        .route("/users/:id/approve", post(admin::approve_user))
+        .route("/users/:id/reject", post(admin::reject_user))
+        .route("/data-entries", get(admin::list_data_entries))
+        .route("/data-entries/:id", get(admin::get_data_entry))
+        .route("/data-entries/:id/source", get(admin::get_data_entry_source))
+        .route("/data-entries/:id/verify", post(admin::verify_data_entry))
+        .route("/data-entries/:id", patch(admin::update_data_entry))
+        .route("/data-entries/:id", delete(admin::delete_data_entry))
+        .route("/data-entries/bulk", post(admin::bulk_data_entries))
+        .route("/crawl-settings", get(admin::get_crawl_settings))
+        .route("/crawl-settings", patch(admin::update_crawl_settings))
+        .route("/queries", get(admin::get_queries))
+        .route("/cache/status", get(admin::get_cache_status))
+        .route("/cache/clear", post(admin::clear_cache))
+        .route("/jobs/automated", get(admin::list_automated_jobs))
+        .route("/jobs/automated", post(admin::create_automated_job))
+        .route("/logs", get(admin::get_logs))
+        .route("/crawl/trigger", post(admin::trigger_crawl))
+        .route("/metrics/dashboard", get(admin::get_metrics_dashboard))
+        .route("/metrics/query", post(admin::query_metrics))
+        .route("/metrics/export", get(admin::export_metrics))
+        .route("/metrics/timeseries", get(admin::get_timeseries))
+        .layer(middleware::from_fn_with_state(AppState::default(), admin_auth_middleware))
 }
 
-fn job_routes() -> Router<AppState> {
+fn metrics_routes() -> Router<AppState> {
     use axum::middleware;
     use crate::middleware::admin_auth_middleware;
     
     Router::new()
-        .route("/", get(handlers::jobs::get_automated_jobs))
-        .route("/", post(handlers::jobs::create_automated_job))
-        .route("/:job_id", put(handlers::jobs::update_automated_job))
-        .route("/:job_id", delete(handlers::jobs::delete_automated_job))
-        .route("/:job_id/control", post(handlers::jobs::control_automated_job))
-        .route("/:job_id/history", get(handlers::jobs::get_job_execution_history))
-        .route("/system/status", get(handlers::jobs::get_job_system_status))
-        .layer(middleware::from_fn(admin_auth_middleware))
+        .route("/", get(metrics::get_prometheus_metrics))
+        .layer(middleware::from_fn_with_state(AppState::default(), admin_auth_middleware))
 }
 
-fn ai_crawl_routes() -> Router<AppState> {
+fn files_routes() -> Router<AppState> {
+    use axum::middleware;
+    use crate::middleware::user_auth_middleware;
+    
     Router::new()
-        .route("/crawl", post(handlers::ai_crawl::ai_crawl_intelligent))
-        .route("/query", post(handlers::ai_crawl::query_intelligent))
-        .route("/status/:dno", get(handlers::ai_crawl::get_ai_status))
-        .route("/retrain/:dno", post(handlers::ai_crawl::retrain_ai_model))
-        .route("/evaluation/:dno", get(handlers::ai_crawl::get_data_evaluation))
+        .route("/:type/:id", get(files::download_file))
+        .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
 }

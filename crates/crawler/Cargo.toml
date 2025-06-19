@@ -7,7 +7,7 @@ license.workspace = true
 
 [dependencies]
 # Shared types
-shared.workspace = true
+core.workspace = true
 
 # Async runtime
 tokio.workspace = true

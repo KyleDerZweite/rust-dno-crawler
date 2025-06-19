@@ -64,8 +64,8 @@ cargo watch -x "run --bin api"
 ### AI Crawler Usage
 
 ```bash
-# Primary AI-driven data gathering
-cargo run --bin crawler -- ai-gather "Netze BW" --data-types "netzentgelte,hlzf" --json
+# Primary AI-driven storage gathering
+cargo run --bin crawler -- ai-gather "Netze BW" --storage-types "netzentgelte,hlzf" --json
 
 # Test SearXNG connectivity
 cargo run --bin crawler -- search "test query" --json
@@ -234,7 +234,7 @@ sqlx migrate revert           # Revert migrations
 # Test AI with different DNOs
 cargo run --bin crawler -- ai-gather "Netze BW" --json --max-time 30
 cargo run --bin crawler -- ai-gather "Westnetz" --json --priority speed
-cargo run --bin crawler -- ai-gather "Bayernwerk" --data-types "hlzf,contact" --json
+cargo run --bin crawler -- ai-gather "Bayernwerk" --storage-types "hlzf,contact" --json
 
 # Monitor AI learning
 curl http://localhost:8080/api/ai/status/netze_bw

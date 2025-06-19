@@ -5,7 +5,7 @@ use crate::evaluation_engine::DataEvaluationEngine;
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// AI-driven intelligent data gathering (primary method)
+    /// AI-driven intelligent storage gathering (primary method)
     AiGather {
         /// DNO name
         dno: String,
@@ -72,12 +72,12 @@ pub async fn handle_ai_gather(
     priority: String,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if !json_output {
-        println!("🤖 AI-driven data gathering for: {}", dno);
+        println!("🤖 AI-driven storage gathering for: {}", dno);
         println!("📊 Data types: {}", data_types);
         println!("⚙️  Priority: {}, Max time: {}s", priority, max_time);
     }
 
-    // Parse data types
+    // Parse storage types
     let target_data_types: Vec<String> = data_types
         .split(',')
         .map(|s| s.trim().to_string())
@@ -103,7 +103,7 @@ pub async fn handle_ai_gather(
     let storage_path = format!("ai_model_{}.json", dno.to_lowercase().replace(" ", "_"));
     let mut ai_agent = IntelligentGatheringAgent::new(storage_path);
 
-    // Execute AI-driven data gathering
+    // Execute AI-driven storage gathering
     let start_time = std::time::Instant::now();
     let gathered_data = ai_agent.gather_data_intelligently(
         &dno,
@@ -111,7 +111,7 @@ pub async fn handle_ai_gather(
         target_years.clone()
     ).await?;
 
-    // Evaluate data quality
+    // Evaluate storage quality
     let mut evaluation_engine = DataEvaluationEngine::new();
     let evaluation = evaluation_engine.evaluate_gathered_data(
         &gathered_data,
@@ -140,8 +140,8 @@ pub async fn handle_ai_gather(
         });
         println!("{}", serde_json::to_string_pretty(&result)?);
     } else {
-        println!("✅ AI data gathering completed in {}s", processing_time);
-        println!("📊 Found {} data fields", gathered_data.len());
+        println!("✅ AI storage gathering completed in {}s", processing_time);
+        println!("📊 Found {} storage fields", gathered_data.len());
         println!("🎯 Overall evaluation score: {:.2}", evaluation.overall_score);
         println!("🤖 AI confidence: {:.2}", ai_metrics.get("average_reward").unwrap_or(&0.0));
         

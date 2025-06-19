@@ -3,7 +3,7 @@
 *.iml
 
 # --- Environment variables and secrets
-.env
+*.env*
 
 # --- SQLite database
 *.db
@@ -16,16 +16,15 @@
 
 # --- Rust package manager
 Cargo.lock
-# If this is a library crate and you're publishing to crates.io, keep Cargo.lock
-# Remove above line if it's a binary crate (keep Cargo.lock in git)
 
 # --- Node (used for TailwindCSS build pipeline)
-*/node_modules/
-*/package-lock.json
-*/yarn.lock
-*/npm-debug.log*
+*node_modules*
+*package-lock.json
+*yarn.lock
+*npm-debug.log*
+package.json
 
-# --- Build artifacts from TailwindCSS or frontend bundlers
+# --- Build artifacts from TailwindCSS or website bundlers
 /public/build/
 /dist/
 /out/
