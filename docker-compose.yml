@@ -52,6 +52,9 @@ services:
     environment:
       - SEARXNG_BASE_URL=${SEARXNG_BASE_URL}
       - SEARXNG_REDIS_URL=${SEARXNG_REDIS_URL}
+    depends_on:
+      redis:
+        condition: service_healthy
     logging:
       driver: "json-file"
       options:

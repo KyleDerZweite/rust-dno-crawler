@@ -5,48 +5,96 @@ use axum::{
     response::{Json, Response},
 };
 use serde_json::{json, Value};
+use jsonwebtoken::{decode, DecodingKey, Validation, Algorithm};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
+use chrono::{DateTime, Utc};
 use crate::AppState;
 
-#[derive(Debug, Clone, PartialEq)]
-pub enum UserRole {
-    Pending,
-    User,
-    Admin,
-}
+// Re-export UserRole from core crate
+pub use core::models::UserRole;
 
 #[derive(Debug, Clone)]
 pub struct AuthenticatedUser {
-    pub id: String,
+    pub id: Uuid,
     pub email: String,
     pub role: UserRole,
     pub name: String,
+    pub session_id: Uuid,
 }
 
-/// Extract user from authorization header (mock implementation)
-async fn extract_user_from_token(token: &str) -> Result<AuthenticatedUser, AuthError> {
-    // TODO: Implement actual JWT token validation
-    // For now, return mock data based on token pattern
-    match token {
-        "admin_token" => Ok(AuthenticatedUser {
-            id: "admin-123".to_string(),
-            email: "admin@example.com".to_string(),
-            role: UserRole::Admin,
-            name: "Admin User".to_string(),
-        }),
-        "user_token" => Ok(AuthenticatedUser {
-            id: "user-123".to_string(),
-            email: "user@example.com".to_string(),
-            role: UserRole::User,
-            name: "Regular User".to_string(),
-        }),
-        "pending_token" => Ok(AuthenticatedUser {
-            id: "pending-123".to_string(),
-            email: "pending@example.com".to_string(),
-            role: UserRole::Pending,
-            name: "Pending User".to_string(),
-        }),
-        _ => Err(AuthError::InvalidToken),
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub sub: String, // User ID
+    pub email: String,
+    pub name: String,
+    pub role: String,
+    pub session_id: String,
+    pub exp: i64,
+    pub iat: i64,
+}
+
+/// Extract user from JWT token using cached repositories
+async fn extract_user_from_token(
+    token: &str,
+    jwt_secret: &str,
+    user_repo: &crate::UserRepository<crate::RedisCache>,
+) -> Result<AuthenticatedUser, AuthError> {
+    // Decode JWT token
+    let validation = Validation::new(Algorithm::HS256);
+    let decoding_key = DecodingKey::from_secret(jwt_secret.as_ref());
+    
+    let token_data = decode::<Claims>(token, &decoding_key, &validation)
+        .map_err(|_| AuthError::InvalidToken)?;
+
+    let claims = token_data.claims;
+
+    // Parse user ID
+    let user_id = Uuid::parse_str(&claims.sub)
+        .map_err(|_| AuthError::InvalidToken)?;
+
+    // Parse session ID
+    let session_id = Uuid::parse_str(&claims.session_id)
+        .map_err(|_| AuthError::InvalidToken)?;
+
+    // Verify session is still active using cached repository
+    let session = user_repo.get_session_by_token_hash(&format!("{:x}", md5::compute(token)))
+        .await
+        .map_err(|_| AuthError::InvalidToken)?;
+
+    if session.is_none() {
+        return Err(AuthError::InvalidToken);
     }
+
+    // Get user from cached repository
+    let user = user_repo.get_user_by_id(user_id)
+        .await
+        .map_err(|_| AuthError::InvalidToken)?
+        .ok_or(AuthError::InvalidToken)?;
+
+    // Check if user is still active
+    if !user.is_active || user.deleted_at.is_some() {
+        return Err(AuthError::InvalidToken);
+    }
+
+    // Parse role
+    let role = match claims.role.as_str() {
+        "pending" => UserRole::Pending,
+        "user" => UserRole::User,
+        "admin" => UserRole::Admin,
+        _ => return Err(AuthError::InvalidToken),
+    };
+
+    // Update session last used timestamp
+    let _ = user_repo.update_session_last_used(session_id).await;
+
+    Ok(AuthenticatedUser {
+        id: user_id,
+        email: claims.email,
+        role,
+        name: claims.name,
+        session_id,
+    })
 }
 
 #[derive(Debug)]
@@ -55,6 +103,7 @@ pub enum AuthError {
     InvalidToken,
     PendingApproval,
     InsufficientPermissions,
+    DatabaseError,
 }
 
 impl AuthError {
@@ -66,7 +115,7 @@ impl AuthError {
                     "error": "missing_token",
                     "message": "Authorization header with Bearer token is required",
                     "details": {},
-                    "request_id": "550e8400-e29b-41d4-a716-446655440000"
+                    "request_id": uuid::Uuid::new_v4().to_string()
                 }))
             ),
             AuthError::InvalidToken => (
@@ -75,7 +124,7 @@ impl AuthError {
                     "error": "invalid_token",
                     "message": "Invalid or expired authentication token",
                     "details": {},
-                    "request_id": "550e8400-e29b-41d4-a716-446655440000"
+                    "request_id": uuid::Uuid::new_v4().to_string()
                 }))
             ),
             AuthError::PendingApproval => (
@@ -87,7 +136,7 @@ impl AuthError {
                         "role": "pending",
                         "verification_status": "awaiting_approval"
                     },
-                    "request_id": "550e8400-e29b-41d4-a716-446655440000"
+                    "request_id": uuid::Uuid::new_v4().to_string()
                 }))
             ),
             AuthError::InsufficientPermissions => (
@@ -104,7 +153,16 @@ impl AuthError {
                             None => "unknown"
                         }
                     },
-                    "request_id": "550e8400-e29b-41d4-a716-446655440000"
+                    "request_id": uuid::Uuid::new_v4().to_string()
+                }))
+            ),
+            AuthError::DatabaseError => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "error": "internal_error",
+                    "message": "Internal server error occurred",
+                    "details": {},
+                    "request_id": uuid::Uuid::new_v4().to_string()
                 }))
             ),
         }
@@ -113,13 +171,15 @@ impl AuthError {
 
 /// Middleware that requires user authentication (user or admin role)
 pub async fn user_auth_middleware(
-    State(_state): State<AppState>,
+    State(state): State<AppState>,
     headers: HeaderMap,
     mut request: Request,
     next: Next,
 ) -> Result<Response, (StatusCode, Json<Value>)> {
     let token = extract_bearer_token(&headers).map_err(|e| e.to_response(&None))?;
-    let user = extract_user_from_token(&token).await.map_err(|e| e.to_response(&None))?;
+    let user = extract_user_from_token(&token, &state.jwt_secret, &state.user_repo)
+        .await
+        .map_err(|e| e.to_response(&None))?;
 
     // Check if user has sufficient permissions (user or admin)
     match user.role {
@@ -134,13 +194,15 @@ pub async fn user_auth_middleware(
 
 /// Middleware that requires admin authentication
 pub async fn admin_auth_middleware(
-    State(_state): State<AppState>,
+    State(state): State<AppState>,
     headers: HeaderMap,
     mut request: Request,
     next: Next,
 ) -> Result<Response, (StatusCode, Json<Value>)> {
     let token = extract_bearer_token(&headers).map_err(|e| e.to_response(&None))?;
-    let user = extract_user_from_token(&token).await.map_err(|e| e.to_response(&None))?;
+    let user = extract_user_from_token(&token, &state.jwt_secret, &state.user_repo)
+        .await
+        .map_err(|e| e.to_response(&None))?;
 
     // Check if user has admin permissions
     match user.role {
@@ -157,13 +219,15 @@ pub async fn admin_auth_middleware(
 
 /// Middleware that allows pending users to access specific endpoints (read-only profile)
 pub async fn pending_allowed_middleware(
-    State(_state): State<AppState>,
+    State(state): State<AppState>,
     headers: HeaderMap,
     mut request: Request,
     next: Next,
 ) -> Result<Response, (StatusCode, Json<Value>)> {
     let token = extract_bearer_token(&headers).map_err(|e| e.to_response(&None))?;
-    let user = extract_user_from_token(&token).await.map_err(|e| e.to_response(&None))?;
+    let user = extract_user_from_token(&token, &state.jwt_secret, &state.user_repo)
+        .await
+        .map_err(|e| e.to_response(&None))?;
 
     // Allow all authenticated users (including pending)
     request.extensions_mut().insert(user);
@@ -188,4 +252,44 @@ fn extract_bearer_token(headers: &HeaderMap) -> Result<String, AuthError> {
     }
 
     Ok(token.to_string())
+}
+
+/// Generate JWT token for user
+pub fn generate_jwt_token(
+    user: &core::models::User,
+    session_id: Uuid,
+    jwt_secret: &str,
+    expires_in_seconds: i64,
+) -> Result<String, jsonwebtoken::errors::Error> {
+    let now = Utc::now().timestamp();
+    let expiration = now + expires_in_seconds;
+
+    let claims = Claims {
+        sub: user.id.to_string(),
+        email: user.email.clone(),
+        name: user.name.clone(),
+        role: match user.role {
+            UserRole::Pending => "pending".to_string(),
+            UserRole::User => "user".to_string(),
+            UserRole::Admin => "admin".to_string(),
+        },
+        session_id: session_id.to_string(),
+        exp: expiration,
+        iat: now,
+    };
+
+    let header = jsonwebtoken::Header::new(Algorithm::HS256);
+    let encoding_key = jsonwebtoken::EncodingKey::from_secret(jwt_secret.as_ref());
+
+    jsonwebtoken::encode(&header, &claims, &encoding_key)
+}
+
+/// Hash password using bcrypt
+pub fn hash_password(password: &str) -> Result<String, bcrypt::BcryptError> {
+    bcrypt::hash(password, bcrypt::DEFAULT_COST)
+}
+
+/// Verify password against hash
+pub fn verify_password(password: &str, hash: &str) -> Result<bool, bcrypt::BcryptError> {
+    bcrypt::verify(password, hash)
 }

@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc, NaiveTime};
+use chrono::{DateTime, Utc, NaiveTime, NaiveDate};
 use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, Type};
 use uuid::Uuid;
@@ -295,32 +295,20 @@ pub struct CreateApiKey {
 pub struct QueryLog {
     pub id: Uuid,
     pub user_id: Option<Uuid>,
-    pub query_text: String,
-    pub interpreted_dno: Option<String>,
-    pub interpreted_year: Option<i32>,
-    pub interpreted_data_type: Option<DataType>,
-    pub confidence: Option<rust_decimal::Decimal>,
-    pub status: String,
+    pub query: String,
+    pub interpretation: Option<String>,
     pub response_time_ms: Option<i32>,
-    pub result_from_cache: bool,
-    pub ip_address: Option<std::net::IpAddr>,
-    pub user_agent: Option<String>,
+    pub source_ip: Option<String>,
     pub created_at: DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateQueryLog {
     pub user_id: Option<Uuid>,
-    pub query_text: String,
-    pub interpreted_dno: Option<String>,
-    pub interpreted_year: Option<i32>,
-    pub interpreted_data_type: Option<DataType>,
-    pub confidence: Option<rust_decimal::Decimal>,
-    pub status: String,
+    pub query: String,
+    pub interpretation: Option<String>,
     pub response_time_ms: Option<i32>,
-    pub result_from_cache: bool,
-    pub ip_address: Option<std::net::IpAddr>,
-    pub user_agent: Option<String>,
+    pub source_ip: Option<String>,
 }
 
 // Crawl jobs model
@@ -581,4 +569,183 @@ pub struct CrawlJobWithSteps {
     #[serde(flatten)]
     pub job: CrawlJob,
     pub steps: Vec<CrawlJobStep>,
+}
+
+// Search result DTOs
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
+pub struct NetzentgelteDataWithDno {
+    // Netzentgelte data fields
+    pub id: Uuid,
+    pub dno_id: Uuid,
+    pub year: i32,
+    pub voltage_level: String,
+    pub leistung: Option<rust_decimal::Decimal>,
+    pub arbeit: Option<rust_decimal::Decimal>,
+    pub leistung_unter_2500h: Option<rust_decimal::Decimal>,
+    pub arbeit_unter_2500h: Option<rust_decimal::Decimal>,
+    pub verification_status: Option<String>,
+    pub verified_by: Option<Uuid>,
+    pub verified_at: Option<DateTime<Utc>>,
+    pub verification_notes: Option<String>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub deleted_at: Option<DateTime<Utc>>,
+    // DNO data fields (prefixed)
+    pub dno_id_full: Uuid,
+    pub dno_slug: String,
+    pub dno_name: String,
+    pub dno_official_name: Option<String>,
+    pub dno_region: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
+pub struct HlzfDataWithDno {
+    // HLZF data fields
+    pub id: Uuid,
+    pub dno_id: Uuid,
+    pub year: i32,
+    pub season: Season,
+    pub voltage_level: String,
+    pub ht: Option<rust_decimal::Decimal>,
+    pub nt: Option<rust_decimal::Decimal>,
+    pub start_date: Option<chrono::NaiveDate>,
+    pub end_date: Option<chrono::NaiveDate>,
+    pub verification_status: Option<String>,
+    pub verified_by: Option<Uuid>,
+    pub verified_at: Option<DateTime<Utc>>,
+    pub verification_notes: Option<String>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub deleted_at: Option<DateTime<Utc>>,
+    // DNO data fields (prefixed)
+    pub dno_id_full: Uuid,
+    pub dno_slug: String,
+    pub dno_name: String,
+    pub dno_official_name: Option<String>,
+    pub dno_region: Option<String>,
+}
+
+// Dashboard and statistics DTOs
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DashboardStats {
+    pub queries_today: u32,
+    pub queries_this_month: u32,
+    pub total_dnos: u32,
+    pub total_data_entries: u32,
+    pub available_years: Vec<i32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DnoInfo {
+    pub id: Uuid,
+    pub name: String,
+    pub slug: String,
+    pub region: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AvailableFilters {
+    pub years: Vec<i32>,
+    pub dnos: Vec<DnoInfo>,
+    pub regions: Vec<String>,
+    pub data_types: Vec<String>,
+}
+
+
+// API request/response DTOs for search endpoints
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchByDnoRequest {
+    pub dno_name: Option<String>,
+    pub dno_id: Option<Uuid>,
+    pub year: Option<i32>,
+    pub data_type: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchByYearRequest {
+    pub year: i32,
+    pub dno_name: Option<String>,
+    pub dno_id: Option<Uuid>,
+    pub data_type: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchByDataTypeRequest {
+    pub data_type: String,
+    pub dno_name: Option<String>,
+    pub dno_id: Option<Uuid>,
+    pub year: Option<i32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchFilters {
+    pub dno_name: Option<String>,
+    pub dno_id: Option<Uuid>,
+    pub year: Option<i32>,
+    pub data_type: Option<String>,
+    pub region: Option<String>,
+    pub limit: Option<u32>,
+    pub offset: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchResult {
+    pub id: Uuid,
+    pub dno: DnoInfo,
+    pub year: i32,
+    pub data_type: String,
+    pub status: String,
+    pub data: serde_json::Value,
+    pub source: Option<SourceInfo>,
+    pub last_updated: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SourceInfo {
+    pub id: Uuid,
+    pub file_type: String,
+    pub file_url: Option<String>,
+    pub page: Option<i32>,
+    pub extracted_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchResponse {
+    pub total: u32,
+    pub results: Vec<SearchResult>,
+    pub filters_applied: serde_json::Value,
+    pub available_years: Vec<i32>,
+    pub available_dnos: Vec<DnoInfo>,
+    pub pagination: Option<Pagination>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Pagination {
+    pub limit: u32,
+    pub offset: u32,
+    pub total: u32,
+    pub has_more: bool,
+}
+
+
+// Health check response
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HealthResponse {
+    pub status: String,
+    pub timestamp: DateTime<Utc>,
+    pub version: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReadinessResponse {
+    pub status: String,
+    pub services: ServiceStatus,
+    pub timestamp: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ServiceStatus {
+    pub database: String,
+    pub cache: Option<String>,
+    pub storage: Option<String>,
 }

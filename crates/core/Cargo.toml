@@ -17,3 +17,9 @@ uuid.workspace = true
 chrono.workspace = true
 tracing.workspace = true
 rust_decimal.workspace = true
+# Redis caching
+redis.workspace = true
+bb8.workspace = true
+bb8-redis.workspace = true
+async-trait.workspace = true
+sha2.workspace = true

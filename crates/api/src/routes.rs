@@ -48,7 +48,7 @@ fn search_routes() -> Router<AppState> {
         .route("/year", post(search::search_by_year))
         .route("/data-type", post(search::search_by_data_type))
         .route("/", get(search::search_with_filters))
-        .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
+        .route_layer(middleware::from_fn_with_state((), user_auth_middleware))
 }
 
 fn dashboard_routes() -> Router<AppState> {
@@ -59,7 +59,7 @@ fn dashboard_routes() -> Router<AppState> {
         .route("/stats", get(dashboard::get_stats))
         .route("/history", get(dashboard::get_history))
         .route("/history/:id", delete(dashboard::delete_history))
-        .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
+        .route_layer(middleware::from_fn_with_state((), user_auth_middleware))
 }
 
 fn account_routes() -> Router<AppState> {
@@ -69,7 +69,7 @@ fn account_routes() -> Router<AppState> {
     Router::new()
         // Profile GET is allowed for pending users (read-only)
         .route("/profile", get(account::get_profile))
-        .layer(middleware::from_fn_with_state(AppState::default(), pending_allowed_middleware))
+        .route_layer(middleware::from_fn_with_state((), pending_allowed_middleware))
         .merge(
             Router::new()
                 // All other account endpoints require user/admin role
@@ -82,7 +82,7 @@ fn account_routes() -> Router<AppState> {
                 .route("/api-keys", post(account::create_api_key))
                 .route("/api-keys/:id", delete(account::delete_api_key))
                 .route("/", delete(account::delete_account))
-                .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
+                .route_layer(middleware::from_fn_with_state((), user_auth_middleware))
         )
 }
 
@@ -117,7 +117,7 @@ fn admin_routes() -> Router<AppState> {
         .route("/metrics/query", post(admin::query_metrics))
         .route("/metrics/export", get(admin::export_metrics))
         .route("/metrics/timeseries", get(admin::get_timeseries))
-        .layer(middleware::from_fn_with_state(AppState::default(), admin_auth_middleware))
+        .route_layer(middleware::from_fn_with_state((), admin_auth_middleware))
 }
 
 fn metrics_routes() -> Router<AppState> {
@@ -126,7 +126,7 @@ fn metrics_routes() -> Router<AppState> {
     
     Router::new()
         .route("/", get(metrics::get_prometheus_metrics))
-        .layer(middleware::from_fn_with_state(AppState::default(), admin_auth_middleware))
+        .route_layer(middleware::from_fn_with_state((), admin_auth_middleware))
 }
 
 fn files_routes() -> Router<AppState> {
@@ -135,5 +135,5 @@ fn files_routes() -> Router<AppState> {
     
     Router::new()
         .route("/:type/:id", get(files::download_file))
-        .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
+        .route_layer(middleware::from_fn_with_state((), user_auth_middleware))
 }

@@ -5,6 +5,7 @@ use std::env;
 pub struct Config {
     pub server: ServerConfig,
     pub database: DatabaseConfig,
+    pub cache: CacheConfig,
     pub auth: AuthConfig,
     pub external: ExternalConfig,
     pub crawler: CrawlerConfig,
@@ -24,6 +25,17 @@ pub struct DatabaseConfig {
     pub min_connections: u32,
     pub connect_timeout: u64,
     pub idle_timeout: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CacheConfig {
+    pub redis_url: String,
+    pub max_connections: u32,
+    pub connection_timeout: u64,
+    pub default_ttl: u64,
+    pub session_ttl: u64,
+    pub found_data_ttl: u64,
+    pub not_found_ttl: u64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -79,22 +91,50 @@ impl Config {
             database: DatabaseConfig {
                 url: env::var("DATABASE_URL")
                     .map_err(|_| crate::AppError::Config("DATABASE_URL is required".to_string()))?,
-                max_connections: env::var("DB_MAX_CONNECTIONS")
+                max_connections: env::var("DATABASE_MAX_CONNECTIONS")
+                    .unwrap_or_else(|_| "100".to_string())
+                    .parse()
+                    .unwrap_or(100),
+                min_connections: env::var("DATABASE_MIN_CONNECTIONS")
                     .unwrap_or_else(|_| "10".to_string())
                     .parse()
                     .unwrap_or(10),
-                min_connections: env::var("DB_MIN_CONNECTIONS")
-                    .unwrap_or_else(|_| "1".to_string())
-                    .parse()
-                    .unwrap_or(1),
-                connect_timeout: env::var("DB_CONNECT_TIMEOUT")
+                connect_timeout: env::var("DATABASE_CONNECT_TIMEOUT")
                     .unwrap_or_else(|_| "30".to_string())
                     .parse()
                     .unwrap_or(30),
-                idle_timeout: env::var("DB_IDLE_TIMEOUT")
+                idle_timeout: env::var("DATABASE_IDLE_TIMEOUT")
                     .unwrap_or_else(|_| "600".to_string())
                     .parse()
                     .unwrap_or(600),
+            },
+            cache: CacheConfig {
+                redis_url: env::var("APP_REDIS_URL")
+                    .map_err(|_| crate::AppError::Config("APP_REDIS_URL is required".to_string()))?,
+                max_connections: env::var("REDIS_MAX_CONNECTIONS")
+                    .unwrap_or_else(|_| "100".to_string())
+                    .parse()
+                    .unwrap_or(100),
+                connection_timeout: env::var("REDIS_CONNECTION_TIMEOUT")
+                    .unwrap_or_else(|_| "5".to_string())
+                    .parse()
+                    .unwrap_or(5),
+                default_ttl: env::var("CACHE_TTL_DEFAULT")
+                    .unwrap_or_else(|_| "3600".to_string())
+                    .parse()
+                    .unwrap_or(3600),
+                session_ttl: env::var("CACHE_TTL_SESSION")
+                    .unwrap_or_else(|_| "3600".to_string())
+                    .parse()
+                    .unwrap_or(3600),
+                found_data_ttl: env::var("CACHE_TTL_FOUND")
+                    .unwrap_or_else(|_| "86400".to_string())
+                    .parse()
+                    .unwrap_or(86400),
+                not_found_ttl: env::var("CACHE_TTL_NOT_FOUND")
+                    .unwrap_or_else(|_| "3600".to_string())
+                    .parse()
+                    .unwrap_or(3600),
             },
             auth: AuthConfig {
                 jwt_secret: env::var("JWT_SECRET")

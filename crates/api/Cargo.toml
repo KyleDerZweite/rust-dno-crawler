@@ -52,3 +52,12 @@ async-trait.workspace = true
 # Cryptography and encoding
 sha2.workspace = true
 base64.workspace = true
+
+# Redis caching
+redis.workspace = true
+bb8.workspace = true
+bb8-redis.workspace = true
+
+# Additional dependencies for passwords
+bcrypt = "0.16"
+md5 = "0.7"

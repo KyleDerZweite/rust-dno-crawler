@@ -18,6 +18,9 @@ pub enum AppError {
     #[error("JSON serialization error: {0}")]
     Json(#[from] serde_json::Error),
 
+    #[error("Cache error: {0}")]
+    Cache(String),
+
     #[error("Configuration error: {0}")]
     Config(String),
 
@@ -62,6 +65,7 @@ impl AppError {
             AppError::Database(_) => "database_error",
             AppError::Http(_) => "http_error",
             AppError::Json(_) => "json_error",
+            AppError::Cache(_) => "cache_error",
             AppError::Config(_) => "config_error",
             AppError::Unauthorized(_) => "unauthorized",
             AppError::Forbidden(_) => "forbidden",
