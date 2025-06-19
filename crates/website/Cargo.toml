@@ -1,5 +1,5 @@
 [package]
-name = "frontend"
+name = "website"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,7 +7,7 @@ license.workspace = true
 
 [dependencies]
 # Shared types
-shared.workspace = true
+core.workspace = true
 
 # Frontend framework
 dioxus.workspace = true
