@@ -5,7 +5,7 @@ mod dashboard;
 mod files;
 mod health;
 mod metrics;
-mod query;
+mod search;
 mod websocket;
 
 use axum::{
@@ -21,7 +21,7 @@ pub fn api_routes() -> Router<AppState> {
         .route("/ready", get(health::readiness_check))
         .nest("/auth", auth_routes())
         // User authenticated endpoints
-        .nest("/query", query_routes())
+        .nest("/search", search_routes())
         .nest("/dashboard", dashboard_routes())
         .nest("/account", account_routes())
         // Admin only endpoints
@@ -39,12 +39,15 @@ fn auth_routes() -> Router<AppState> {
         .route("/logout", post(auth::logout))
 }
 
-fn query_routes() -> Router<AppState> {
+fn search_routes() -> Router<AppState> {
     use axum::middleware;
     use crate::middleware::user_auth_middleware;
     
     Router::new()
-        .route("/natural", post(query::natural_query))
+        .route("/dno", post(search::search_by_dno))
+        .route("/year", post(search::search_by_year))
+        .route("/data-type", post(search::search_by_data_type))
+        .route("/", get(search::search_with_filters))
         .layer(middleware::from_fn_with_state(AppState::default(), user_auth_middleware))
 }
 
