@@ -59,7 +59,6 @@ coverage/
 *.lock
 *.local.json
 *.png
-*.md
 .claude/
 
 # --- TEMP-REMOVED
